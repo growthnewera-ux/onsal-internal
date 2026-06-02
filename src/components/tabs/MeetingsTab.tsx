@@ -35,7 +35,7 @@ export default function MeetingsTab() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [form, setForm] = useState({ title: "", date: new Date().toISOString().slice(0, 10) });
+  const [form, setForm] = useState({ title: "", date: new Date().toISOString().slice(0, 10), notes: "" });
   const [actionForm, setActionForm] = useState<Record<number, { content: string; assignee: string; dueDate: string }>>({});
 
   // AI 분석 상태
@@ -62,7 +62,12 @@ export default function MeetingsTab() {
     const m = await res.json();
     setMeetings((prev) => [m, ...prev]);
     setExpandedId(m.id);
-    setForm({ title: "", date: new Date().toISOString().slice(0, 10) });
+    // 회의록이 있으면 AI 분석 바로 시작
+    if (form.notes.trim()) {
+      setNotes(form.notes);
+      setAnalyzeTarget(m.id);
+    }
+    setForm({ title: "", date: new Date().toISOString().slice(0, 10), notes: "" });
     setShowAdd(false);
   };
 
@@ -158,21 +163,37 @@ export default function MeetingsTab() {
       </div>
 
       {showAdd && (
-        <Card className="border-dashed border-2 border-black">
-          <CardContent className="pt-4">
+        <Card className="border-2 border-black">
+          <CardContent className="pt-4 space-y-3">
+            {/* 회의명 + 날짜 */}
             <div className="flex gap-2 items-end flex-wrap">
               <div className="flex-1 min-w-[180px]">
                 <label className="text-xs text-gray-500 mb-1 block">회의명</label>
-                <Input placeholder="예: 주간 팀 미팅, 신제품 기획 회의" value={form.title}
-                  onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                  onKeyDown={(e) => e.key === "Enter" && addMeeting()} />
+                <Input placeholder="예: 온살&루메 출시 회의" value={form.title}
+                  onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
               </div>
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">날짜</label>
                 <Input type="date" className="w-36" value={form.date}
                   onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
               </div>
-              <Button onClick={addMeeting}>추가</Button>
+            </div>
+            {/* 회의록 입력 */}
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block">
+                회의록 / 카톡 내용 붙여넣기 <span className="text-gray-300">(선택 — AI가 자동으로 액션아이템 추출)</span>
+              </label>
+              <textarea
+                className="w-full h-40 text-sm border border-gray-200 rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-gray-300 placeholder-gray-300"
+                placeholder={"회의 내용, 카톡 대화, 메모 등 자유롭게 붙여넣으세요.\n\nAI가 담당자별 할 일을 자동으로 정리해드려요."}
+                value={form.notes}
+                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button className="flex-1" onClick={addMeeting}>
+                {form.notes.trim() ? "회의 추가 + AI 분석 시작" : "회의 추가"}
+              </Button>
               <Button variant="ghost" onClick={() => setShowAdd(false)}>취소</Button>
             </div>
           </CardContent>
