@@ -8,10 +8,10 @@ import ExpensesTab from "./tabs/ExpensesTab";
 import MemberSettings from "./MemberSettings";
 
 const TABS = [
-  { id: "sales", label: "📊 매출 현황" },
-  { id: "tasks", label: "✅ 팀 업무" },
-  { id: "meetings", label: "📋 회의 액션" },
-  { id: "expenses", label: "💰 팀 비용" },
+  { id: "sales", label: "매출 현황" },
+  { id: "tasks", label: "팀 업무" },
+  { id: "meetings", label: "회의 액션" },
+  { id: "expenses", label: "팀 비용" },
 ];
 
 export default function Dashboard() {
@@ -42,7 +42,7 @@ export default function Dashboard() {
             onClick={() => setShowSettings(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
           >
-            ⚙️ 팀원 설정
+            팀원 설정
           </button>
         </div>
 
