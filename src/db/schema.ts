@@ -47,6 +47,14 @@ export const actionItems = pgTable("action_items", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// 월별 예산
+export const budgets = pgTable("budgets", {
+  id: serial("id").primaryKey(),
+  month: text("month").notNull().unique(), // "2026-06"
+  totalBudget: integer("total_budget").notNull().default(0),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // 팀 비용
 export const expenses = pgTable("expenses", {
   id: serial("id").primaryKey(),
