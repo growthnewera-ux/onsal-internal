@@ -4,18 +4,18 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
 interface ActionItem {
-  id: string;
+  id: number;
+  meetingId: number;
   content: string;
   assignee: string;
   completed: boolean;
 }
 
 interface Meeting {
-  id: string;
+  id: number;
   title: string;
   date: string;
   actions: ActionItem[];
@@ -35,81 +35,79 @@ const MEMBER_COLORS: Record<string, string> = {
 export default function MeetingsTab() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [showAdd, setShowAdd] = useState(false);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form, setForm] = useState({ title: "", date: new Date().toISOString().slice(0, 10) });
-  const [actionForm, setActionForm] = useState<Record<string, { content: string; assignee: string }>>({});
+  const [actionForm, setActionForm] = useState<Record<number, { content: string; assignee: string }>>({});
 
   useEffect(() => {
-    const saved = localStorage.getItem("onsal_meetings");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setMeetings(parsed);
-      if (parsed.length > 0) setExpandedId(parsed[0].id);
-    }
+    fetch("/api/meetings").then((r) => r.json()).then((data: Meeting[]) => {
+      setMeetings(data);
+      if (data.length > 0) setExpandedId(data[0].id);
+    });
   }, []);
 
-  const persist = (updated: Meeting[]) => {
-    setMeetings(updated);
-    localStorage.setItem("onsal_meetings", JSON.stringify(updated));
-  };
-
-  const addMeeting = () => {
+  const addMeeting = async () => {
     if (!form.title.trim()) return;
-    const m: Meeting = {
-      id: Date.now().toString(),
-      title: form.title.trim(),
-      date: form.date,
-      actions: [],
-    };
-    const updated = [m, ...meetings];
-    persist(updated);
+    const res = await fetch("/api/meetings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: form.title, date: form.date }),
+    });
+    const m = await res.json();
+    setMeetings((prev) => [m, ...prev]);
     setExpandedId(m.id);
     setForm({ title: "", date: new Date().toISOString().slice(0, 10) });
     setShowAdd(false);
   };
 
-  const addAction = (meetingId: string) => {
+  const deleteMeeting = async (id: number) => {
+    await fetch("/api/meetings", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    setMeetings((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const addAction = async (meetingId: number) => {
     const f = actionForm[meetingId];
     if (!f?.content.trim()) return;
-    const action: ActionItem = {
-      id: Date.now().toString(),
-      content: f.content.trim(),
-      assignee: f.assignee || MEMBERS[0],
-      completed: false,
-    };
-    const updated = meetings.map((m) =>
-      m.id === meetingId ? { ...m, actions: [...m.actions, action] } : m
-    );
-    persist(updated);
+    const res = await fetch("/api/meetings/actions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ meetingId, content: f.content, assignee: f.assignee || MEMBERS[0] }),
+    });
+    const action = await res.json();
+    setMeetings((prev) => prev.map((m) => m.id === meetingId ? { ...m, actions: [...m.actions, action] } : m));
     setActionForm((prev) => ({ ...prev, [meetingId]: { content: "", assignee: MEMBERS[0] } }));
   };
 
-  const toggleAction = (meetingId: string, actionId: string) => {
-    const updated = meetings.map((m) =>
-      m.id === meetingId
-        ? { ...m, actions: m.actions.map((a) => (a.id === actionId ? { ...a, completed: !a.completed } : a)) }
-        : m
-    );
-    persist(updated);
+  const toggleAction = async (meetingId: number, actionId: number, completed: boolean) => {
+    await fetch("/api/meetings/actions", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: actionId, completed: !completed }),
+    });
+    setMeetings((prev) => prev.map((m) =>
+      m.id === meetingId ? { ...m, actions: m.actions.map((a) => a.id === actionId ? { ...a, completed: !completed } : a) } : m
+    ));
   };
 
-  const deleteAction = (meetingId: string, actionId: string) => {
-    const updated = meetings.map((m) =>
+  const deleteAction = async (meetingId: number, actionId: number) => {
+    await fetch("/api/meetings/actions", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: actionId }),
+    });
+    setMeetings((prev) => prev.map((m) =>
       m.id === meetingId ? { ...m, actions: m.actions.filter((a) => a.id !== actionId) } : m
-    );
-    persist(updated);
-  };
-
-  const deleteMeeting = (id: string) => {
-    persist(meetings.filter((m) => m.id !== id));
+    ));
   };
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-sm font-medium text-gray-500">
-          회의에서 나온 액션아이템을 담당자와 함께 관리해요
-        </h2>
+        <p className="text-sm text-gray-500">회의에서 나온 액션아이템을 담당자와 함께 관리해요</p>
         <Button size="sm" onClick={() => setShowAdd(!showAdd)}>+ 회의 추가</Button>
       </div>
 
@@ -119,21 +117,14 @@ export default function MeetingsTab() {
             <div className="flex gap-2 items-end flex-wrap">
               <div className="flex-1 min-w-[180px]">
                 <label className="text-xs text-gray-500 mb-1 block">회의명</label>
-                <Input
-                  placeholder="예: 주간 팀 미팅, 신제품 기획 회의"
-                  value={form.title}
+                <Input placeholder="예: 주간 팀 미팅, 신제품 기획 회의" value={form.title}
                   onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                  onKeyDown={(e) => e.key === "Enter" && addMeeting()}
-                />
+                  onKeyDown={(e) => e.key === "Enter" && addMeeting()} />
               </div>
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">날짜</label>
-                <Input
-                  type="date"
-                  className="w-36"
-                  value={form.date}
-                  onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                />
+                <Input type="date" className="w-36" value={form.date}
+                  onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
               </div>
               <Button onClick={addMeeting}>추가</Button>
               <Button variant="ghost" onClick={() => setShowAdd(false)}>취소</Button>
@@ -143,11 +134,7 @@ export default function MeetingsTab() {
       )}
 
       {meetings.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center text-gray-400 text-sm">
-            아직 등록된 회의가 없어요. 회의 추가 버튼을 눌러보세요!
-          </CardContent>
-        </Card>
+        <Card><CardContent className="py-12 text-center text-gray-400 text-sm">아직 등록된 회의가 없어요. 회의 추가 버튼을 눌러보세요!</CardContent></Card>
       )}
 
       {meetings.map((m) => {
@@ -164,9 +151,7 @@ export default function MeetingsTab() {
                   <span className="text-base">{isExpanded ? "▼" : "▶"}</span>
                   <div>
                     <CardTitle className="text-base">{m.title}</CardTitle>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {new Date(m.date).toLocaleDateString("ko-KR")}
-                    </p>
+                    <p className="text-xs text-gray-400 mt-0.5">{new Date(m.date).toLocaleDateString("ko-KR")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -175,68 +160,33 @@ export default function MeetingsTab() {
                       {pending === 0 ? "✓ 완료" : `${pending}개 남음`}
                     </Badge>
                   )}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); deleteMeeting(m.id); }}
-                    className="text-gray-300 hover:text-red-400 text-sm"
-                  >
-                    ✕
-                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); deleteMeeting(m.id); }} className="text-gray-300 hover:text-red-400 text-sm">✕</button>
                 </div>
               </div>
             </CardHeader>
 
             {isExpanded && (
               <CardContent className="space-y-2 pt-0">
-                {/* 액션 추가 */}
                 <div className="flex gap-2 items-center flex-wrap bg-gray-50 p-3 rounded-lg">
-                  <select
-                    className="border border-gray-200 rounded px-2 py-1.5 text-sm bg-white"
+                  <select className="border border-gray-200 rounded px-2 py-1.5 text-sm bg-white"
                     value={af.assignee}
-                    onChange={(e) =>
-                      setActionForm((prev) => ({ ...prev, [m.id]: { ...af, assignee: e.target.value } }))
-                    }
-                  >
+                    onChange={(e) => setActionForm((prev) => ({ ...prev, [m.id]: { ...af, assignee: e.target.value } }))}>
                     {MEMBERS.map((mem) => <option key={mem}>{mem}</option>)}
                   </select>
-                  <Input
-                    className="flex-1 min-w-[200px] h-8"
-                    placeholder="액션아이템 입력 후 Enter"
+                  <Input className="flex-1 min-w-[200px] h-8" placeholder="액션아이템 입력 후 Enter"
                     value={af.content}
-                    onChange={(e) =>
-                      setActionForm((prev) => ({ ...prev, [m.id]: { ...af, content: e.target.value } }))
-                    }
-                    onKeyDown={(e) => e.key === "Enter" && addAction(m.id)}
-                  />
+                    onChange={(e) => setActionForm((prev) => ({ ...prev, [m.id]: { ...af, content: e.target.value } }))}
+                    onKeyDown={(e) => e.key === "Enter" && addAction(m.id)} />
                   <Button size="sm" onClick={() => addAction(m.id)}>추가</Button>
                 </div>
 
-                {/* 액션 목록 */}
-                {m.actions.length === 0 && (
-                  <p className="text-sm text-gray-400 text-center py-2">액션아이템을 추가해보세요</p>
-                )}
+                {m.actions.length === 0 && <p className="text-sm text-gray-400 text-center py-2">액션아이템을 추가해보세요</p>}
                 {m.actions.map((a) => (
-                  <div
-                    key={a.id}
-                    className={`flex items-center gap-3 p-2.5 rounded-lg border ${a.completed ? "border-gray-100 opacity-60" : "border-gray-200 bg-white"}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={a.completed}
-                      onChange={() => toggleAction(m.id, a.id)}
-                      className="w-4 h-4 cursor-pointer accent-black"
-                    />
-                    <p className={`flex-1 text-sm ${a.completed ? "line-through text-gray-400" : "text-gray-700"}`}>
-                      {a.content}
-                    </p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MEMBER_COLORS[a.assignee] || "bg-gray-100 text-gray-700"}`}>
-                      {a.assignee}
-                    </span>
-                    <button
-                      onClick={() => deleteAction(m.id, a.id)}
-                      className="text-gray-300 hover:text-red-400 text-xs"
-                    >
-                      ✕
-                    </button>
+                  <div key={a.id} className={`flex items-center gap-3 p-2.5 rounded-lg border ${a.completed ? "border-gray-100 opacity-60" : "border-gray-200 bg-white"}`}>
+                    <input type="checkbox" checked={a.completed} onChange={() => toggleAction(m.id, a.id, a.completed)} className="w-4 h-4 cursor-pointer accent-black" />
+                    <p className={`flex-1 text-sm ${a.completed ? "line-through text-gray-400" : "text-gray-700"}`}>{a.content}</p>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MEMBER_COLORS[a.assignee] || "bg-gray-100 text-gray-700"}`}>{a.assignee}</span>
+                    <button onClick={() => deleteAction(m.id, a.id)} className="text-gray-300 hover:text-red-400 text-xs">✕</button>
                   </div>
                 ))}
               </CardContent>
