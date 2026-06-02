@@ -20,6 +20,8 @@ export const COLOR_MAP: Record<string, string> = {
   black: "bg-black text-white",
 };
 
+export const COLORS = ["purple", "blue", "green", "orange", "pink", "gray"];
+
 export function useMembers() {
   const [members, setMembers] = useState<Member[]>([]);
 
@@ -28,6 +30,16 @@ export function useMembers() {
   };
 
   useEffect(() => { load(); }, []);
+
+  const addMember = async (name: string, role: string) => {
+    const res = await fetch("/api/members", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, role }),
+    });
+    const added = await res.json();
+    setMembers((prev) => [...prev, added]);
+  };
 
   const updateMember = async (id: number, name: string, role: string) => {
     const res = await fetch("/api/members", {
@@ -39,5 +51,14 @@ export function useMembers() {
     setMembers((prev) => prev.map((m) => m.id === id ? updated : m));
   };
 
-  return { members, updateMember, reload: load };
+  const deleteMember = async (id: number) => {
+    await fetch("/api/members", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    setMembers((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  return { members, addMember, updateMember, deleteMember, reload: load };
 }
