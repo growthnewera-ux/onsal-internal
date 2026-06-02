@@ -108,6 +108,9 @@ export default function ExpensesTab() {
     setExpenses((prev) => prev.filter((e) => e.id !== id));
   };
 
+  const ALL_MONTHS = ["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06",
+                      "2026-07","2026-08","2026-09","2026-10","2026-11","2026-12"];
+
   const monthExpenses = expenses.filter((e) => e.date.startsWith(filterMonth));
   const filtered = filterCat === "전체" ? monthExpenses : monthExpenses.filter((e) => e.category === filterCat);
   const totalSpent = monthExpenses.reduce((s, e) => s + e.amount, 0);
@@ -120,8 +123,9 @@ export default function ExpensesTab() {
     total: monthExpenses.filter((e) => e.category === cat).reduce((s, e) => s + e.amount, 0),
   })).filter((c) => c.total > 0).sort((a, b) => b.total - a.total);
 
-  const availableMonths = [...new Set(expenses.map((e) => e.date.slice(0, 7)))].sort().reverse();
-  if (!availableMonths.includes(currentMonth)) availableMonths.unshift(currentMonth);
+  // 연간 합산
+  const yearTotal = expenses.filter((e) => e.date.startsWith("2026")).reduce((s, e) => s + e.amount, 0);
+  const yearBudgetTotal = ALL_MONTHS.reduce((s, m) => s + (budgetMap[m] || 0), 0);
 
   const budgetColor =
     usedRate >= 90 ? "bg-red-500" :
@@ -130,19 +134,49 @@ export default function ExpensesTab() {
 
   return (
     <div className="space-y-5">
+      {/* 연간 합산 카드 */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="col-span-2 bg-gray-900 text-white rounded-xl p-4">
+          <p className="text-xs text-gray-400 mb-1">2026년 연간 합산 지출</p>
+          <p className="text-2xl font-bold">{fmtFull(yearTotal)}</p>
+          {yearBudgetTotal > 0 && (
+            <p className="text-xs text-gray-400 mt-1">
+              연간 예산 {fmtFull(yearBudgetTotal)} 중 {yearBudgetTotal > 0 ? ((yearTotal / yearBudgetTotal) * 100).toFixed(1) : 0}% 사용
+            </p>
+          )}
+        </div>
+        {ALL_MONTHS.filter((m) => expenses.some((e) => e.date.startsWith(m))).slice(0, 2).map((m) => {
+          const spent = expenses.filter((e) => e.date.startsWith(m)).reduce((s, e) => s + e.amount, 0);
+          return (
+            <div key={m} className="bg-white border border-gray-100 rounded-xl p-4 cursor-pointer hover:border-gray-300" onClick={() => setFilterMonth(m)}>
+              <p className="text-xs text-gray-400 mb-1">{m.slice(5)}월</p>
+              <p className="text-lg font-bold text-gray-800">{fmt(spent)}원</p>
+            </div>
+          );
+        })}
+      </div>
+
       {/* 월 탭 + 지출 추가 버튼 */}
       <div className="flex flex-wrap items-center gap-2 justify-between">
         <div className="flex flex-wrap gap-1.5">
-          {availableMonths.slice(0, 6).map((m) => (
-            <button key={m} onClick={() => setFilterMonth(m)}
-              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors border ${
-                filterMonth === m
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "bg-white border-gray-200 text-gray-600 hover:border-gray-400"
-              }`}>
-              {m.slice(0, 4)}년 {m.slice(5)}월
-            </button>
-          ))}
+          {ALL_MONTHS.map((m) => {
+            const hasData = expenses.some((e) => e.date.startsWith(m));
+            const isCurrent = m === currentMonth;
+            return (
+              <button key={m} onClick={() => setFilterMonth(m)}
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors border ${
+                  filterMonth === m
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : hasData
+                    ? "bg-white border-gray-300 text-gray-700 hover:border-gray-500"
+                    : isCurrent
+                    ? "bg-white border-gray-300 text-gray-600 hover:border-gray-500"
+                    : "bg-white border-gray-100 text-gray-300 hover:border-gray-300 hover:text-gray-500"
+                }`}>
+                {m.slice(5)}월{isCurrent && filterMonth !== m ? <span className="ml-1 text-xs opacity-50">•</span> : ""}
+              </button>
+            );
+          })}
         </div>
         <Button size="sm" onClick={() => setShowAdd(!showAdd)}>지출 추가</Button>
       </div>
