@@ -20,6 +20,7 @@ interface Meeting {
   id: number;
   title: string;
   date: string;
+  summary?: string;
   actions: ActionItem[];
 }
 
@@ -111,6 +112,16 @@ export default function MeetingsTab() {
 
   const saveAiActions = async (meetingId: number) => {
     if (!aiResult) return;
+    // summary DB 저장
+    if (aiResult.summary) {
+      await fetch("/api/meetings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: meetingId, summary: aiResult.summary }),
+      });
+      setMeetings(prev => prev.map(m => m.id === meetingId ? { ...m, summary: aiResult.summary } : m));
+    }
+    // 선택된 액션아이템 저장
     const toSave = aiResult.actions.filter((_, i) => selectedActions[i]);
     for (const a of toSave) {
       const res = await fetch("/api/meetings/actions", {
@@ -355,6 +366,71 @@ export default function MeetingsTab() {
                   </button>
                 )}
 
+                {/* 회의 요약 */}
+                {m.summary && (
+                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-blue-600 mb-1">회의 요약</p>
+                    <p className="text-sm text-gray-700">{m.summary}</p>
+                  </div>
+                )}
+
+                {/* 담당자별 액션아이템 */}
+                {m.actions.length > 0 && (() => {
+                  const grouped = members
+                    .map(mem => ({
+                      member: mem,
+                      actions: m.actions.filter(a => a.assignee === mem.name),
+                    }))
+                    .filter(g => g.actions.length > 0);
+                  // 미매칭 (팀원 목록에 없는 담당자)
+                  const matchedNames = grouped.map(g => g.member.name);
+                  const unmatched = m.actions.filter(a => !matchedNames.includes(a.assignee));
+
+                  return (
+                    <div className="space-y-2">
+                      {grouped.map(({ member, actions }) => (
+                        <div key={member.id} className="rounded-lg border border-gray-100 overflow-hidden">
+                          <div className={`px-3 py-1.5 flex items-center gap-2 ${COLOR_MAP[member.color]} bg-opacity-30`}>
+                            <span className="text-xs font-bold">{member.name}</span>
+                            <span className="text-xs opacity-70">{member.role}</span>
+                            <span className="text-xs ml-auto opacity-60">
+                              {actions.filter(a => a.completed).length}/{actions.length} 완료
+                            </span>
+                          </div>
+                          {actions.map(a => (
+                            <div key={a.id} className={`flex items-center gap-3 px-3 py-2 border-t border-gray-50 ${a.completed ? "opacity-50" : ""}`}>
+                              <input type="checkbox" checked={a.completed}
+                                onChange={() => toggleAction(m.id, a.id, a.completed)}
+                                className="w-4 h-4 cursor-pointer accent-black flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-sm ${a.completed ? "line-through text-gray-400" : "text-gray-700"}`}>{a.content}</p>
+                                {a.dueDate && (
+                                  <p className={`text-xs mt-0.5 ${!a.completed && new Date(a.dueDate) < new Date(new Date().toDateString()) ? "text-red-500" : "text-gray-400"}`}>
+                                    마감: {new Date(a.dueDate).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
+                                  </p>
+                                )}
+                              </div>
+                              <button onClick={() => deleteAction(m.id, a.id)}
+                                className="text-gray-200 hover:text-red-400 text-xs flex-shrink-0">✕</button>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                      {/* 미매칭 담당자 */}
+                      {unmatched.map(a => (
+                        <div key={a.id} className={`flex items-center gap-3 p-2.5 rounded-lg border ${a.completed ? "border-gray-100 opacity-50" : "border-gray-200 bg-white"}`}>
+                          <input type="checkbox" checked={a.completed}
+                            onChange={() => toggleAction(m.id, a.id, a.completed)}
+                            className="w-4 h-4 cursor-pointer accent-black" />
+                          <p className={`flex-1 text-sm ${a.completed ? "line-through text-gray-400" : "text-gray-700"}`}>{a.content}</p>
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{a.assignee}</span>
+                          <button onClick={() => deleteAction(m.id, a.id)} className="text-gray-200 hover:text-red-400 text-xs">✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+
                 {/* 수동 액션아이템 추가 */}
                 <div className="flex gap-2 items-center flex-wrap bg-gray-50 p-3 rounded-lg">
                   <select className="border border-gray-200 rounded px-2 py-1.5 text-sm bg-white"
@@ -373,18 +449,13 @@ export default function MeetingsTab() {
                 </div>
 
                 {m.actions.length === 0 && <p className="text-sm text-gray-400 text-center py-2">액션아이템을 추가해보세요</p>}
-                {m.actions.map((a) => (
+                {false && m.actions.map((a) => (
                   <div key={a.id} className={`flex items-center gap-3 p-2.5 rounded-lg border ${a.completed ? "border-gray-100 opacity-60" : "border-gray-200 bg-white"}`}>
                     <input type="checkbox" checked={a.completed} onChange={() => toggleAction(m.id, a.id, a.completed)} className="w-4 h-4 cursor-pointer accent-black" />
                     <div className="flex-1 min-w-0">
                       <p className={`text-sm ${a.completed ? "line-through text-gray-400" : "text-gray-700"}`}>{a.content}</p>
-                      {a.dueDate && (
-                        <p className={`text-xs mt-0.5 ${!a.completed && new Date(a.dueDate) < new Date(new Date().toDateString()) ? "text-red-500 font-medium" : "text-gray-400"}`}>
-                          마감: {new Date(a.dueDate).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
-                        </p>
-                      )}
                     </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${COLOR_MAP[members.find((m) => m.name === a.assignee)?.color || (a.assignee === "전체" ? "black" : "gray")]}`}>{a.assignee}</span>
+                    <span className="text-xs">{a.assignee}</span>
                     <button onClick={() => deleteAction(m.id, a.id)} className="text-gray-300 hover:text-red-400 text-xs">✕</button>
                   </div>
                 ))}

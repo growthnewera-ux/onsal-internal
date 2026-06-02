@@ -33,6 +33,7 @@ export const meetings = pgTable("meetings", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   date: date("date").notNull(),
+  summary: text("summary"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
