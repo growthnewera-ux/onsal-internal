@@ -23,6 +23,12 @@ interface Meeting {
   actions: ActionItem[];
 }
 
+interface AIAction {
+  assignee: string;
+  content: string;
+  dueDate: string | null;
+}
+
 export default function MeetingsTab() {
   const { members } = useMembers();
   const memberNames = ["전체", ...members.map((m) => m.name)];
@@ -31,6 +37,13 @@ export default function MeetingsTab() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form, setForm] = useState({ title: "", date: new Date().toISOString().slice(0, 10) });
   const [actionForm, setActionForm] = useState<Record<number, { content: string; assignee: string; dueDate: string }>>({});
+
+  // AI 분석 상태
+  const [analyzeTarget, setAnalyzeTarget] = useState<number | null>(null); // 분석 대상 회의 ID
+  const [notes, setNotes] = useState("");
+  const [analyzing, setAnalyzing] = useState(false);
+  const [aiResult, setAiResult] = useState<{ actions: AIAction[]; summary: string } | null>(null);
+  const [selectedActions, setSelectedActions] = useState<boolean[]>([]);
 
   useEffect(() => {
     fetch("/api/meetings").then((r) => r.json()).then((data: Meeting[]) => {
@@ -60,6 +73,46 @@ export default function MeetingsTab() {
       body: JSON.stringify({ id }),
     });
     setMeetings((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const analyzeNotes = async (meetingId: number) => {
+    if (!notes.trim()) return;
+    setAnalyzing(true);
+    setAiResult(null);
+    try {
+      const meeting = meetings.find(m => m.id === meetingId);
+      const res = await fetch("/api/meetings/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes, members, meetingDate: meeting?.date }),
+      });
+      const data = await res.json();
+      if (data.actions) {
+        setAiResult(data);
+        setSelectedActions(data.actions.map(() => true));
+      }
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const saveAiActions = async (meetingId: number) => {
+    if (!aiResult) return;
+    const toSave = aiResult.actions.filter((_, i) => selectedActions[i]);
+    for (const a of toSave) {
+      const res = await fetch("/api/meetings/actions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ meetingId, content: a.content, assignee: a.assignee, dueDate: a.dueDate }),
+      });
+      const action = await res.json();
+      setMeetings(prev => prev.map(m =>
+        m.id === meetingId ? { ...m, actions: [...m.actions, action] } : m
+      ));
+    }
+    setAiResult(null);
+    setNotes("");
+    setAnalyzeTarget(null);
   };
 
   const addAction = async (meetingId: number) => {
@@ -100,7 +153,7 @@ export default function MeetingsTab() {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-500">회의에서 나온 액션아이템을 담당자와 함께 관리해요</p>
+        <p className="text-sm text-gray-500">회의록을 붙여넣으면 AI가 액션아이템을 자동으로 추출해요</p>
         <Button size="sm" onClick={() => setShowAdd(!showAdd)}>+ 회의 추가</Button>
       </div>
 
@@ -159,7 +212,80 @@ export default function MeetingsTab() {
             </CardHeader>
 
             {isExpanded && (
-              <CardContent className="space-y-2 pt-0">
+              <CardContent className="space-y-3 pt-0">
+
+                {/* AI 회의록 분석 영역 */}
+                {analyzeTarget === m.id ? (
+                  <div className="bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold text-gray-700">✦ AI 회의록 분석</p>
+                      <button onClick={() => { setAnalyzeTarget(null); setNotes(""); setAiResult(null); }}
+                        className="text-gray-400 hover:text-gray-600 text-xs">✕ 닫기</button>
+                    </div>
+
+                    {!aiResult ? (
+                      <>
+                        <textarea
+                          className="w-full h-36 text-sm border border-blue-200 rounded-lg p-3 bg-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-400"
+                          placeholder={`회의록, 카톡 내용, 메모 등 자유롭게 붙여넣으세요.\n\n예시:\n"예지님 6월 말까지 용기 발주 완료, 현지님 인스타 광고 다음주 집행, 동희님 쿠팡 입점 미팅 준비..."`}
+                          value={notes}
+                          onChange={e => setNotes(e.target.value)}
+                        />
+                        <Button
+                          className="w-full"
+                          onClick={() => analyzeNotes(m.id)}
+                          disabled={analyzing || !notes.trim()}>
+                          {analyzing ? "AI 분석 중..." : "✦ AI로 액션아이템 추출"}
+                        </Button>
+                      </>
+                    ) : (
+                      <div className="space-y-3">
+                        {aiResult.summary && (
+                          <div className="bg-white rounded-lg p-3 border border-blue-100">
+                            <p className="text-xs text-blue-600 font-semibold mb-1">회의 요약</p>
+                            <p className="text-sm text-gray-700">{aiResult.summary}</p>
+                          </div>
+                        )}
+                        <div className="space-y-2">
+                          <p className="text-xs font-semibold text-gray-600">추출된 액션아이템 (저장할 항목 선택)</p>
+                          {aiResult.actions.map((a, i) => (
+                            <div key={i}
+                              className={`flex items-start gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-colors ${selectedActions[i] ? "bg-white border-blue-200" : "bg-gray-50 border-gray-100 opacity-50"}`}
+                              onClick={() => setSelectedActions(prev => prev.map((v, j) => j === i ? !v : v))}>
+                              <input type="checkbox" checked={selectedActions[i]} onChange={() => {}}
+                                className="mt-0.5 accent-blue-600 w-4 h-4 flex-shrink-0" />
+                              <div className="flex-1">
+                                <p className="text-sm text-gray-800">{a.content}</p>
+                                {a.dueDate && (
+                                  <p className="text-xs text-gray-400 mt-0.5">마감: {new Date(a.dueDate).toLocaleDateString("ko-KR")}</p>
+                                )}
+                              </div>
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${COLOR_MAP[members.find(mem => mem.name === a.assignee)?.color || "gray"]}`}>
+                                {a.assignee}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button className="flex-1" onClick={() => saveAiActions(m.id)}
+                            disabled={!selectedActions.some(Boolean)}>
+                            선택 항목 저장 ({selectedActions.filter(Boolean).length}개)
+                          </Button>
+                          <Button variant="ghost" onClick={() => { setAiResult(null); setNotes(""); }}>
+                            다시 입력
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button onClick={() => { setAnalyzeTarget(m.id); setAiResult(null); setNotes(""); }}
+                    className="w-full py-2 rounded-lg border border-dashed border-blue-200 text-sm text-blue-500 hover:bg-blue-50 hover:border-blue-300 transition-colors font-medium">
+                    ✦ 회의록 붙여넣고 AI 분석
+                  </button>
+                )}
+
+                {/* 수동 액션아이템 추가 */}
                 <div className="flex gap-2 items-center flex-wrap bg-gray-50 p-3 rounded-lg">
                   <select className="border border-gray-200 rounded px-2 py-1.5 text-sm bg-white"
                     value={af.assignee}
