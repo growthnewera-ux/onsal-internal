@@ -36,10 +36,12 @@ export default function MeetingsTab() {
   const [showAdd, setShowAdd] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form, setForm] = useState({ title: "", date: new Date().toISOString().slice(0, 10), notes: "" });
+  const [formAttendees, setFormAttendees] = useState<string[]>([]);
   const [actionForm, setActionForm] = useState<Record<number, { content: string; assignee: string; dueDate: string }>>({});
 
   // AI 분석 상태
-  const [analyzeTarget, setAnalyzeTarget] = useState<number | null>(null); // 분석 대상 회의 ID
+  const [analyzeTarget, setAnalyzeTarget] = useState<number | null>(null);
+  const [analyzeAttendees, setAnalyzeAttendees] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [aiResult, setAiResult] = useState<{ actions: AIAction[]; summary: string } | null>(null);
@@ -66,8 +68,10 @@ export default function MeetingsTab() {
     if (form.notes.trim()) {
       setNotes(form.notes);
       setAnalyzeTarget(m.id);
+      setAnalyzeAttendees(formAttendees);
     }
     setForm({ title: "", date: new Date().toISOString().slice(0, 10), notes: "" });
+    setFormAttendees([]);
     setShowAdd(false);
   };
 
@@ -86,10 +90,14 @@ export default function MeetingsTab() {
     setAiResult(null);
     try {
       const meeting = meetings.find(m => m.id === meetingId);
+      // 참석자만 필터링해서 전달
+      const attendeeMembers = analyzeAttendees.length > 0
+        ? members.filter(m => analyzeAttendees.includes(m.name))
+        : members;
       const res = await fetch("/api/meetings/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notes, members, meetingDate: meeting?.date }),
+        body: JSON.stringify({ notes, members: attendeeMembers, meetingDate: meeting?.date }),
       });
       const data = await res.json();
       if (data.actions) {
@@ -178,6 +186,27 @@ export default function MeetingsTab() {
                   onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
               </div>
             </div>
+            {/* 참석자 선택 */}
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block">참석자 선택 <span className="text-gray-300">(AI가 참석자에게만 업무 배정)</span></label>
+              <div className="flex flex-wrap gap-1.5">
+                {members.map(m => {
+                  const selected = formAttendees.includes(m.name);
+                  return (
+                    <button key={m.id} type="button"
+                      onClick={() => setFormAttendees(prev =>
+                        selected ? prev.filter(n => n !== m.name) : [...prev, m.name]
+                      )}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                        selected ? "bg-black text-white border-black" : "bg-white border-gray-200 text-gray-500 hover:border-gray-400"
+                      }`}>
+                      {m.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* 회의록 입력 */}
             <div>
               <label className="text-xs text-gray-500 mb-1 block">
@@ -246,6 +275,26 @@ export default function MeetingsTab() {
 
                     {!aiResult ? (
                       <>
+                        {/* 참석자 선택 */}
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1.5">참석자 선택 <span className="text-gray-300">(선택한 사람에게만 업무 배정)</span></p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {members.map(mem => {
+                              const sel = analyzeAttendees.includes(mem.name);
+                              return (
+                                <button key={mem.id} type="button"
+                                  onClick={() => setAnalyzeAttendees(prev =>
+                                    sel ? prev.filter(n => n !== mem.name) : [...prev, mem.name]
+                                  )}
+                                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+                                    sel ? "bg-gray-900 text-white border-gray-900" : "bg-white border-gray-200 text-gray-500 hover:border-gray-400"
+                                  }`}>
+                                  {mem.name}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                         <textarea
                           className="w-full h-36 text-sm border border-blue-200 rounded-lg p-3 bg-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-gray-400"
                           placeholder={`회의록, 카톡 내용, 메모 등 자유롭게 붙여넣으세요.\n\n예시:\n"예지님 6월 말까지 용기 발주 완료, 현지님 인스타 광고 다음주 집행, 동희님 쿠팡 입점 미팅 준비..."`}
