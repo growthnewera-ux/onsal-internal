@@ -17,7 +17,8 @@ interface Task {
 }
 
 export default function TasksTab() {
-  const { members } = useMembers();
+  const { members, deleteMember } = useMembers();
+  const [editMode, setEditMode] = useState(false);
   const memberNames = members.map((m) => m.name);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filterMember, setFilterMember] = useState("전체");
@@ -77,13 +78,33 @@ export default function TasksTab() {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2 justify-between">
-        <div className="flex flex-wrap gap-2">
-          {["전체", ...memberNames].map((m) => (
-            <button key={m} onClick={() => setFilterMember(m)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${filterMember === m ? "bg-black text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"}`}>
-              {m}
-            </button>
+        <div className="flex flex-wrap gap-1.5 items-center">
+          <button onClick={() => setFilterMember("전체")}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${filterMember === "전체" ? "bg-black text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"}`}>
+            전체
+          </button>
+          {members.map((m) => (
+            <div key={m.id} className="relative group flex items-center">
+              <button onClick={() => setFilterMember(m.name)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  filterMember === m.name ? "bg-black text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"
+                } ${editMode ? "pr-6" : ""}`}>
+                {m.name}
+              </button>
+              {editMode && (
+                <button
+                  onClick={() => { deleteMember(m.id); if (filterMember === m.name) setFilterMember("전체"); }}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center leading-none hover:bg-red-600">
+                  ×
+                </button>
+              )}
+            </div>
           ))}
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${editMode ? "bg-red-50 border-red-200 text-red-500" : "border-gray-200 text-gray-400 hover:border-gray-400"}`}>
+            {editMode ? "완료" : "편집"}
+          </button>
         </div>
         <Button onClick={() => setShowAdd(!showAdd)} size="sm">+ 업무 추가</Button>
       </div>
