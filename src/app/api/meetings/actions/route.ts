@@ -5,11 +5,12 @@ import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   const db = getDb();
-  const { meetingId, content, assignee } = await req.json();
+  const { meetingId, content, assignee, dueDate } = await req.json();
   const inserted = await db.insert(actionItems).values({
     meetingId,
     content,
     assignee,
+    dueDate: dueDate || null,
     completed: false,
   }).returning();
   return NextResponse.json(inserted[0]);

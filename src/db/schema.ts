@@ -1,5 +1,14 @@
 import { pgTable, serial, text, integer, boolean, timestamp, date } from "drizzle-orm/pg-core";
 
+// 팀원 설정
+export const members = pgTable("members", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  role: text("role").notNull().default(""),
+  color: text("color").notNull().default("gray"),
+  order: integer("order").notNull().default(0),
+});
+
 // 매출 데이터
 export const sales = pgTable("sales", {
   id: serial("id").primaryKey(),
@@ -33,6 +42,7 @@ export const actionItems = pgTable("action_items", {
   meetingId: integer("meeting_id").notNull(),
   content: text("content").notNull(),
   assignee: text("assignee").notNull(),
+  dueDate: date("due_date"),
   completed: boolean("completed").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });

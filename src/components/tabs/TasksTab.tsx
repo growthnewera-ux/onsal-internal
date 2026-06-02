@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useMembers, COLOR_MAP } from "@/hooks/useMembers";
 
 interface Task {
   id: number;
@@ -15,25 +16,23 @@ interface Task {
   createdAt: string;
 }
 
-const MEMBERS = ["김다솔", "BM2", "콘텐츠", "퍼포먼스", "디자이너", "영업"];
-const MEMBER_COLORS: Record<string, string> = {
-  "김다솔": "bg-purple-100 text-purple-700",
-  "BM2": "bg-blue-100 text-blue-700",
-  "콘텐츠": "bg-green-100 text-green-700",
-  "퍼포먼스": "bg-orange-100 text-orange-700",
-  "디자이너": "bg-pink-100 text-pink-700",
-  "영업": "bg-gray-100 text-gray-700",
-};
-
 export default function TasksTab() {
+  const { members } = useMembers();
+  const memberNames = members.map((m) => m.name);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filterMember, setFilterMember] = useState("전체");
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ assignee: MEMBERS[0], title: "", dueDate: "" });
+  const [form, setForm] = useState({ assignee: "", title: "", dueDate: "" });
 
   useEffect(() => {
     fetch("/api/tasks").then((r) => r.json()).then(setTasks);
   }, []);
+
+  useEffect(() => {
+    if (members.length > 0 && !form.assignee) {
+      setForm((f) => ({ ...f, assignee: members[0].name }));
+    }
+  }, [members]);
 
   const addTask = async () => {
     if (!form.title.trim()) return;
@@ -44,7 +43,7 @@ export default function TasksTab() {
     });
     const t = await res.json();
     setTasks((prev) => [t, ...prev]);
-    setForm({ assignee: MEMBERS[0], title: "", dueDate: "" });
+    setForm({ assignee: members[0]?.name || "", title: "", dueDate: "" });
     setShowAdd(false);
   };
 
@@ -79,7 +78,7 @@ export default function TasksTab() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2 justify-between">
         <div className="flex flex-wrap gap-2">
-          {["전체", ...MEMBERS].map((m) => (
+          {["전체", ...memberNames].map((m) => (
             <button key={m} onClick={() => setFilterMember(m)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${filterMember === m ? "bg-black text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"}`}>
               {m}
@@ -97,7 +96,7 @@ export default function TasksTab() {
                 <label className="text-xs text-gray-500 mb-1 block">담당자</label>
                 <select className="border border-gray-200 rounded px-2 py-1.5 text-sm" value={form.assignee}
                   onChange={(e) => setForm((f) => ({ ...f, assignee: e.target.value }))}>
-                  {MEMBERS.map((m) => <option key={m}>{m}</option>)}
+                  {memberNames.map((m) => <option key={m}>{m}</option>)}
                 </select>
               </div>
               <div className="flex-1 min-w-[200px]">
@@ -138,7 +137,7 @@ export default function TasksTab() {
                   </p>
                 )}
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MEMBER_COLORS[t.assignee] || "bg-gray-100 text-gray-700"}`}>{t.assignee}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${COLOR_MAP[members.find((m) => m.name === t.assignee)?.color || "gray"]}`}>{t.assignee}</span>
               <button onClick={() => deleteTask(t.id)} className="text-gray-300 hover:text-red-400 text-xs ml-1">✕</button>
             </div>
           ))}
@@ -157,7 +156,7 @@ export default function TasksTab() {
               <div key={t.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 bg-gray-50">
                 <input type="checkbox" checked={t.completed} onChange={() => toggleComplete(t.id, t.completed)} className="w-4 h-4 cursor-pointer accent-black" />
                 <p className="flex-1 text-sm text-gray-400 line-through truncate">{t.title}</p>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MEMBER_COLORS[t.assignee] || "bg-gray-100 text-gray-700"}`}>{t.assignee}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${COLOR_MAP[members.find((m) => m.name === t.assignee)?.color || "gray"]}`}>{t.assignee}</span>
                 <button onClick={() => deleteTask(t.id)} className="text-gray-300 hover:text-red-400 text-xs ml-1">✕</button>
               </div>
             ))}

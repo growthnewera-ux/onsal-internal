@@ -5,12 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useMembers, COLOR_MAP } from "@/hooks/useMembers";
 
 interface ActionItem {
   id: number;
   meetingId: number;
   content: string;
   assignee: string;
+  dueDate: string | null;
   completed: boolean;
 }
 
@@ -21,23 +23,14 @@ interface Meeting {
   actions: ActionItem[];
 }
 
-const MEMBERS = ["김다솔", "BM2", "콘텐츠", "퍼포먼스", "디자이너", "영업", "전체"];
-const MEMBER_COLORS: Record<string, string> = {
-  "김다솔": "bg-purple-100 text-purple-700",
-  "BM2": "bg-blue-100 text-blue-700",
-  "콘텐츠": "bg-green-100 text-green-700",
-  "퍼포먼스": "bg-orange-100 text-orange-700",
-  "디자이너": "bg-pink-100 text-pink-700",
-  "영업": "bg-gray-100 text-gray-700",
-  "전체": "bg-black text-white",
-};
-
 export default function MeetingsTab() {
+  const { members } = useMembers();
+  const memberNames = ["전체", ...members.map((m) => m.name)];
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form, setForm] = useState({ title: "", date: new Date().toISOString().slice(0, 10) });
-  const [actionForm, setActionForm] = useState<Record<number, { content: string; assignee: string }>>({});
+  const [actionForm, setActionForm] = useState<Record<number, { content: string; assignee: string; dueDate: string }>>({});
 
   useEffect(() => {
     fetch("/api/meetings").then((r) => r.json()).then((data: Meeting[]) => {
@@ -75,11 +68,11 @@ export default function MeetingsTab() {
     const res = await fetch("/api/meetings/actions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ meetingId, content: f.content, assignee: f.assignee || MEMBERS[0] }),
+      body: JSON.stringify({ meetingId, content: f.content, assignee: f.assignee || memberNames[1] || "전체", dueDate: f.dueDate || null }),
     });
     const action = await res.json();
     setMeetings((prev) => prev.map((m) => m.id === meetingId ? { ...m, actions: [...m.actions, action] } : m));
-    setActionForm((prev) => ({ ...prev, [meetingId]: { content: "", assignee: MEMBERS[0] } }));
+    setActionForm((prev) => ({ ...prev, [meetingId]: { content: "", assignee: memberNames[1] || "전체", dueDate: "" } }));
   };
 
   const toggleAction = async (meetingId: number, actionId: number, completed: boolean) => {
@@ -141,7 +134,7 @@ export default function MeetingsTab() {
         const pending = m.actions.filter((a) => !a.completed).length;
         const total = m.actions.length;
         const isExpanded = expandedId === m.id;
-        const af = actionForm[m.id] || { content: "", assignee: MEMBERS[0] };
+        const af = actionForm[m.id] || { content: "", assignee: memberNames[1] || "전체", dueDate: "" };
 
         return (
           <Card key={m.id} className={isExpanded ? "border-black border-2" : ""}>
@@ -171,12 +164,15 @@ export default function MeetingsTab() {
                   <select className="border border-gray-200 rounded px-2 py-1.5 text-sm bg-white"
                     value={af.assignee}
                     onChange={(e) => setActionForm((prev) => ({ ...prev, [m.id]: { ...af, assignee: e.target.value } }))}>
-                    {MEMBERS.map((mem) => <option key={mem}>{mem}</option>)}
+                    {memberNames.map((mem) => <option key={mem}>{mem}</option>)}
                   </select>
                   <Input className="flex-1 min-w-[200px] h-8" placeholder="액션아이템 입력 후 Enter"
                     value={af.content}
                     onChange={(e) => setActionForm((prev) => ({ ...prev, [m.id]: { ...af, content: e.target.value } }))}
                     onKeyDown={(e) => e.key === "Enter" && addAction(m.id)} />
+                  <Input type="date" className="w-32 h-8 text-xs"
+                    value={af.dueDate}
+                    onChange={(e) => setActionForm((prev) => ({ ...prev, [m.id]: { ...af, dueDate: e.target.value } }))} />
                   <Button size="sm" onClick={() => addAction(m.id)}>추가</Button>
                 </div>
 
@@ -184,8 +180,15 @@ export default function MeetingsTab() {
                 {m.actions.map((a) => (
                   <div key={a.id} className={`flex items-center gap-3 p-2.5 rounded-lg border ${a.completed ? "border-gray-100 opacity-60" : "border-gray-200 bg-white"}`}>
                     <input type="checkbox" checked={a.completed} onChange={() => toggleAction(m.id, a.id, a.completed)} className="w-4 h-4 cursor-pointer accent-black" />
-                    <p className={`flex-1 text-sm ${a.completed ? "line-through text-gray-400" : "text-gray-700"}`}>{a.content}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MEMBER_COLORS[a.assignee] || "bg-gray-100 text-gray-700"}`}>{a.assignee}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm ${a.completed ? "line-through text-gray-400" : "text-gray-700"}`}>{a.content}</p>
+                      {a.dueDate && (
+                        <p className={`text-xs mt-0.5 ${!a.completed && new Date(a.dueDate) < new Date(new Date().toDateString()) ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                          마감: {new Date(a.dueDate).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
+                        </p>
+                      )}
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${COLOR_MAP[members.find((m) => m.name === a.assignee)?.color || (a.assignee === "전체" ? "black" : "gray")]}`}>{a.assignee}</span>
                     <button onClick={() => deleteAction(m.id, a.id)} className="text-gray-300 hover:text-red-400 text-xs">✕</button>
                   </div>
                 ))}
