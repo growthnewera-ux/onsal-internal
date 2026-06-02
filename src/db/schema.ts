@@ -55,6 +55,15 @@ export const budgets = pgTable("budgets", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// 카테고리별 예산
+export const categoryBudgets = pgTable("category_budgets", {
+  id: serial("id").primaryKey(),
+  month: text("month").notNull(), // "2026-06"
+  category: text("category").notNull(),
+  budget: integer("budget").notNull().default(0),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // 팀 비용
 export const expenses = pgTable("expenses", {
   id: serial("id").primaryKey(),
