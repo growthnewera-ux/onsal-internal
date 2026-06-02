@@ -5,6 +5,7 @@ import SalesTab from "./tabs/SalesTab";
 import TasksTab from "./tabs/TasksTab";
 import MeetingsTab from "./tabs/MeetingsTab";
 import ExpensesTab from "./tabs/ExpensesTab";
+import CalendarTab from "./tabs/CalendarTab";
 import MemberSettings from "./MemberSettings";
 
 const TABS = [
@@ -12,6 +13,7 @@ const TABS = [
   { id: "tasks", label: "팀 업무" },
   { id: "meetings", label: "회의 액션" },
   { id: "expenses", label: "팀 비용" },
+  { id: "calendar", label: "제품 일정" },
 ];
 
 export default function Dashboard() {
@@ -72,6 +74,7 @@ export default function Dashboard() {
         {activeTab === "tasks" && <TasksTab />}
         {activeTab === "meetings" && <MeetingsTab />}
         {activeTab === "expenses" && <ExpensesTab />}
+        {activeTab === "calendar" && <CalendarTab />}
       </main>
     </div>
   );
