@@ -102,7 +102,8 @@ export default function ExpensesTab() {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, amount: Number(form.amount.replace(/,/g, "")) }),
     });
-    setExpenses(p => [await res.json(), ...p]);
+    const e = await res.json();
+    setExpenses(p => [e, ...p]);
     setForm({ category: CATEGORIES[0], description: "", amount: "", date: new Date().toISOString().slice(0, 10) });
     setShowAdd(false);
   };

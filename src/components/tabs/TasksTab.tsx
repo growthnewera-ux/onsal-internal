@@ -17,8 +17,11 @@ interface Task {
 }
 
 export default function TasksTab() {
-  const { members, deleteMember } = useMembers();
+  const { members, deleteMember, addMember } = useMembers();
   const [editMode, setEditMode] = useState(false);
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [newMemberName, setNewMemberName] = useState("");
+  const [newMemberRole, setNewMemberRole] = useState("");
   const memberNames = members.map((m) => m.name);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filterMember, setFilterMember] = useState("전체");
@@ -66,6 +69,15 @@ export default function TasksTab() {
     setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const handleAddMember = async () => {
+    if (!newMemberName.trim()) return;
+    await addMember(newMemberName.trim(), newMemberRole.trim());
+    setNewMemberName("");
+    setNewMemberRole("");
+    setShowAddMember(false);
+    setEditMode(false);
+  };
+
   const filtered = filterMember === "전체" ? tasks : tasks.filter((t) => t.assignee === filterMember);
   const pending = filtered.filter((t) => !t.completed);
   const done = filtered.filter((t) => t.completed);
@@ -77,36 +89,72 @@ export default function TasksTab() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-2 justify-between">
-        <div className="flex flex-wrap gap-1.5 items-center">
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {/* 전체 필터 */}
           <button onClick={() => setFilterMember("전체")}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${filterMember === "전체" ? "bg-black text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"}`}>
             전체
           </button>
+
+          {/* 팀원 칩 */}
           {members.map((m) => (
-            <div key={m.id} className="relative group flex items-center">
-              <button onClick={() => setFilterMember(m.name)}
+            <div key={m.id} className="relative flex items-center">
+              <button onClick={() => !editMode && setFilterMember(m.name)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  filterMember === m.name ? "bg-black text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"
-                } ${editMode ? "pr-6" : ""}`}>
+                  filterMember === m.name && !editMode ? "bg-black text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"
+                } ${editMode ? "pr-7 cursor-default" : ""}`}>
                 {m.name}
               </button>
               {editMode && (
                 <button
                   onClick={() => { deleteMember(m.id); if (filterMember === m.name) setFilterMember("전체"); }}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center leading-none hover:bg-red-600">
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-600">
                   ×
                 </button>
               )}
             </div>
           ))}
-          <button
-            onClick={() => setEditMode(!editMode)}
-            className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${editMode ? "bg-red-50 border-red-200 text-red-500" : "border-gray-200 text-gray-400 hover:border-gray-400"}`}>
-            {editMode ? "완료" : "편집"}
-          </button>
+
+          {/* 팀원 추가 버튼 (편집모드 또는 멤버 없을 때) */}
+          {(editMode || members.length === 0) && !showAddMember && (
+            <button onClick={() => setShowAddMember(true)}
+              className="px-3 py-1.5 rounded-full text-sm font-medium border border-dashed border-gray-300 text-gray-400 hover:border-gray-500 hover:text-gray-600 transition-colors">
+              + 팀원 추가
+            </button>
+          )}
+
+          {/* 편집 토글 (멤버 있을 때만) */}
+          {members.length > 0 && (
+            <button onClick={() => { setEditMode(!editMode); setShowAddMember(false); }}
+              className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                editMode ? "bg-gray-900 text-white border-gray-900" : "border-gray-200 text-gray-400 hover:border-gray-400"
+              }`}>
+              {editMode ? "완료" : "편집"}
+            </button>
+          )}
+
+          <div className="ml-auto">
+            <Button onClick={() => setShowAdd(!showAdd)} size="sm">+ 업무 추가</Button>
+          </div>
         </div>
-        <Button onClick={() => setShowAdd(!showAdd)} size="sm">+ 업무 추가</Button>
+
+        {/* 팀원 추가 인라인 폼 */}
+        {showAddMember && (
+          <div className="flex gap-2 items-center p-3 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+            <Input className="h-8 text-sm flex-1" placeholder="이름 (예: 예지)"
+              value={newMemberName}
+              onChange={e => setNewMemberName(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleAddMember()}
+              autoFocus />
+            <Input className="h-8 text-sm w-28" placeholder="역할 (예: BM)"
+              value={newMemberRole}
+              onChange={e => setNewMemberRole(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleAddMember()} />
+            <Button size="sm" className="h-8" onClick={handleAddMember}>추가</Button>
+            <Button size="sm" variant="ghost" className="h-8" onClick={() => { setShowAddMember(false); setNewMemberName(""); setNewMemberRole(""); }}>취소</Button>
+          </div>
+        )}
       </div>
 
       {showAdd && (
