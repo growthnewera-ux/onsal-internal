@@ -38,6 +38,12 @@ const fmt = (n: number) =>
 
 const fmtFull = (n: number) => `${n.toLocaleString()}원`;
 
+// 입력값에 콤마 자동 포맷
+const toComma = (v: string) => {
+  const num = v.replace(/[^0-9]/g, "");
+  return num ? Number(num).toLocaleString() : "";
+};
+
 export default function ExpensesTab() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -160,8 +166,8 @@ export default function ExpensesTab() {
               </div>
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">금액 (원)</label>
-                <Input className="w-36" placeholder="500000" value={form.amount}
-                  onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
+                <Input className="w-36" placeholder="500,000" value={form.amount}
+                  onChange={(e) => setForm((f) => ({ ...f, amount: toComma(e.target.value) }))}
                   onKeyDown={(e) => e.key === "Enter" && addExpense()} />
               </div>
               <div>
@@ -194,7 +200,7 @@ export default function ExpensesTab() {
                 <div className="flex gap-2 items-center">
                   <Input className="w-32 h-8 text-sm" placeholder="예산 입력 (원)"
                     value={budgetInput}
-                    onChange={(e) => setBudgetInput(e.target.value)}
+                    onChange={(e) => setBudgetInput(toComma(e.target.value))}
                     onKeyDown={(e) => e.key === "Enter" && saveBudget()}
                     autoFocus />
                   <Button size="sm" className="h-8" onClick={saveBudget}>저장</Button>

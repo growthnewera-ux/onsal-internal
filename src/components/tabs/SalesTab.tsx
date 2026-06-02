@@ -26,6 +26,11 @@ const fmtKRW = (n: number) =>
     ? `${(n / 10000).toFixed(0)}만`
     : n.toLocaleString();
 
+const toComma = (v: string) => {
+  const num = v.replace(/[^0-9]/g, "");
+  return num ? Number(num).toLocaleString() : "";
+};
+
 export default function SalesTab() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [data, setData] = useState<MonthData[]>(
@@ -159,10 +164,10 @@ export default function SalesTab() {
                       <td className="text-right py-2">
                         {editing === d.month ? (
                           <div className="flex gap-1 items-center justify-end">
-                            <Input className="w-24 h-7 text-xs" placeholder="목표" value={form.target}
-                              onChange={(e) => setForm((f) => ({ ...f, target: e.target.value }))} />
-                            <Input className="w-24 h-7 text-xs" placeholder="실적" value={form.actual}
-                              onChange={(e) => setForm((f) => ({ ...f, actual: e.target.value }))} />
+                            <Input className="w-28 h-7 text-xs" placeholder="목표" value={form.target}
+                              onChange={(e) => setForm((f) => ({ ...f, target: toComma(e.target.value) }))} />
+                            <Input className="w-28 h-7 text-xs" placeholder="실적" value={form.actual}
+                              onChange={(e) => setForm((f) => ({ ...f, actual: toComma(e.target.value) }))} />
                             <Button size="sm" className="h-7 text-xs px-2" onClick={submitEdit}>저장</Button>
                             <Button size="sm" variant="ghost" className="h-7 text-xs px-2" onClick={() => setEditing(null)}>취소</Button>
                           </div>
