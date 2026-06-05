@@ -164,7 +164,10 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
       <button class="btn-primary" onclick="openCandModal()">+ 후보 추가</button>
     </div>
     <div class="stats-bar" id="cand-stats"></div>
-    <div class="filter-bar" id="cand-filters"></div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:4px">
+      <div class="filter-bar" id="cand-filters"></div>
+      <div class="filter-bar" id="cand-cat-filters" style="padding-left:2px"></div>
+    </div>
     <div class="cand-grid" id="cand-grid"></div>
   </div>
 
@@ -195,10 +198,21 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
       <div class="form-row-2">
         <div class="form-row" style="margin-bottom:0"><label class="form-label">채널/계정명</label><input class="form-input" id="c-handle" placeholder="@handle"></div>
         <div class="form-row" style="margin-bottom:0"><label class="form-label">카테고리</label>
-          <select class="form-select" id="c-category">
-            <option>뷰티</option><option>일상/브이로그</option><option>아이돌</option>
-            <option>부부/육아</option><option>라이프스타일</option><option>연예인</option><option>기타</option>
-          </select>
+          <input class="form-input" id="c-category" list="cat-list" placeholder="카테고리 선택 또는 직접 입력">
+          <datalist id="cat-list">
+            <option>뷰티</option>
+            <option>스킨케어</option>
+            <option>패션</option>
+            <option>라이프스타일</option>
+            <option>일상/브이로그</option>
+            <option>부부/육아</option>
+            <option>아이돌</option>
+            <option>연예인</option>
+            <option>피트니스/헬스</option>
+            <option>음식/요리</option>
+            <option>여행</option>
+            <option>기타</option>
+          </datalist>
         </div>
       </div>
       <div class="form-row"><label class="form-label">플랫폼</label>
@@ -326,6 +340,7 @@ let editingCandId = null;
 let editingAmbId  = null;
 let editingMission = null; // {ambId, month}
 let activeCandFilter = '전체';
+let activeCandCatFilter = '전체';
 let activeSubTab = 'candidates';
 let aPlats = {yt:false, ig:false};
 let cPlats = {yt:false, ig:false};
@@ -382,12 +397,26 @@ function renderCands() {
     </div>`).join('');
 
   const filters = ['전체','검토중','연락중','계약완료','거절/보류'];
-  document.getElementById('cand-filters').innerHTML = filters.map(f =>
-    `<span class="f-chip ${f===activeCandFilter?'on':''}" onclick="setCandFilter('${f}')">${f}</span>`
-  ).join('');
+  document.getElementById('cand-filters').innerHTML =
+    `<span style="font-size:10px;font-weight:700;color:var(--text3);align-self:center;margin-right:2px">상태</span>` +
+    filters.map(f =>
+      `<span class="f-chip ${f===activeCandFilter?'on':''}" onclick="setCandFilter('${f}')">${f}</span>`
+    ).join('');
+
+  // 카테고리 필터 — 실제 후보 데이터에서 추출
+  const allCats = ['전체', ...new Set(candidates.map(c => c.category).filter(Boolean))];
+  document.getElementById('cand-cat-filters').innerHTML =
+    `<span style="font-size:10px;font-weight:700;color:var(--text3);align-self:center;margin-right:2px">카테고리</span>` +
+    allCats.map(c =>
+      `<span class="f-chip ${c===activeCandCatFilter?'on':''}" onclick="setCandCatFilter('${c}')">${c}</span>`
+    ).join('');
 
   const filterMap = {'전체':null,'검토중':'reviewing','연락중':'contacting','계약완료':'contracted','거절/보류':'rejected'};
-  const filtered = activeCandFilter==='전체' ? candidates : candidates.filter(c => c.status === filterMap[activeCandFilter]);
+  const filtered = candidates.filter(c => {
+    const matchStatus = activeCandFilter==='전체' || c.status === filterMap[activeCandFilter];
+    const matchCat    = activeCandCatFilter==='전체' || c.category === activeCandCatFilter;
+    return matchStatus && matchCat;
+  });
 
   if (filtered.length === 0) {
     document.getElementById('cand-grid').innerHTML = `
@@ -413,12 +442,15 @@ function renderCands() {
         </div>
         <span class="status-badge ${st.cls}">${st.label}</span>
       </div>
-      <div class="cand-platforms">${plats}</div>
+      <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:10px">
+        ${plats}
+        ${c.category ? `<span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;background:#f0fdf4;color:#15803d">${c.category}</span>` : ''}
+      </div>
       <div class="cand-meta">
         <div class="cand-meta-item"><div class="cand-meta-label">유튜브 구독</div><div class="cand-meta-value">${c.ytSubs||'–'}</div></div>
         <div class="cand-meta-item"><div class="cand-meta-label">인스타 팔로워</div><div class="cand-meta-value">${c.igFollowers||'–'}</div></div>
-        <div class="cand-meta-item"><div class="cand-meta-label">카테고리</div><div class="cand-meta-value">${c.category||'–'}</div></div>
         <div class="cand-meta-item"><div class="cand-meta-label">예상 단가</div><div class="cand-meta-value">${c.fee ? fmt(c.fee)+'만원' : '–'}</div></div>
+        <div class="cand-meta-item"><div class="cand-meta-label">추가일</div><div class="cand-meta-value" style="font-size:11px">${c.addedAt ? new Date(c.addedAt).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'}) : '–'}</div></div>
       </div>
       ${c.note ? `<div class="cand-note">📌 ${c.note}</div>` : ''}
       <div class="cand-actions">
@@ -432,6 +464,7 @@ function renderCands() {
 }
 
 function setCandFilter(f) { activeCandFilter = f; renderCands(); }
+function setCandCatFilter(c) { activeCandCatFilter = c; renderCands(); }
 
 function openCandModal(id) {
   editingCandId = id || null;
