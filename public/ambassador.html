@@ -836,33 +836,64 @@ function renderCPlatUI() {
 function renderCPlatFields() {
  const wrap = document.getElementById('c-plat-fields');
  if(!wrap) return;
+
+ // 렌더 전 현재 입력값 저장 (플랫폼 토글해도 기존 입력 유지)
+ const _prev = {
+   ytSubs:      document.getElementById('c-yt-subs')?.value      || '',
+   ytUrl:       document.getElementById('c-yt-url')?.value        || '',
+   igFollowers: document.getElementById('c-ig-followers')?.value  || '',
+   igUrl:       document.getElementById('c-ig-url')?.value        || '',
+   ttFollowers: document.getElementById('c-tt-followers')?.value  || '',
+   ttUrl:       document.getElementById('c-tt-url')?.value        || '',
+ };
+
  let html = '';
  if(cPlats.yt) html += `
  <div class="form-row-2" style="margin-bottom:12px">
- <div><label class="form-label"> 유튜브 구독자</label><input class="form-input" id="c-yt-subs" placeholder="예: 26.4만"></div>
+ <div><label class="form-label">유튜브 구독자</label><input class="form-input" id="c-yt-subs" placeholder="예: 26.4만"></div>
  <div><label class="form-label">유튜브 채널 URL</label><input class="form-input" id="c-yt-url" placeholder="https://youtube.com/@..."></div>
  </div>`;
  if(cPlats.ig) html += `
  <div class="form-row-2" style="margin-bottom:12px">
- <div><label class="form-label"> 인스타 팔로워</label><input class="form-input" id="c-ig-followers" placeholder="예: 8만"></div>
+ <div><label class="form-label">인스타 팔로워</label><input class="form-input" id="c-ig-followers" placeholder="예: 8만"></div>
  <div><label class="form-label">인스타그램 URL</label><input class="form-input" id="c-ig-url" placeholder="https://instagram.com/..."></div>
  </div>`;
  if(cPlats.tt) html += `
  <div class="form-row-2" style="margin-bottom:12px">
- <div><label class="form-label"> 틱톡 팔로워</label><input class="form-input" id="c-tt-followers" placeholder="예: 5만"></div>
+ <div><label class="form-label">틱톡 팔로워</label><input class="form-input" id="c-tt-followers" placeholder="예: 5만"></div>
  <div><label class="form-label">틱톡 URL</label><input class="form-input" id="c-tt-url" placeholder="https://tiktok.com/@..."></div>
  </div>`;
  if(!cPlats.yt && !cPlats.ig && !cPlats.tt)
- html = '<div style="font-size:12px;color:var(--text3);padding:8px 0 12px">플랫폼을 선택하면 입력 필드가 나타나요</div>';
+   html = '<div style="font-size:12px;color:var(--text3);padding:8px 0 12px">플랫폼을 선택하면 입력 필드가 나타나요</div>';
+
  wrap.innerHTML = html;
- // 기존 저장값 복원 (편집 모드)
- if(editingCandId) {
- const c = candidates.find(x=>x.id===editingCandId);
- if(c) {
- if(cPlats.yt){ const e=document.getElementById('c-yt-subs'); if(e) e.value=c.ytSubs||''; const u=document.getElementById('c-yt-url'); if(u) u.value=c.ytUrl||''; }
- if(cPlats.ig){ const e=document.getElementById('c-ig-followers'); if(e) e.value=c.igFollowers||''; const u=document.getElementById('c-ig-url'); if(u) u.value=c.igUrl||''; }
- if(cPlats.tt){ const e=document.getElementById('c-tt-followers'); if(e) e.value=c.ttFollowers||''; const u=document.getElementById('c-tt-url'); if(u) u.value=c.ttUrl||''; }
+
+ // 이전 입력값 복원 (새 후보 or 편집 모두)
+ if(cPlats.yt) {
+   const s = document.getElementById('c-yt-subs'), u = document.getElementById('c-yt-url');
+   if(s) s.value = _prev.ytSubs;
+   if(u) u.value = _prev.ytUrl;
  }
+ if(cPlats.ig) {
+   const s = document.getElementById('c-ig-followers'), u = document.getElementById('c-ig-url');
+   if(s) s.value = _prev.igFollowers;
+   if(u) u.value = _prev.igUrl;
+ }
+ if(cPlats.tt) {
+   const s = document.getElementById('c-tt-followers'), u = document.getElementById('c-tt-url');
+   if(s) s.value = _prev.ttFollowers;
+   if(u) u.value = _prev.ttUrl;
+ }
+
+ // 편집 모드일 때 DB 저장값으로 초기 복원 (첫 렌더 시에만, _prev가 비어있을 때)
+ const allEmpty = !_prev.ytSubs && !_prev.ytUrl && !_prev.igFollowers && !_prev.igUrl && !_prev.ttFollowers && !_prev.ttUrl;
+ if(editingCandId && allEmpty) {
+   const c = candidates.find(x=>x.id===editingCandId);
+   if(c) {
+     if(cPlats.yt){ const e=document.getElementById('c-yt-subs'); if(e) e.value=c.ytSubs||''; const u=document.getElementById('c-yt-url'); if(u) u.value=c.ytUrl||''; }
+     if(cPlats.ig){ const e=document.getElementById('c-ig-followers'); if(e) e.value=c.igFollowers||''; const u=document.getElementById('c-ig-url'); if(u) u.value=c.igUrl||''; }
+     if(cPlats.tt){ const e=document.getElementById('c-tt-followers'); if(e) e.value=c.ttFollowers||''; const u=document.getElementById('c-tt-url'); if(u) u.value=c.ttUrl||''; }
+   }
  }
 }
 function updatePlatUI(prefix) {
