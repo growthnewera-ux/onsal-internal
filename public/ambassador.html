@@ -348,14 +348,31 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
         <div><label class="form-label">유튜브 게시 URL</label><input class="form-input" id="m-yt-url" placeholder="https://youtu.be/..."></div>
         <div><label class="form-label">인스타 게시 URL</label><input class="form-input" id="m-ig-url" placeholder="https://instagram.com/p/..."></div>
       </div>
-      <div class="form-row"><label class="form-label">마감일</label><input class="form-input" id="m-deadline" type="date"></div>
-      <div class="form-row"><label class="form-label">진행 상태</label>
-        <select class="form-select" id="m-status">
-          <option value="planned">예정</option>
-          <option value="inprogress">진행중</option>
-          <option value="published">게시완료</option>
-          <option value="verified">확인완료</option>
-        </select>
+      <div class="form-row-2">
+        <div><label class="form-label">마감일</label><input class="form-input" id="m-deadline" type="date"></div>
+        <div><label class="form-label">진행 상태</label>
+          <select class="form-select" id="m-status">
+            <option value="planned">예정</option>
+            <option value="inprogress">진행중</option>
+            <option value="published">게시완료</option>
+            <option value="verified">확인완료</option>
+          </select>
+        </div>
+      </div>
+      <!-- 지급 관련 -->
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">💰 지급 관련</div>
+        <div class="form-row-2">
+          <div><label class="form-label">지급 금액 (만원)</label><input class="form-input" id="m-pay-amount" type="number" placeholder="예: 30"></div>
+          <div><label class="form-label">지급 상태</label>
+            <select class="form-select" id="m-pay-status">
+              <option value="unpaid">미지급</option>
+              <option value="pending">지급 예정</option>
+              <option value="paid">지급 완료</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row"><label class="form-label">지급 예정일</label><input class="form-input" id="m-pay-date" type="date"></div>
       </div>
       <div class="form-row"><label class="form-label">내부 메모</label><textarea class="form-textarea" id="m-note" placeholder="내부 커뮤니케이션, 수정 요청 등"></textarea></div>
       <div class="modal-footer">
@@ -368,7 +385,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 
 <script src="/nav.js"></script>
 <script>
-const MONTHS = ['6월','7월','8월','9월','10월','11월','12월'];
+const MONTHS = ['7월','8월','9월','10월','11월','12월'];
 const CAND_KEY = 'onsal_candidates_v1';
 const AMB_KEY  = 'onsal_ambassadors_v1';
 
@@ -463,6 +480,8 @@ function renderCands() {
 
   const filterMap = {'전체':null,'검토중':'reviewing','연락중':'contacting','계약완료':'contracted','거절/보류':'rejected'};
   const filtered = candidates.filter(c => {
+    // 기본 필터: '계약완료' 상태는 기본적으로 숨김 (명시 선택 시만 표시)
+    if (activeCandFilter !== '계약완료' && c.status === 'contracted') return false;
     const matchStatus = activeCandFilter==='전체' || c.status === filterMap[activeCandFilter];
     const matchCat    = activeCandCatFilter==='전체' || c.category === activeCandCatFilter;
     return matchStatus && matchCat;
@@ -501,9 +520,19 @@ function renderCands() {
     return `
     <div class="cand-card">
       <div class="cand-card-top">
-        <div>
-          <div class="cand-name">${c.name}</div>
-          <div class="cand-handle">${c.handle||''}</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${(()=>{
+            const igHandle = (c.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]||'';
+            return igHandle
+              ? `<img src="https://unavatar.io/instagram/${igHandle.replace(/\//g,'')}"
+                   onerror="this.outerHTML='<div style=\\'width:40px;height:40px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--accent);flex-shrink:0\\'>${c.name[0]}</div>'"
+                   style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0" loading="lazy">`
+              : `<div style="width:40px;height:40px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--accent);flex-shrink:0">${c.name[0]}</div>`;
+          })()}
+          <div>
+            <div class="cand-name">${c.name}</div>
+            <div class="cand-handle">${c.handle||''}</div>
+          </div>
         </div>
         <span class="status-badge ${st.cls}">${st.label}</span>
       </div>
@@ -654,7 +683,8 @@ function moveToContracted(id) {
     name: c.name, handle: c.handle, url: c.url,
     platforms: c.platforms, ytSubs: c.ytSubs, igFollowers: c.igFollowers,
     category: c.category, fee: c.fee, note: c.note,
-    contractStart: '6월', contractEnd: '12월',
+    contractStart: '7월', contractEnd: '12월',
+    ytUrl: c.ytUrl||'', igUrl: c.igUrl||'', ttUrl: c.ttUrl||'',
     missions: {},
   };
   MONTHS.forEach(m => { amb.missions[m] = { product:'', contentType:'yt_ig', guide:'', ytUrl:'', igUrl:'', deadline:'', status:'planned', note:'' }; });
@@ -805,18 +835,22 @@ function renderAmbs() {
       return `<span class="amb-info-tag" style="background:${m.bg};color:${m.color}">${m.label}${m.subs?` · ${m.subs}`:''}${link}</span>`;
     }).join('');
 
+    const PAY_STATUS = { unpaid:{label:'미지급',cls:'ms-planned'}, pending:{label:'지급예정',cls:'ms-inprogress'}, paid:{label:'지급완료',cls:'ms-verified'} };
     const missionRows = MONTHS.map(m => {
       const mis = a.missions?.[m] || {};
-      const st = MISS_STATUS[mis.status || 'planned'];
+      const st  = MISS_STATUS[mis.status || 'planned'];
+      const pay = PAY_STATUS[mis.payStatus || 'unpaid'];
       const ytLink = mis.ytUrl ? `<a href="${mis.ytUrl}" target="_blank" class="mission-url-link">유튜브↗</a>` : '';
       const igLink = mis.igUrl ? `<a href="${mis.igUrl}" target="_blank" class="mission-url-link">인스타↗</a>` : '';
-      const links = [ytLink,igLink].filter(Boolean).join(' ');
+      const links  = [ytLink,igLink].filter(Boolean).join(' ');
       return `<tr>
         <td style="font-weight:700;color:var(--text)">${m}</td>
         <td>${mis.product || '<span style="color:var(--text3)">–</span>'}</td>
         <td>${mis.contentType ? CONTENT_LABELS[mis.contentType] : '–'}</td>
-        <td style="max-width:200px;white-space:pre-wrap;font-size:12px;color:var(--text2)">${mis.guide ? mis.guide.slice(0,60)+(mis.guide.length>60?'…':'') : '–'}</td>
+        <td style="max-width:180px;font-size:12px;color:var(--text2)">${mis.guide ? mis.guide.slice(0,50)+(mis.guide.length>50?'…':'') : '–'}</td>
         <td>${links || '<span style="color:var(--text3)">–</span>'}</td>
+        <td style="font-size:12px">${mis.payAmount ? mis.payAmount+'만원' : '–'}</td>
+        <td><span class="mission-status ${pay.cls}">${pay.label}</span></td>
         <td>${mis.deadline || '–'}</td>
         <td><span class="mission-status ${st.cls}">${st.label}</span></td>
         <td><button class="mission-edit-btn" onclick="openMissionModal('${a.id}','${m}')">편집</button></td>
@@ -828,7 +862,14 @@ function renderAmbs() {
       <div class="amb-profile-card">
         <div class="amb-profile-top">
           <div class="amb-profile-left">
-            <div class="amb-avatar">${a.name[0]}</div>
+            <div class="amb-avatar" style="overflow:hidden;padding:0">
+              ${a.igUrl
+                ? `<img src="https://unavatar.io/instagram/${(a.igUrl.match(/instagram\.com\/([^/?#]+)/)?.[1]||'').replace(/\//g,'')}"
+                    onerror="this.outerHTML='<span style=\\'font-size:18px;font-weight:800\\'>${a.name[0]}</span>'"
+                    style="width:44px;height:44px;border-radius:50%;object-fit:cover" loading="lazy">`
+                : `<span style="font-size:18px;font-weight:800">${a.name[0]}</span>`
+              }
+            </div>
             <div>
               <div class="amb-info-name">${a.name}</div>
               <div class="amb-info-handle">${a.handle || ''} · ${a.category || ''}</div>
@@ -841,8 +882,9 @@ function renderAmbs() {
               </div>
             </div>
           </div>
-          <div style="display:flex;gap:6px">
+          <div style="display:flex;gap:6px;align-items:center">
             ${a.url ? `<a href="${a.url}" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center">↗ 채널</a>` : ''}
+            <button class="btn-secondary" style="color:var(--orange,#d9600a);border-color:var(--orange,#d9600a)" onclick="moveBackToCandidate('${a.id}')">← 후보풀로</button>
             <button class="btn-danger" onclick="deleteAmb('${a.id}')">삭제</button>
           </div>
         </div>
@@ -851,14 +893,16 @@ function renderAmbs() {
       <div class="mission-table-wrap">
         <table class="mission-table">
           <thead><tr>
-            <th style="width:60px">월</th>
-            <th>홍보 제품</th>
+            <th style="width:52px">월</th>
+            <th>광고 제품</th>
             <th>콘텐츠 유형</th>
-            <th>가이드</th>
+            <th>광고 가이드</th>
             <th>게시 URL</th>
+            <th>지급 금액</th>
+            <th>지급 상태</th>
             <th>마감</th>
-            <th>상태</th>
-            <th style="width:60px"></th>
+            <th>진행 상태</th>
+            <th style="width:50px"></th>
           </tr></thead>
           <tbody>${missionRows}</tbody>
         </table>
@@ -871,6 +915,20 @@ function deleteAmb(id) {
   if (!confirm('삭제할까요?')) return;
   ambassadors = ambassadors.filter(a => a.id !== id);
   save(); renderAmbs();
+}
+
+function moveBackToCandidate(ambId) {
+  const a = ambassadors.find(x => x.id === ambId);
+  if (!a) return;
+  if (!confirm(`${a.name}을(를) 후보풀로 되돌릴까요?`)) return;
+  // 원래 candidateId가 있으면 상태 복원
+  if (a.candidateId) {
+    candidates = candidates.map(c => c.id === a.candidateId ? {...c, status:'reviewing'} : c);
+  }
+  ambassadors = ambassadors.filter(x => x.id !== ambId);
+  save();
+  alert(`${a.name}이 후보풀로 이동됐어요.`);
+  setSubTab('candidates');
 }
 
 // ── MISSION MODAL ──
@@ -886,6 +944,9 @@ function openMissionModal(ambId, month) {
   document.getElementById('m-ig-url').value = m.igUrl || '';
   document.getElementById('m-deadline').value = m.deadline || '';
   document.getElementById('m-status').value = m.status || 'planned';
+  document.getElementById('m-pay-amount').value = m.payAmount || '';
+  document.getElementById('m-pay-status').value = m.payStatus || 'unpaid';
+  document.getElementById('m-pay-date').value = m.payDate || '';
   document.getElementById('m-note').value = m.note || '';
   document.getElementById('missionOverlay').classList.add('show');
 }
@@ -902,9 +963,12 @@ function saveMission() {
     guide: document.getElementById('m-guide').value.trim(),
     ytUrl: document.getElementById('m-yt-url').value.trim(),
     igUrl: document.getElementById('m-ig-url').value.trim(),
-    deadline: document.getElementById('m-deadline').value,
-    status: document.getElementById('m-status').value,
-    note: document.getElementById('m-note').value.trim(),
+    deadline:  document.getElementById('m-deadline').value,
+    status:    document.getElementById('m-status').value,
+    payAmount: document.getElementById('m-pay-amount').value || '',
+    payStatus: document.getElementById('m-pay-status').value,
+    payDate:   document.getElementById('m-pay-date').value,
+    note:      document.getElementById('m-note').value.trim(),
   };
   save(); closeMissionModal(); renderAmbs();
 }
