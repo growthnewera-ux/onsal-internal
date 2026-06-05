@@ -364,18 +364,32 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <div class="form-row" style="margin-bottom:0"><label class="form-label">카테고리</label>
  <input class="form-input" id="c-category" list="cat-list" placeholder="카테고리 선택 또는 직접 입력">
  <datalist id="cat-list">
- <option>뷰티</option>
- <option>스킨케어</option>
- <option>패션</option>
- <option>라이프스타일</option>
- <option>일상/브이로그</option>
- <option>부부/육아</option>
- <option>아이돌</option>
- <option>연예인</option>
- <option>피트니스/헬스</option>
- <option>음식/요리</option>
- <option>여행</option>
- <option>기타</option>
+ <optgroup label="-- 뷰티/패션 --">
+ <option value="뷰티">뷰티 — 메이크업·스킨케어 중심</option>
+ <option value="스킨케어">스킨케어 — 피부관리 특화</option>
+ <option value="패션">패션 — 의류·스타일링 중심</option>
+ <option value="뷰티/패션">뷰티/패션 — 복합 채널</option>
+ </optgroup>
+ <optgroup label="-- 라이프스타일 --">
+ <option value="라이프스타일">라이프스타일 — 일상 전반</option>
+ <option value="일상/브이로그">일상/브이로그 — 데일리 콘텐츠</option>
+ <option value="부부/커플">부부/커플 — 연인·부부 채널</option>
+ <option value="육아/맘">육아/맘 — 자녀 양육 콘텐츠</option>
+ <option value="피트니스/헬스">피트니스/헬스 — 운동·다이어트</option>
+ <option value="음식/요리">음식/요리 — 쿡, 먹방</option>
+ <option value="여행">여행 — 국내외 여행</option>
+ </optgroup>
+ <optgroup label="-- 셀럽/아이돌 --">
+ <option value="연예인">연예인 — 배우·가수</option>
+ <option value="아이돌">아이돌 — K-POP 아티스트</option>
+ <option value="스포츠 선수">스포츠 선수</option>
+ </optgroup>
+ <optgroup label="-- 기타 --">
+ <option value="직장인/커리어">직장인/커리어</option>
+ <option value="반려동물">반려동물</option>
+ <option value="게임">게임</option>
+ <option value="기타">기타</option>
+ </optgroup>
  </datalist>
  </div>
  </div>
