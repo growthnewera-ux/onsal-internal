@@ -34,6 +34,10 @@
 html, body { height: 100%; overflow: hidden; }
 body { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
 
+
+.gnav-link{padding:0 16px;height:64px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border-bottom:3px solid transparent;transition:all .15s;}
+.gnav-link:hover{color:var(--text2);}
+.gnav-link.active{color:var(--accent);border-bottom-color:var(--accent);}
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
@@ -273,6 +277,7 @@ tbody tr:hover td { background: #fafbff; }
 
 <header>
   <div class="logo"><div class="logo-mark">🌿</div>온살 마케팅 플래너</div>
+  <nav id="globalNav"></nav>
   <div class="header-stats">
     <div class="hstat">
       <div class="hstat-label">총 예산</div>
@@ -354,7 +359,6 @@ const CATS = [
   { id:'exp',   label:'체험단',     dot:'dot-exp',   pill:'pill-exp'   },
   { id:'ad',    label:'광고',       dot:'dot-ad',    pill:'pill-ad'    },
   { id:'viral', label:'바이럴',     dot:'dot-viral', pill:'pill-viral' },
-  { id:'ops',   label:'운영/제작',  dot:'dot-ops',   pill:'pill-ops'   },
 ];
 
 // 인플루언서 서브카테고리
@@ -458,7 +462,7 @@ let modalData = null;
 
 // 카테고리별 예산 (만원) — localStorage 저장
 const CAT_BUDGET_KEY = 'cat_budgets_v1';
-const DEFAULT_CAT_BUDGETS = { inf:5000, amb:2000, exp:1500, ad:2200, viral:200, ops:100 };
+const DEFAULT_CAT_BUDGETS = { inf:5000, amb:2000, exp:1500, ad:2200, viral:200 };
 let catBudgets = { ...DEFAULT_CAT_BUDGETS };
 
 function loadCatBudgets() {
@@ -951,5 +955,6 @@ renderCatTabs(); renderInfSubFilter(); renderItems(); renderMonthTabs(); renderM
 // 캐시 있으면 자동으로 카드에 반영 (새로고침 불필요)
 document.getElementById('ytLoadWrap').style.display = 'block';
 </script>
+<script src="/nav.js"></script>
 </body>
 </html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>온살 앰버서더 관리</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+:root {
+  --bg:#f4f5f7; --white:#fff; --border:#e2e4e9; --border2:#d0d3db;
+  --text:#111318; --text2:#4a4f5e; --text3:#9098ae;
+  --accent:#5b4ef8; --accent-bg:#ede9ff;
+  --green:#12a05c; --green-bg:#e6f7ef;
+  --red:#e03131; --red-bg:#fff0f0;
+  --orange:#d9600a; --orange-bg:#fff3e8;
+  --yellow:#b45309; --yellow-bg:#fefce8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* ── NAV ── */
+.app-header{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:0;box-shadow:0 1px 4px rgba(0,0,0,.05);position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;color:var(--text);padding-right:20px;border-right:1px solid var(--border);white-space:nowrap;}
+.logo-mark{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.gnav-link{padding:0 18px;height:56px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border-bottom:3px solid transparent;transition:all .15s;}
+.gnav-link:hover{color:var(--text2);}
+.gnav-link.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ── SUB TABS ── */
+.sub-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;}
+.sub-tab{padding:13px 18px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;color:var(--text3);transition:all .15s;white-space:nowrap;}
+.sub-tab:hover{color:var(--text2);}
+.sub-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ── LAYOUT ── */
+.main{padding:24px;max-width:1400px;margin:0 auto;}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.toolbar-left{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.toolbar-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.4px;}
+.toolbar-sub{font-size:13px;color:var(--text3);}
+.btn-primary{padding:9px 18px;background:var(--accent);color:white;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-primary:hover{background:#4a3de0;box-shadow:0 4px 12px rgba(91,78,248,.3);}
+.btn-secondary{padding:8px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text);}
+.btn-danger{padding:6px 12px;background:var(--red-bg);border:1px solid var(--red);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer;font-family:inherit;}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.f-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--white);transition:all .12s;}
+.f-chip:hover{border-color:var(--border2);color:var(--text);}
+.f-chip.on{background:var(--text);border-color:var(--text);color:white;}
+
+/* ── CANDIDATE GRID ── */
+.cand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.cand-card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:18px;transition:box-shadow .15s;}
+.cand-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.cand-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.cand-name{font-size:15px;font-weight:800;color:var(--text);}
+.cand-handle{font-size:12px;color:var(--text3);margin-top:2px;}
+.status-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap;}
+.status-reviewing{background:#eff6ff;color:#2563eb;}
+.status-contacting{background:var(--yellow-bg);color:var(--yellow);}
+.status-contracted{background:var(--green-bg);color:var(--green);}
+.status-rejected{background:#f8fafc;color:var(--text3);}
+.cand-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.cand-meta-item{background:var(--bg);border-radius:7px;padding:7px 10px;}
+.cand-meta-label{font-size:10px;color:var(--text3);font-weight:600;margin-bottom:2px;}
+.cand-meta-value{font-size:13px;font-weight:700;color:var(--text);}
+.cand-platforms{display:flex;gap:5px;margin-bottom:10px;}
+.platform-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.platform-youtube{background:#fee2e2;color:#dc2626;}
+.platform-instagram{background:#fdf4ff;color:#9333ea;}
+.cand-note{font-size:12px;color:var(--text3);line-height:1.4;margin-bottom:12px;background:var(--bg);padding:7px 10px;border-radius:6px;}
+.cand-actions{display:flex;gap:6px;}
+
+/* ── CONTRACTED TABLE ── */
+.contracted-section{margin-bottom:32px;}
+.amb-profile-card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:20px;margin-bottom:2px;}
+.amb-profile-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.amb-profile-left{display:flex;gap:14px;align-items:flex-start;}
+.amb-avatar{width:44px;height:44px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--accent);flex-shrink:0;}
+.amb-info-name{font-size:16px;font-weight:800;color:var(--text);}
+.amb-info-handle{font-size:12px;color:var(--text3);margin-top:2px;}
+.amb-info-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+.amb-info-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--bg);color:var(--text2);}
+.mission-table-wrap{background:var(--white);border-radius:0 0 14px 14px;border:1.5px solid var(--border);border-top:none;overflow-x:auto;}
+.mission-table{width:100%;border-collapse:collapse;min-width:900px;}
+.mission-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:#fafbfc;border-bottom:1px solid var(--border);white-space:nowrap;}
+.mission-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.mission-table tr:last-child td{border-bottom:none;}
+.mission-table tr:hover td{background:#fafbff;}
+.mission-status{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;white-space:nowrap;}
+.ms-planned{background:#eff6ff;color:#2563eb;}
+.ms-inprogress{background:var(--yellow-bg);color:var(--yellow);}
+.ms-published{background:var(--green-bg);color:var(--green);}
+.ms-verified{background:#f5f3ff;color:#7c3aed;}
+.mission-edit-btn{font-size:11px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);font-family:inherit;}
+.mission-edit-btn:hover{border-color:var(--accent);color:var(--accent);}
+.mission-url-link{font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;}
+.mission-url-link:hover{text-decoration:underline;}
+
+/* ── EMPTY STATE ── */
+.empty-state{background:var(--white);border-radius:14px;border:1.5px dashed var(--border2);padding:60px;text-align:center;}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.empty-desc{font-size:13px;color:var(--text3);}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:18px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.14);width:520px;max-height:90vh;overflow-y:auto;}
+.modal-header{padding:22px 24px 0;display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-size:18px;font-weight:800;letter-spacing:-.4px;}
+.modal-close{background:none;border:none;font-size:20px;color:var(--text3);cursor:pointer;padding:4px;}
+.modal-body{padding:20px 24px 24px;}
+.form-row{margin-bottom:16px;}
+.form-label{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:14px;font-weight:500;color:var(--text);outline:none;font-family:inherit;transition:border-color .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,78,248,.1);}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.platform-checkboxes{display:flex;gap:8px;}
+.plat-check{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);transition:all .12s;}
+.plat-check input{display:none;}
+.plat-check.selected-yt{border-color:#dc2626;background:#fee2e2;color:#dc2626;}
+.plat-check.selected-ig{border-color:#9333ea;background:#fdf4ff;color:#9333ea;}
+.modal-footer{display:flex;gap:8px;margin-top:20px;}
+.btn-modal-cancel{flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-modal-ok{flex:2;padding:12px;background:var(--accent);border:none;border-radius:9px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-modal-ok:hover{background:#4a3de0;}
+
+/* stats bar */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--white);border-radius:12px;padding:16px 18px;border:1.5px solid var(--border);}
+.stat-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.6px;}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo"><div class="logo-mark">🌿</div>온살 마케팅</div>
+  <nav id="globalNav"></nav>
+</header>
+
+<div class="sub-tabs">
+  <div class="sub-tab active" id="tab-candidates" onclick="setSubTab('candidates')">후보풀</div>
+  <div class="sub-tab" id="tab-contracted" onclick="setSubTab('contracted')">계약 앰버서더</div>
+</div>
+
+<div class="main">
+
+  <!-- ── 후보풀 ── -->
+  <div id="view-candidates">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="toolbar-title">앰버서더 후보풀</span>
+        <span class="toolbar-sub" id="cand-count"></span>
+      </div>
+      <button class="btn-primary" onclick="openCandModal()">+ 후보 추가</button>
+    </div>
+    <div class="stats-bar" id="cand-stats"></div>
+    <div class="filter-bar" id="cand-filters"></div>
+    <div class="cand-grid" id="cand-grid"></div>
+  </div>
+
+  <!-- ── 계약 앰버서더 ── -->
+  <div id="view-contracted" style="display:none">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="toolbar-title">계약 앰버서더</span>
+        <span class="toolbar-sub" id="amb-count"></span>
+      </div>
+      <button class="btn-primary" onclick="openAmbModal()">+ 앰버서더 추가</button>
+    </div>
+    <div class="stats-bar" id="amb-stats"></div>
+    <div id="amb-list"></div>
+  </div>
+
+</div>
+
+<!-- ── 후보 추가/편집 모달 ── -->
+<div class="overlay" id="candOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="cand-modal-title">후보 추가</div>
+      <button class="modal-close" onclick="closeCandModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row"><label class="form-label">이름</label><input class="form-input" id="c-name" placeholder="이름"></div>
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">채널/계정명</label><input class="form-input" id="c-handle" placeholder="@handle"></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">카테고리</label>
+          <select class="form-select" id="c-category">
+            <option>뷰티</option><option>일상/브이로그</option><option>아이돌</option>
+            <option>부부/육아</option><option>라이프스타일</option><option>연예인</option><option>기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">플랫폼</label>
+        <div class="platform-checkboxes">
+          <label class="plat-check" id="plat-yt"><input type="checkbox" onchange="togglePlat('yt')"> 🎥 유튜브</label>
+          <label class="plat-check" id="plat-ig"><input type="checkbox" onchange="togglePlat('ig')"> 📸 인스타그램</label>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div><label class="form-label">유튜브 구독자</label><input class="form-input" id="c-yt-subs" placeholder="예: 15만"></div>
+        <div><label class="form-label">인스타 팔로워</label><input class="form-input" id="c-ig-followers" placeholder="예: 8만"></div>
+      </div>
+      <div class="form-row-2">
+        <div><label class="form-label">채널 URL</label><input class="form-input" id="c-url" placeholder="https://youtube.com/@..."></div>
+        <div><label class="form-label">예상 단가 (만원)</label><input class="form-input" id="c-fee" type="number" placeholder="300"></div>
+      </div>
+      <div class="form-row"><label class="form-label">상태</label>
+        <select class="form-select" id="c-status">
+          <option value="reviewing">검토중</option>
+          <option value="contacting">연락중</option>
+          <option value="contracted">계약완료</option>
+          <option value="rejected">거절/보류</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label">메모</label><textarea class="form-textarea" id="c-note" placeholder="컨택 경과, 특이사항 등"></textarea></div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeCandModal()">취소</button>
+        <button class="btn-modal-ok" onclick="saveCand()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 앰버서더 추가 모달 ── -->
+<div class="overlay" id="ambOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">계약 앰버서더 추가</div>
+      <button class="modal-close" onclick="closeAmbModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div><label class="form-label">이름</label><input class="form-input" id="a-name" placeholder="이름"></div>
+        <div><label class="form-label">채널/계정명</label><input class="form-input" id="a-handle" placeholder="@handle"></div>
+      </div>
+      <div class="form-row"><label class="form-label">플랫폼</label>
+        <div class="platform-checkboxes">
+          <label class="plat-check" id="aplat-yt"><input type="checkbox" onchange="toggleAPlat('yt')"> 🎥 유튜브</label>
+          <label class="plat-check" id="aplat-ig"><input type="checkbox" onchange="toggleAPlat('ig')"> 📸 인스타그램</label>
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div><label class="form-label">유튜브 구독자</label><input class="form-input" id="a-yt-subs" placeholder="15만"></div>
+        <div><label class="form-label">인스타 팔로워</label><input class="form-input" id="a-ig-followers" placeholder="8만"></div>
+        <div><label class="form-label">카테고리</label><select class="form-select" id="a-category"><option>뷰티</option><option>일상/브이로그</option><option>아이돌</option><option>부부/육아</option><option>라이프스타일</option><option>연예인</option><option>기타</option></select></div>
+      </div>
+      <div class="form-row-2">
+        <div><label class="form-label">채널 URL</label><input class="form-input" id="a-url" placeholder="https://..."></div>
+        <div><label class="form-label">월 단가 (만원)</label><input class="form-input" id="a-fee" type="number" placeholder="300"></div>
+      </div>
+      <div class="form-row-2">
+        <div><label class="form-label">계약 시작월</label><select class="form-select" id="a-start"><option>6월</option><option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option></select></div>
+        <div><label class="form-label">계약 종료월</label><select class="form-select" id="a-end"><option>6월</option><option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option></select></div>
+      </div>
+      <div class="form-row"><label class="form-label">메모</label><textarea class="form-textarea" id="a-note" placeholder="특이사항, 계약조건 등"></textarea></div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeAmbModal()">취소</button>
+        <button class="btn-modal-ok" onclick="saveAmb()">추가</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 미션 편집 모달 ── -->
+<div class="overlay" id="missionOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="mission-modal-title">월별 미션 설정</div>
+      <button class="modal-close" onclick="closeMissionModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row"><label class="form-label">홍보 제품</label><input class="form-input" id="m-product" placeholder="예: 온살 세럼 30ml"></div>
+      <div class="form-row"><label class="form-label">콘텐츠 유형</label>
+        <select class="form-select" id="m-content-type">
+          <option value="yt_long">유튜브 롱폼</option>
+          <option value="yt_shorts">유튜브 쇼츠</option>
+          <option value="ig_reel">인스타 릴스</option>
+          <option value="ig_feed">인스타 피드</option>
+          <option value="yt_ig">유튜브 + 인스타그램</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label">콘텐츠 가이드</label><textarea class="form-textarea" id="m-guide" placeholder="핵심 메시지, 강조 포인트, 금지사항 등" style="min-height:120px"></textarea></div>
+      <div class="form-row-2">
+        <div><label class="form-label">유튜브 게시 URL</label><input class="form-input" id="m-yt-url" placeholder="https://youtu.be/..."></div>
+        <div><label class="form-label">인스타 게시 URL</label><input class="form-input" id="m-ig-url" placeholder="https://instagram.com/p/..."></div>
+      </div>
+      <div class="form-row"><label class="form-label">마감일</label><input class="form-input" id="m-deadline" type="date"></div>
+      <div class="form-row"><label class="form-label">진행 상태</label>
+        <select class="form-select" id="m-status">
+          <option value="planned">예정</option>
+          <option value="inprogress">진행중</option>
+          <option value="published">게시완료</option>
+          <option value="verified">확인완료</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label">내부 메모</label><textarea class="form-textarea" id="m-note" placeholder="내부 커뮤니케이션, 수정 요청 등"></textarea></div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeMissionModal()">취소</button>
+        <button class="btn-modal-ok" onclick="saveMission()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/nav.js"></script>
+<script>
+const MONTHS = ['6월','7월','8월','9월','10월','11월','12월'];
+const CAND_KEY = 'onsal_candidates_v1';
+const AMB_KEY  = 'onsal_ambassadors_v1';
+
+let candidates = JSON.parse(localStorage.getItem(CAND_KEY) || '[]');
+let ambassadors = JSON.parse(localStorage.getItem(AMB_KEY) || '[]');
+
+let editingCandId = null;
+let editingAmbId  = null;
+let editingMission = null; // {ambId, month}
+let activeCandFilter = '전체';
+let activeSubTab = 'candidates';
+let aPlats = {yt:false, ig:false};
+let cPlats = {yt:false, ig:false};
+
+const save = () => {
+  localStorage.setItem(CAND_KEY, JSON.stringify(candidates));
+  localStorage.setItem(AMB_KEY,  JSON.stringify(ambassadors));
+};
+const fmt = n => parseInt(n||0).toLocaleString('ko-KR');
+
+// ── SUB TABS ──
+function setSubTab(t) {
+  activeSubTab = t;
+  document.getElementById('tab-candidates').classList.toggle('active', t==='candidates');
+  document.getElementById('tab-contracted').classList.toggle('active', t==='contracted');
+  document.getElementById('view-candidates').style.display = t==='candidates' ? '' : 'none';
+  document.getElementById('view-contracted').style.display = t==='contracted' ? '' : 'none';
+  if (t==='contracted') renderAmbs(); else renderCands();
+}
+
+// ── STATUS HELPERS ──
+const CAND_STATUS = {
+  reviewing:  { label:'검토중',   cls:'status-reviewing' },
+  contacting: { label:'연락중',   cls:'status-contacting' },
+  contracted: { label:'계약완료', cls:'status-contracted' },
+  rejected:   { label:'거절/보류',cls:'status-rejected' },
+};
+const MISS_STATUS = {
+  planned:    { label:'예정',     cls:'ms-planned' },
+  inprogress: { label:'진행중',   cls:'ms-inprogress' },
+  published:  { label:'게시완료', cls:'ms-published' },
+  verified:   { label:'확인완료', cls:'ms-verified' },
+};
+const CONTENT_LABELS = {
+  yt_long:'유튜브 롱폼', yt_shorts:'유튜브 쇼츠', ig_reel:'인스타 릴스',
+  ig_feed:'인스타 피드', yt_ig:'유튜브+인스타'
+};
+
+// ── CANDIDATES ──
+function renderCands() {
+  const stats = { reviewing:0, contacting:0, contracted:0, rejected:0 };
+  candidates.forEach(c => stats[c.status]++);
+
+  document.getElementById('cand-count').textContent = `총 ${candidates.length}명`;
+  document.getElementById('cand-stats').innerHTML = [
+    ['전체 후보', candidates.length, ''],
+    ['검토중', stats.reviewing, '#2563eb'],
+    ['연락중', stats.contacting, '#b45309'],
+    ['계약완료', stats.contracted, '#12a05c'],
+  ].map(([l,v,c]) => `
+    <div class="stat-card">
+      <div class="stat-label">${l}</div>
+      <div class="stat-val" style="${c?`color:${c}`:'''}">${v}명</div>
+    </div>`).join('');
+
+  const filters = ['전체','검토중','연락중','계약완료','거절/보류'];
+  document.getElementById('cand-filters').innerHTML = filters.map(f =>
+    `<span class="f-chip ${f===activeCandFilter?'on':''}" onclick="setCandFilter('${f}')">${f}</span>`
+  ).join('');
+
+  const filterMap = {'전체':null,'검토중':'reviewing','연락중':'contacting','계약완료':'contracted','거절/보류':'rejected'};
+  const filtered = activeCandFilter==='전체' ? candidates : candidates.filter(c => c.status === filterMap[activeCandFilter]);
+
+  if (filtered.length === 0) {
+    document.getElementById('cand-grid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">👥</div>
+        <div class="empty-title">후보가 없어요</div>
+        <div class="empty-desc">우상단 버튼으로 후보를 추가해보세요</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('cand-grid').innerHTML = filtered.map(c => {
+    const st = CAND_STATUS[c.status] || CAND_STATUS.reviewing;
+    const plats = (c.platforms||[]).map(p => p==='yt'
+      ? `<span class="platform-badge platform-youtube">🎥 유튜브</span>`
+      : `<span class="platform-badge platform-instagram">📸 인스타</span>`).join('');
+    return `
+    <div class="cand-card">
+      <div class="cand-card-top">
+        <div>
+          <div class="cand-name">${c.name}</div>
+          <div class="cand-handle">${c.handle||''}</div>
+        </div>
+        <span class="status-badge ${st.cls}">${st.label}</span>
+      </div>
+      <div class="cand-platforms">${plats}</div>
+      <div class="cand-meta">
+        <div class="cand-meta-item"><div class="cand-meta-label">유튜브 구독</div><div class="cand-meta-value">${c.ytSubs||'–'}</div></div>
+        <div class="cand-meta-item"><div class="cand-meta-label">인스타 팔로워</div><div class="cand-meta-value">${c.igFollowers||'–'}</div></div>
+        <div class="cand-meta-item"><div class="cand-meta-label">카테고리</div><div class="cand-meta-value">${c.category||'–'}</div></div>
+        <div class="cand-meta-item"><div class="cand-meta-label">예상 단가</div><div class="cand-meta-value">${c.fee ? fmt(c.fee)+'만원' : '–'}</div></div>
+      </div>
+      ${c.note ? `<div class="cand-note">📌 ${c.note}</div>` : ''}
+      <div class="cand-actions">
+        <button class="btn-secondary" onclick="editCand('${c.id}')">편집</button>
+        ${c.status !== 'contracted' ? `<button class="btn-secondary" style="color:var(--green);border-color:var(--green)" onclick="moveToContracted('${c.id}')">→ 계약 전환</button>` : ''}
+        ${c.url ? `<a href="${c.url}" target="_blank" style="display:inline-flex;align-items:center;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none">↗ 채널</a>` : ''}
+        <button class="btn-danger" onclick="deleteCand('${c.id}')">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setCandFilter(f) { activeCandFilter = f; renderCands(); }
+
+function openCandModal(id) {
+  editingCandId = id || null;
+  const c = id ? candidates.find(x=>x.id===id) : null;
+  document.getElementById('cand-modal-title').textContent = id ? '후보 편집' : '후보 추가';
+  document.getElementById('c-name').value = c?.name || '';
+  document.getElementById('c-handle').value = c?.handle || '';
+  document.getElementById('c-category').value = c?.category || '뷰티';
+  document.getElementById('c-yt-subs').value = c?.ytSubs || '';
+  document.getElementById('c-ig-followers').value = c?.igFollowers || '';
+  document.getElementById('c-url').value = c?.url || '';
+  document.getElementById('c-fee').value = c?.fee || '';
+  document.getElementById('c-status').value = c?.status || 'reviewing';
+  document.getElementById('c-note').value = c?.note || '';
+  cPlats = {yt: c?.platforms?.includes('yt'), ig: c?.platforms?.includes('ig')};
+  updatePlatUI('c');
+  document.getElementById('candOverlay').classList.add('show');
+}
+function closeCandModal() { document.getElementById('candOverlay').classList.remove('show'); }
+function editCand(id) { openCandModal(id); }
+
+function togglePlat(p) {
+  cPlats[p] = !cPlats[p];
+  updatePlatUI('c');
+}
+function updatePlatUI(prefix) {
+  const pl = prefix === 'c' ? cPlats : aPlats;
+  document.getElementById(`${prefix==='c'?'':'a'}plat-yt`)?.classList.toggle('selected-yt', !!pl.yt);
+  document.getElementById(`${prefix==='c'?'':'a'}plat-ig`)?.classList.toggle('selected-ig', !!pl.ig);
+}
+
+function saveCand() {
+  const name = document.getElementById('c-name').value.trim();
+  if (!name) return alert('이름을 입력해주세요');
+  const plats = Object.keys(cPlats).filter(k => cPlats[k]);
+  const data = {
+    id: editingCandId || Date.now().toString(),
+    name, handle: document.getElementById('c-handle').value.trim(),
+    category: document.getElementById('c-category').value,
+    platforms: plats,
+    ytSubs: document.getElementById('c-yt-subs').value.trim(),
+    igFollowers: document.getElementById('c-ig-followers').value.trim(),
+    url: document.getElementById('c-url').value.trim(),
+    fee: document.getElementById('c-fee').value || 0,
+    status: document.getElementById('c-status').value,
+    note: document.getElementById('c-note').value.trim(),
+    addedAt: editingCandId ? (candidates.find(c=>c.id===editingCandId)?.addedAt || new Date().toISOString()) : new Date().toISOString(),
+  };
+  if (editingCandId) {
+    candidates = candidates.map(c => c.id === editingCandId ? data : c);
+  } else {
+    candidates.push(data);
+  }
+  save(); closeCandModal(); renderCands();
+}
+
+function deleteCand(id) {
+  if (!confirm('삭제할까요?')) return;
+  candidates = candidates.filter(c => c.id !== id);
+  save(); renderCands();
+}
+
+function moveToContracted(id) {
+  const c = candidates.find(x => x.id === id);
+  if (!c) return;
+  if (!confirm(`${c.name}을(를) 계약 앰버서더로 전환할까요?`)) return;
+  const amb = {
+    id: Date.now().toString(),
+    candidateId: c.id,
+    name: c.name, handle: c.handle, url: c.url,
+    platforms: c.platforms, ytSubs: c.ytSubs, igFollowers: c.igFollowers,
+    category: c.category, fee: c.fee, note: c.note,
+    contractStart: '6월', contractEnd: '12월',
+    missions: {},
+  };
+  MONTHS.forEach(m => { amb.missions[m] = { product:'', contentType:'yt_ig', guide:'', ytUrl:'', igUrl:'', deadline:'', status:'planned', note:'' }; });
+  ambassadors.push(amb);
+  candidates = candidates.map(c2 => c2.id === id ? {...c2, status:'contracted'} : c2);
+  save();
+  alert(`${c.name} 앰버서더 탭에 추가됐어요!`);
+  setSubTab('contracted');
+}
+
+// ── AMBASSADORS ──
+function openAmbModal() {
+  editingAmbId = null;
+  ['a-name','a-handle','a-url','a-yt-subs','a-ig-followers','a-fee','a-note'].forEach(id => document.getElementById(id).value = '');
+  aPlats = {yt:false, ig:false};
+  document.getElementById('aplat-yt').classList.remove('selected-yt');
+  document.getElementById('aplat-ig').classList.remove('selected-ig');
+  document.getElementById('ambOverlay').classList.add('show');
+}
+function closeAmbModal() { document.getElementById('ambOverlay').classList.remove('show'); }
+
+function toggleAPlat(p) {
+  aPlats[p] = !aPlats[p];
+  document.getElementById('aplat-yt').classList.toggle('selected-yt', !!aPlats.yt);
+  document.getElementById('aplat-ig').classList.toggle('selected-ig', !!aPlats.ig);
+}
+
+function saveAmb() {
+  const name = document.getElementById('a-name').value.trim();
+  if (!name) return alert('이름을 입력해주세요');
+  const plats = Object.keys(aPlats).filter(k => aPlats[k]);
+  const start = document.getElementById('a-start').value;
+  const end   = document.getElementById('a-end').value;
+  const missions = {};
+  MONTHS.forEach(m => { missions[m] = { product:'', contentType:'yt_ig', guide:'', ytUrl:'', igUrl:'', deadline:'', status:'planned', note:'' }; });
+  const amb = {
+    id: Date.now().toString(),
+    name, handle: document.getElementById('a-handle').value.trim(),
+    url: document.getElementById('a-url').value.trim(),
+    platforms: plats,
+    ytSubs: document.getElementById('a-yt-subs').value.trim(),
+    igFollowers: document.getElementById('a-ig-followers').value.trim(),
+    category: document.getElementById('a-category').value,
+    fee: document.getElementById('a-fee').value || 0,
+    note: document.getElementById('a-note').value.trim(),
+    contractStart: start, contractEnd: end,
+    missions,
+  };
+  ambassadors.push(amb);
+  save(); closeAmbModal(); renderAmbs();
+}
+
+function renderAmbs() {
+  document.getElementById('amb-count').textContent = `총 ${ambassadors.length}명`;
+
+  const totalMissions = ambassadors.reduce((s,a) => s + Object.values(a.missions||{}).filter(m => m.product).length, 0);
+  const verified = ambassadors.reduce((s,a) => s + Object.values(a.missions||{}).filter(m => m.status==='verified').length, 0);
+  const published = ambassadors.reduce((s,a) => s + Object.values(a.missions||{}).filter(m => m.status==='published').length, 0);
+
+  document.getElementById('amb-stats').innerHTML = [
+    ['계약 앰버서더', ambassadors.length + '명', ''],
+    ['월별 미션 설정', totalMissions + '건', '#2563eb'],
+    ['게시완료', published + '건', '#12a05c'],
+    ['확인완료', verified + '건', '#7c3aed'],
+  ].map(([l,v,c]) => `
+    <div class="stat-card">
+      <div class="stat-label">${l}</div>
+      <div class="stat-val" style="${c?`color:${c}`:'''}">${v}</div>
+    </div>`).join('');
+
+  if (ambassadors.length === 0) {
+    document.getElementById('amb-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🤝</div>
+        <div class="empty-title">계약된 앰버서더가 없어요</div>
+        <div class="empty-desc">후보풀에서 "계약 전환" 버튼을 누르거나, 직접 추가해보세요</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('amb-list').innerHTML = ambassadors.map(a => {
+    const plats = (a.platforms||[]).map(p => p==='yt'
+      ? `<span class="amb-info-tag" style="background:#fee2e2;color:#dc2626">🎥 유튜브</span>`
+      : `<span class="amb-info-tag" style="background:#fdf4ff;color:#9333ea">📸 인스타</span>`).join('');
+
+    const missionRows = MONTHS.map(m => {
+      const mis = a.missions?.[m] || {};
+      const st = MISS_STATUS[mis.status || 'planned'];
+      const ytLink = mis.ytUrl ? `<a href="${mis.ytUrl}" target="_blank" class="mission-url-link">유튜브↗</a>` : '';
+      const igLink = mis.igUrl ? `<a href="${mis.igUrl}" target="_blank" class="mission-url-link">인스타↗</a>` : '';
+      const links = [ytLink,igLink].filter(Boolean).join(' ');
+      return `<tr>
+        <td style="font-weight:700;color:var(--text)">${m}</td>
+        <td>${mis.product || '<span style="color:var(--text3)">–</span>'}</td>
+        <td>${mis.contentType ? CONTENT_LABELS[mis.contentType] : '–'}</td>
+        <td style="max-width:200px;white-space:pre-wrap;font-size:12px;color:var(--text2)">${mis.guide ? mis.guide.slice(0,60)+(mis.guide.length>60?'…':'') : '–'}</td>
+        <td>${links || '<span style="color:var(--text3)">–</span>'}</td>
+        <td>${mis.deadline || '–'}</td>
+        <td><span class="mission-status ${st.cls}">${st.label}</span></td>
+        <td><button class="mission-edit-btn" onclick="openMissionModal('${a.id}','${m}')">편집</button></td>
+      </tr>`;
+    }).join('');
+
+    return `
+    <div class="contracted-section">
+      <div class="amb-profile-card">
+        <div class="amb-profile-top">
+          <div class="amb-profile-left">
+            <div class="amb-avatar">${a.name[0]}</div>
+            <div>
+              <div class="amb-info-name">${a.name}</div>
+              <div class="amb-info-handle">${a.handle || ''} · ${a.category || ''}</div>
+              <div class="amb-info-meta">
+                ${plats}
+                ${a.ytSubs ? `<span class="amb-info-tag">구독 ${a.ytSubs}</span>` : ''}
+                ${a.igFollowers ? `<span class="amb-info-tag">팔로워 ${a.igFollowers}</span>` : ''}
+                ${a.fee ? `<span class="amb-info-tag">월 ${fmt(a.fee)}만원</span>` : ''}
+                <span class="amb-info-tag">${a.contractStart}~${a.contractEnd}</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            ${a.url ? `<a href="${a.url}" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center">↗ 채널</a>` : ''}
+            <button class="btn-danger" onclick="deleteAmb('${a.id}')">삭제</button>
+          </div>
+        </div>
+        ${a.note ? `<div style="font-size:12px;color:var(--text3);background:var(--bg);padding:8px 12px;border-radius:7px">📌 ${a.note}</div>` : ''}
+      </div>
+      <div class="mission-table-wrap">
+        <table class="mission-table">
+          <thead><tr>
+            <th style="width:60px">월</th>
+            <th>홍보 제품</th>
+            <th>콘텐츠 유형</th>
+            <th>가이드</th>
+            <th>게시 URL</th>
+            <th>마감</th>
+            <th>상태</th>
+            <th style="width:60px"></th>
+          </tr></thead>
+          <tbody>${missionRows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteAmb(id) {
+  if (!confirm('삭제할까요?')) return;
+  ambassadors = ambassadors.filter(a => a.id !== id);
+  save(); renderAmbs();
+}
+
+// ── MISSION MODAL ──
+function openMissionModal(ambId, month) {
+  editingMission = {ambId, month};
+  const a = ambassadors.find(x => x.id === ambId);
+  const m = a?.missions?.[month] || {};
+  document.getElementById('mission-modal-title').textContent = `${a?.name} · ${month} 미션`;
+  document.getElementById('m-product').value = m.product || '';
+  document.getElementById('m-content-type').value = m.contentType || 'yt_ig';
+  document.getElementById('m-guide').value = m.guide || '';
+  document.getElementById('m-yt-url').value = m.ytUrl || '';
+  document.getElementById('m-ig-url').value = m.igUrl || '';
+  document.getElementById('m-deadline').value = m.deadline || '';
+  document.getElementById('m-status').value = m.status || 'planned';
+  document.getElementById('m-note').value = m.note || '';
+  document.getElementById('missionOverlay').classList.add('show');
+}
+function closeMissionModal() { document.getElementById('missionOverlay').classList.remove('show'); }
+
+function saveMission() {
+  const {ambId, month} = editingMission;
+  const a = ambassadors.find(x => x.id === ambId);
+  if (!a) return;
+  if (!a.missions) a.missions = {};
+  a.missions[month] = {
+    product: document.getElementById('m-product').value.trim(),
+    contentType: document.getElementById('m-content-type').value,
+    guide: document.getElementById('m-guide').value.trim(),
+    ytUrl: document.getElementById('m-yt-url').value.trim(),
+    igUrl: document.getElementById('m-ig-url').value.trim(),
+    deadline: document.getElementById('m-deadline').value,
+    status: document.getElementById('m-status').value,
+    note: document.getElementById('m-note').value.trim(),
+  };
+  save(); closeMissionModal(); renderAmbs();
+}
+
+// overlays close on backdrop click
+['candOverlay','ambOverlay','missionOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('show'); });
+});
+
+renderCands();
+</script>
+</body>
+</html>
