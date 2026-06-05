@@ -151,22 +151,27 @@ html,body{height:100%;overflow:hidden;font-family:'Pretendard','Apple SD Gothic 
 .bov-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#fafbfc;}
 .bov-header h3{font-size:13px;font-weight:700;color:var(--text);}
 .bov-header span{font-size:11px;color:var(--text3);}
-.bov-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-.bov-row{display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
-.bov-grid>.bov-row:nth-child(even){border-right:none;}
-.bov-grid>.bov-row:nth-last-child(-n+2){border-bottom:none;}
+/* 세로 단일 컬럼 */
+.bov-list{display:flex;flex-direction:column;}
+.bov-row{display:grid;grid-template-columns:8px 64px 1fr 110px 100px 80px 26px;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid var(--border);}
+.bov-row:last-child{border-bottom:none;}
 .bov-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.bov-label{font-size:13px;font-weight:700;color:var(--text);width:60px;flex-shrink:0;}
-.bov-bar-wrap{flex:1;min-width:40px;}
-.bov-track{height:5px;background:var(--bg);border-radius:5px;overflow:hidden;}
-.bov-fill{height:100%;border-radius:5px;transition:width .4s;}
-.bov-amounts{text-align:right;flex-shrink:0;}
-.bov-spent{font-size:12px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;}
-.bov-pct{font-size:10px;font-weight:700;white-space:nowrap;}
-.bov-pct.ok{color:var(--green);}
-.bov-pct.warn{color:var(--orange);}
-.bov-pct.over{color:var(--red);}
-.bov-pct.zero{color:var(--text3);}
+.bov-label{font-size:13px;font-weight:700;color:var(--text);}
+.bov-bar-wrap{min-width:0;}
+.bov-track{height:6px;background:var(--bg);border-radius:6px;overflow:hidden;}
+.bov-fill{height:100%;border-radius:6px;transition:width .4s;}
+.bov-stat{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
+.bov-spent{font-size:13px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.bov-remain{font-size:10px;color:var(--text3);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.bov-pct-cell{display:flex;align-items:center;justify-content:center;}
+.bov-pct{font-size:12px;font-weight:800;white-space:nowrap;padding:3px 9px;border-radius:8px;}
+.bov-pct.ok  {background:var(--green-bg);color:var(--green);}
+.bov-pct.warn{background:#fff3e8;color:var(--orange);}
+.bov-pct.over{background:var(--red-bg);color:var(--red);}
+.bov-pct.zero{background:var(--bg);color:var(--text3);}
+.bov-input{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;font-weight:700;color:var(--text);width:76px;outline:none;font-family:inherit;font-variant-numeric:tabular-nums;text-align:right;}
+.bov-input:focus{border-color:var(--accent);}
+.bov-unit{font-size:11px;color:var(--text3);}
 .bov-input{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:12px;font-weight:700;color:var(--text);width:68px;outline:none;font-family:inherit;font-variant-numeric:tabular-nums;text-align:right;}
 .bov-input:focus{border-color:var(--accent);}
 .bov-unit{font-size:10px;color:var(--text3);}
@@ -785,31 +790,45 @@ function renderRightBody() {
 
   // ── 예산 배분 현황 ──
   const totalCatBgt = Object.values(catBudgets).reduce((s,v)=>s+v, 0);
+  // ── 예산 배분 현황 (세로 리스트) ──
   html += `
   <div class="budget-overview">
     <div class="bov-header">
       <h3>카테고리별 예산 배분</h3>
-      <span>예산 클릭 시 수정 · 전체 배분 ${fmtKor(totalCatBgt)}</span>
+      <span>전체 배분 ${fmtKor(totalCatBgt)} · 입력칸 수정 가능</span>
     </div>
-    <div class="bov-grid">`;
+    <div style="padding:6px 18px 4px;display:grid;grid-template-columns:8px 64px 1fr 110px 100px 80px 26px;gap:10px;align-items:center;border-bottom:1px solid var(--border);background:#fafbfc;">
+      <div></div>
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">카테고리</div>
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">진행률</div>
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right">집행 / 잔여</div>
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:center">달성률</div>
+      <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right">예산</div>
+      <div></div>
+    </div>
+    <div class="bov-list">`;
 
   CATS.forEach(cat => {
     const allCatVat = Object.values(plan).flat().filter(i=>i.cat===cat.id).reduce((s,i)=>s+i.priceVat,0);
-    const bgt   = catBudgets[cat.id]||0;
-    const cpct  = bgt>0 ? Math.min(100, Math.round(allCatVat/bgt*100)) : 0;
-    const fill  = bgt>0 ? Math.min(100, allCatVat/bgt*100) : 0;
-    const cls   = bgt===0 ? 'zero' : cpct>=100?'over':cpct>=80?'warn':'ok';
+    const bgt    = catBudgets[cat.id]||0;
+    const cpct   = bgt>0 ? Math.min(100, Math.round(allCatVat/bgt*100)) : 0;
+    const fill   = bgt>0 ? Math.min(100, allCatVat/bgt*100) : 0;
+    const cls    = bgt===0 ? 'zero' : cpct>=100?'over':cpct>=80?'warn':'ok';
+    const remain = bgt - allCatVat;
+    // 이번달 해당 카테고리 항목 수
+    const monthCount = items.filter(i=>i.cat===cat.id).length;
     html += `
       <div class="bov-row">
         <div class="bov-dot ${cat.dot}"></div>
-        <span class="bov-label">${cat.label}</span>
+        <span class="bov-label">${cat.label}${monthCount>0?`<br><span style="font-size:10px;font-weight:500;color:var(--text3)">${activeMonth} ${monthCount}건</span>`:''}</span>
         <div class="bov-bar-wrap">
           <div class="bov-track"><div class="bov-fill" style="width:${fill}%;background:${cat.col}"></div></div>
         </div>
-        <div class="bov-amounts">
-          <div class="bov-spent">${allCatVat>0?fmtShort(allCatVat):'–'}</div>
-          <div class="bov-pct ${cls}">${bgt>0?cpct+'%':'예산없음'}</div>
+        <div class="bov-stat">
+          <span class="bov-spent">${allCatVat>0?fmtKor(allCatVat):'–'}</span>
+          <span class="bov-remain">${bgt>0?(remain>=0?'잔여 '+fmtShort(remain):'초과 '+fmtShort(-remain)):'예산 미설정'}</span>
         </div>
+        <div class="bov-pct-cell"><span class="bov-pct ${cls}">${bgt>0?cpct+'%':'–'}</span></div>
         <input class="bov-input" type="number" value="${bgt}" title="${cat.label} 예산 (만원)" onchange="setCatBudget('${cat.id}',this.value)">
         <span class="bov-unit">만</span>
       </div>`;
