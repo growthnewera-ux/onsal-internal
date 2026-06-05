@@ -128,6 +128,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 .plat-check input{display:none;}
 .plat-check.selected-yt{border-color:#dc2626;background:#fee2e2;color:#dc2626;}
 .plat-check.selected-ig{border-color:#9333ea;background:#fdf4ff;color:#9333ea;}
+.plat-check.selected-tt{border-color:#000;background:#f0f0f0;color:#000;}
 .modal-footer{display:flex;gap:8px;margin-top:20px;}
 .btn-modal-cancel{flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
 .btn-modal-ok{flex:2;padding:12px;background:var(--accent);border:none;border-radius:9px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
@@ -248,35 +249,70 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 
 <!-- ── 앰버서더 추가 모달 ── -->
 <div class="overlay" id="ambOverlay">
-  <div class="modal">
+  <div class="modal" style="width:500px">
     <div class="modal-header">
       <div class="modal-title">계약 앰버서더 추가</div>
       <button class="modal-close" onclick="closeAmbModal()">✕</button>
     </div>
     <div class="modal-body">
+
+      <!-- 1. 카테고리 -->
+      <div class="form-row">
+        <label class="form-label">카테고리</label>
+        <input class="form-input" id="a-category" list="amb-cat-list" placeholder="카테고리 선택 또는 직접 입력">
+        <datalist id="amb-cat-list">
+          <option>뷰티</option><option>스킨케어</option><option>패션</option>
+          <option>라이프스타일</option><option>일상/브이로그</option><option>부부/육아</option>
+          <option>아이돌</option><option>연예인</option><option>피트니스/헬스</option>
+          <option>음식/요리</option><option>여행</option><option>기타</option>
+        </datalist>
+      </div>
+
+      <!-- 2. 이름 / 3. 채널·계정명 -->
       <div class="form-row-2">
         <div><label class="form-label">이름</label><input class="form-input" id="a-name" placeholder="이름"></div>
         <div><label class="form-label">채널/계정명</label><input class="form-input" id="a-handle" placeholder="@handle"></div>
       </div>
-      <div class="form-row"><label class="form-label">플랫폼</label>
-        <div class="platform-checkboxes">
+
+      <!-- 4. 플랫폼 선택 -->
+      <div class="form-row">
+        <label class="form-label">플랫폼</label>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <label class="plat-check" id="aplat-all" onclick="toggleAAll(event)" style="border-color:#888;color:#555">
+            🌐 전체선택
+          </label>
           <label class="plat-check" id="aplat-yt"><input type="checkbox" onchange="toggleAPlat('yt')"> 🎥 유튜브</label>
           <label class="plat-check" id="aplat-ig"><input type="checkbox" onchange="toggleAPlat('ig')"> 📸 인스타그램</label>
+          <label class="plat-check" id="aplat-tt"><input type="checkbox" onchange="toggleAPlat('tt')"> 🎵 틱톡</label>
         </div>
       </div>
-      <div class="form-row-3">
-        <div><label class="form-label">유튜브 구독자</label><input class="form-input" id="a-yt-subs" placeholder="15만"></div>
-        <div><label class="form-label">인스타 팔로워</label><input class="form-input" id="a-ig-followers" placeholder="8만"></div>
-        <div><label class="form-label">카테고리</label><select class="form-select" id="a-category"><option>뷰티</option><option>일상/브이로그</option><option>아이돌</option><option>부부/육아</option><option>라이프스타일</option><option>연예인</option><option>기타</option></select></div>
+
+      <!-- 5. 플랫폼별 URL + 팔로워 (동적 표시) -->
+      <div id="a-plat-urls"></div>
+
+      <!-- 6. 월 단가 -->
+      <div class="form-row">
+        <label class="form-label">월 단가 (만원)</label>
+        <input class="form-input" id="a-fee" type="number" placeholder="예: 300" style="width:140px">
+        <span style="font-size:13px;color:var(--text3);margin-left:8px;align-self:center">만원 / 월</span>
       </div>
+
+      <!-- 7. 계약기간 -->
       <div class="form-row-2">
-        <div><label class="form-label">채널 URL</label><input class="form-input" id="a-url" placeholder="https://..."></div>
-        <div><label class="form-label">월 단가 (만원)</label><input class="form-input" id="a-fee" type="number" placeholder="300"></div>
+        <div>
+          <label class="form-label">계약 시작월</label>
+          <select class="form-select" id="a-start">
+            <option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">계약 종료월</label>
+          <select class="form-select" id="a-end">
+            <option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option>
+          </select>
+        </div>
       </div>
-      <div class="form-row-2">
-        <div><label class="form-label">계약 시작월</label><select class="form-select" id="a-start"><option>6월</option><option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option></select></div>
-        <div><label class="form-label">계약 종료월</label><select class="form-select" id="a-end"><option>6월</option><option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option></select></div>
-      </div>
+
       <div class="form-row"><label class="form-label">메모</label><textarea class="form-textarea" id="a-note" placeholder="특이사항, 계약조건 등"></textarea></div>
       <div class="modal-footer">
         <button class="btn-modal-cancel" onclick="closeAmbModal()">취소</button>
@@ -333,8 +369,19 @@ const MONTHS = ['6월','7월','8월','9월','10월','11월','12월'];
 const CAND_KEY = 'onsal_candidates_v1';
 const AMB_KEY  = 'onsal_ambassadors_v1';
 
-let candidates = JSON.parse(localStorage.getItem(CAND_KEY) || '[]');
+let candidates = JSON.parse(localStorage.getItem(CAND_KEY) || 'null');
 let ambassadors = JSON.parse(localStorage.getItem(AMB_KEY) || '[]');
+
+// 최초 실행 시 인스타 후보 4명 기본 데이터 삽입
+if (!candidates) {
+  candidates = [
+    { id:'seed-1', name:'xsxzxe',     handle:'@xsxzxe',     url:'https://www.instagram.com/xsxzxe/',     platforms:['ig'], category:'', igFollowers:'', ytSubs:'', ttFollowers:'', fee:0, status:'reviewing', note:'', addedAt:new Date().toISOString() },
+    { id:'seed-2', name:'lim2da',      handle:'@lim2da',      url:'https://www.instagram.com/lim2da/',      platforms:['ig'], category:'', igFollowers:'', ytSubs:'', ttFollowers:'', fee:0, status:'reviewing', note:'', addedAt:new Date().toISOString() },
+    { id:'seed-3', name:'y0ngsunj',    handle:'@y0ngsunj',    url:'https://www.instagram.com/y0ngsunj/',    platforms:['ig'], category:'', igFollowers:'', ytSubs:'', ttFollowers:'', fee:0, status:'reviewing', note:'', addedAt:new Date().toISOString() },
+    { id:'seed-4', name:'jinkyuvogue', handle:'@jinkyuvogue', url:'https://www.instagram.com/jinkyuvogue/', platforms:['ig'], category:'', igFollowers:'', ytSubs:'', ttFollowers:'', fee:0, status:'reviewing', note:'', addedAt:new Date().toISOString() },
+  ];
+  localStorage.setItem(CAND_KEY, JSON.stringify(candidates));
+}
 
 let editingCandId = null;
 let editingAmbId  = null;
@@ -342,7 +389,7 @@ let editingMission = null; // {ambId, month}
 let activeCandFilter = '전체';
 let activeCandCatFilter = '전체';
 let activeSubTab = 'candidates';
-let aPlats = {yt:false, ig:false};
+let aPlats = {yt:false, ig:false, tt:false};
 let cPlats = {yt:false, ig:false};
 
 const save = () => {
@@ -551,39 +598,97 @@ function moveToContracted(id) {
 // ── AMBASSADORS ──
 function openAmbModal() {
   editingAmbId = null;
-  ['a-name','a-handle','a-url','a-yt-subs','a-ig-followers','a-fee','a-note'].forEach(id => document.getElementById(id).value = '');
-  aPlats = {yt:false, ig:false};
-  document.getElementById('aplat-yt').classList.remove('selected-yt');
-  document.getElementById('aplat-ig').classList.remove('selected-ig');
+  ['a-name','a-handle','a-category','a-fee','a-note'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  aPlats = {yt:false, ig:false, tt:false};
+  renderAPlatUI();
+  renderAPlatUrls();
   document.getElementById('ambOverlay').classList.add('show');
 }
 function closeAmbModal() { document.getElementById('ambOverlay').classList.remove('show'); }
 
 function toggleAPlat(p) {
   aPlats[p] = !aPlats[p];
+  renderAPlatUI();
+  renderAPlatUrls();
+}
+
+function toggleAAll(e) {
+  e.preventDefault();
+  const allOn = aPlats.yt && aPlats.ig && aPlats.tt;
+  aPlats = {yt:!allOn, ig:!allOn, tt:!allOn};
+  renderAPlatUI();
+  renderAPlatUrls();
+}
+
+function renderAPlatUI() {
   document.getElementById('aplat-yt').classList.toggle('selected-yt', !!aPlats.yt);
   document.getElementById('aplat-ig').classList.toggle('selected-ig', !!aPlats.ig);
+  document.getElementById('aplat-tt')?.classList.toggle('selected-tt', !!aPlats.tt);
+  const allOn = aPlats.yt && aPlats.ig && aPlats.tt;
+  const btn = document.getElementById('aplat-all');
+  if (btn) {
+    btn.style.background = allOn ? 'var(--text)' : '';
+    btn.style.borderColor = allOn ? 'var(--text)' : '#888';
+    btn.style.color = allOn ? 'white' : '#555';
+  }
+  // sync checkboxes
+  const ytCb = document.querySelector('#aplat-yt input');
+  const igCb = document.querySelector('#aplat-ig input');
+  const ttCb = document.querySelector('#aplat-tt input');
+  if(ytCb) ytCb.checked = !!aPlats.yt;
+  if(igCb) igCb.checked = !!aPlats.ig;
+  if(ttCb) ttCb.checked = !!aPlats.tt;
+}
+
+function renderAPlatUrls() {
+  const wrap = document.getElementById('a-plat-urls');
+  if (!wrap) return;
+  let html = '';
+  if (aPlats.yt) html += `
+    <div class="form-row-2" style="margin-bottom:10px">
+      <div><label class="form-label">🎥 유튜브 URL</label><input class="form-input" id="a-yt-url" placeholder="https://youtube.com/@..."></div>
+      <div><label class="form-label">유튜브 구독자</label><input class="form-input" id="a-yt-subs" placeholder="예: 26.4만"></div>
+    </div>`;
+  if (aPlats.ig) html += `
+    <div class="form-row-2" style="margin-bottom:10px">
+      <div><label class="form-label">📸 인스타그램 URL</label><input class="form-input" id="a-ig-url" placeholder="https://instagram.com/..."></div>
+      <div><label class="form-label">인스타 팔로워</label><input class="form-input" id="a-ig-followers" placeholder="예: 8만"></div>
+    </div>`;
+  if (aPlats.tt) html += `
+    <div class="form-row-2" style="margin-bottom:10px">
+      <div><label class="form-label">🎵 틱톡 URL</label><input class="form-input" id="a-tt-url" placeholder="https://tiktok.com/@..."></div>
+      <div><label class="form-label">틱톡 팔로워</label><input class="form-input" id="a-tt-followers" placeholder="예: 5만"></div>
+    </div>`;
+  wrap.innerHTML = html;
 }
 
 function saveAmb() {
   const name = document.getElementById('a-name').value.trim();
   if (!name) return alert('이름을 입력해주세요');
   const plats = Object.keys(aPlats).filter(k => aPlats[k]);
+  if (!plats.length) return alert('플랫폼을 하나 이상 선택해주세요');
   const start = document.getElementById('a-start').value;
   const end   = document.getElementById('a-end').value;
   const missions = {};
   MONTHS.forEach(m => { missions[m] = { product:'', contentType:'yt_ig', guide:'', ytUrl:'', igUrl:'', deadline:'', status:'planned', note:'' }; });
   const amb = {
     id: Date.now().toString(),
-    name, handle: document.getElementById('a-handle').value.trim(),
-    url: document.getElementById('a-url').value.trim(),
-    platforms: plats,
-    ytSubs: document.getElementById('a-yt-subs').value.trim(),
-    igFollowers: document.getElementById('a-ig-followers').value.trim(),
-    category: document.getElementById('a-category').value,
-    fee: document.getElementById('a-fee').value || 0,
-    note: document.getElementById('a-note').value.trim(),
-    contractStart: start, contractEnd: end,
+    name,
+    handle:      document.getElementById('a-handle').value.trim(),
+    category:    document.getElementById('a-category').value.trim(),
+    platforms:   plats,
+    ytUrl:       document.getElementById('a-yt-url')?.value.trim() || '',
+    igUrl:       document.getElementById('a-ig-url')?.value.trim() || '',
+    ttUrl:       document.getElementById('a-tt-url')?.value.trim() || '',
+    ytSubs:      document.getElementById('a-yt-subs')?.value.trim() || '',
+    igFollowers: document.getElementById('a-ig-followers')?.value.trim() || '',
+    ttFollowers: document.getElementById('a-tt-followers')?.value.trim() || '',
+    fee:         document.getElementById('a-fee').value || 0,
+    note:        document.getElementById('a-note').value.trim(),
+    contractStart: start,
+    contractEnd:   end,
     missions,
   };
   ambassadors.push(amb);
@@ -619,9 +724,16 @@ function renderAmbs() {
   }
 
   document.getElementById('amb-list').innerHTML = ambassadors.map(a => {
-    const plats = (a.platforms||[]).map(p => p==='yt'
-      ? `<span class="amb-info-tag" style="background:#fee2e2;color:#dc2626">🎥 유튜브</span>`
-      : `<span class="amb-info-tag" style="background:#fdf4ff;color:#9333ea">📸 인스타</span>`).join('');
+    const platMap = {
+      yt: { label:'🎥 유튜브',    bg:'#fee2e2', color:'#dc2626', url: a.ytUrl, subs: a.ytSubs },
+      ig: { label:'📸 인스타',    bg:'#fdf4ff', color:'#9333ea', url: a.igUrl, subs: a.igFollowers },
+      tt: { label:'🎵 틱톡',      bg:'#f0f0f0', color:'#333',   url: a.ttUrl, subs: a.ttFollowers },
+    };
+    const plats = (a.platforms||[]).map(p => {
+      const m = platMap[p]; if(!m) return '';
+      const link = m.url ? `<a href="${m.url}" target="_blank" style="color:${m.color};font-size:10px;text-decoration:none;margin-left:3px">↗</a>` : '';
+      return `<span class="amb-info-tag" style="background:${m.bg};color:${m.color}">${m.label}${m.subs?` · ${m.subs}`:''}${link}</span>`;
+    }).join('');
 
     const missionRows = MONTHS.map(m => {
       const mis = a.missions?.[m] || {};
