@@ -3,365 +3,341 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>온살 마케팅 예산 플래너</title>
+<title>온살 예산 플래너</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
-
 :root {
-  --bg: #f4f5f7;
-  --white: #ffffff;
-  --border: #e2e4e9;
-  --border2: #d0d3db;
-  --text: #111318;
-  --text2: #4a4f5e;
-  --text3: #9098ae;
-  --accent: #5b4ef8;
-  --accent-bg: #ede9ff;
-  --green: #12a05c;
-  --green-bg: #e6f7ef;
-  --red: #e03131;
-  --red-bg: #fff0f0;
-
-  --inf:   #2563eb; --inf-bg:   #eff6ff;
-  --amb:   #c2410c; --amb-bg:   #fff7ed;
-  --exp:   #15803d; --exp-bg:   #f0fdf4;
-  --ad:    #7c3aed; --ad-bg:    #f5f3ff;
-  --viral: #be185d; --viral-bg: #fdf2f8;
-  --ops:   #475569; --ops-bg:   #f8fafc;
+  --bg:#f4f5f7; --white:#fff; --border:#e2e4e9; --border2:#d0d3db;
+  --text:#111318; --text2:#4a4f5e; --text3:#9098ae;
+  --accent:#5b4ef8; --accent-bg:#ede9ff;
+  --green:#12a05c; --green-bg:#e6f7ef;
+  --red:#e03131; --red-bg:#fff0f0;
+  --orange:#d9600a;
+  --inf:#2563eb; --inf-bg:#eff6ff;
+  --amb:#c2410c; --amb-bg:#fff7ed;
+  --exp:#15803d; --exp-bg:#f0fdf4;
+  --ad:#7c3aed;  --ad-bg:#f5f3ff;
+  --viral:#be185d; --viral-bg:#fdf2f8;
 }
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
-body { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
-
-
-.gnav-link{padding:0 16px;height:64px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border-bottom:3px solid transparent;transition:all .15s;}
-.gnav-link:hover{color:var(--text2);}
-.gnav-link.active{color:var(--accent);border-bottom-color:var(--accent);}
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-
-/* HEADER */
-header {
-  height: 64px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  gap: 0;
-  flex-shrink: 0;
+/* ── HEADER ── */
+.app-header {
+  height:56px; background:var(--white); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 20px; gap:0;
+  box-shadow:0 1px 4px rgba(0,0,0,.05); position:sticky; top:0; z-index:50; flex-shrink:0;
 }
 .logo {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 16px; font-weight: 800; color: var(--text);
-  white-space: nowrap; letter-spacing: -0.4px;
-  padding-right: 24px; border-right: 1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+  font-size:15px; font-weight:800; color:var(--text);
+  padding-right:16px; border-right:1px solid var(--border); white-space:nowrap;
 }
-.logo-mark { width: 30px; height: 30px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-.header-stats { display: flex; flex: 1; }
-.hstat { padding: 0 24px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
-.hstat-label { font-size: 10px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 1px; }
-.hstat-main { font-size: 17px; font-weight: 800; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
-.hstat-sub  { font-size: 11px; color: var(--text3); font-weight: 500; font-variant-numeric: tabular-nums; margin-top: 0; }
-.hstat-main.ok   { color: var(--green); }
-.hstat-main.over { color: var(--red); }
-.hstat-main.neutral { color: var(--text); }
-.budget-input {
-  background: transparent; border: none; border-bottom: 2px solid var(--accent);
-  color: var(--text); font-size: 17px; font-weight: 800; width: 110px;
-  text-align: right; outline: none; font-family: inherit; letter-spacing: -0.5px;
-}
+.logo-mark{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.gnav-link{padding:0 14px;height:56px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border-bottom:3px solid transparent;transition:all .15s;}
+.gnav-link:hover{color:var(--text2);}
+.gnav-link.active{color:var(--accent);border-bottom-color:var(--accent);}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:0;border-left:1px solid var(--border);}
+.hstat{padding:0 16px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;}
+.hstat-label{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1px;}
+.hstat-val{font-size:14px;font-weight:800;letter-spacing:-.4px;font-variant-numeric:tabular-nums;}
+.hstat-val.ok{color:var(--green);}
+.hstat-val.over{color:var(--red);}
+.hstat-val.neu{color:var(--text);}
+.budget-input{background:transparent;border:none;border-bottom:2px solid var(--accent);color:var(--text);font-size:14px;font-weight:800;width:80px;text-align:right;outline:none;font-family:inherit;letter-spacing:-.4px;}
 
-/* LAYOUT */
-.layout { display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 64px); }
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:340px 1fr;height:calc(100vh - 56px);}
 
-/* LEFT */
-.left { background: var(--white); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-.left-top { padding: 16px 16px 0; flex-shrink: 0; }
-.left-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+/* ── LEFT PANEL ── */
+.left{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.left-top{padding:14px 14px 0;flex-shrink:0;}
+.left-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
 
-.search-box {
-  width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 9px;
-  padding: 9px 12px 9px 36px; font-size: 13px; color: var(--text); outline: none;
-  font-family: inherit; transition: border-color 0.15s, box-shadow 0.15s;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239098ae' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: 11px center;
-}
-.search-box::placeholder { color: var(--text3); }
-.search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,78,248,0.1); }
+/* search */
+.search-wrap{position:relative;margin-bottom:0;}
+.search-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px 8px 34px;font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:border-color .15s;}
+.search-input::placeholder{color:var(--text3);}
+.search-input:focus{border-color:var(--accent);}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none;}
 
-/* CAT TABS (main) */
-.cat-tabs { display: flex; padding: 12px 16px 0; gap: 5px; flex-wrap: wrap; flex-shrink: 0; }
-.cat-tab {
-  padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
-  cursor: pointer; border: 1.5px solid var(--border); color: var(--text2); background: var(--bg);
-  transition: all 0.15s; white-space: nowrap; margin-bottom: 3px;
-}
-.cat-tab:hover { border-color: var(--border2); color: var(--text); }
-.cat-tab.active-inf   { background: var(--inf-bg);   border-color: var(--inf);   color: var(--inf);   }
-.cat-tab.active-amb   { background: var(--amb-bg);   border-color: var(--amb);   color: var(--amb);   }
-.cat-tab.active-exp   { background: var(--exp-bg);   border-color: var(--exp);   color: var(--exp);   }
-.cat-tab.active-ad    { background: var(--ad-bg);    border-color: var(--ad);    color: var(--ad);    }
-.cat-tab.active-viral { background: var(--viral-bg); border-color: var(--viral); color: var(--viral); }
-.cat-tab.active-ops   { background: var(--ops-bg);   border-color: var(--ops);   color: var(--ops);   }
+/* cat tabs */
+.cat-tabs{display:flex;padding:10px 14px 0;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.cat-tab{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--bg);transition:all .12s;white-space:nowrap;margin-bottom:3px;}
+.cat-tab:hover{border-color:var(--border2);color:var(--text);}
+.cat-tab.a-inf  {background:var(--inf-bg);  border-color:var(--inf);  color:var(--inf);}
+.cat-tab.a-amb  {background:var(--amb-bg);  border-color:var(--amb);  color:var(--amb);}
+.cat-tab.a-exp  {background:var(--exp-bg);  border-color:var(--exp);  color:var(--exp);}
+.cat-tab.a-ad   {background:var(--ad-bg);   border-color:var(--ad);   color:var(--ad);}
+.cat-tab.a-viral{background:var(--viral-bg);border-color:var(--viral);color:var(--viral);}
 
-/* INF SUB-CATEGORY FILTER */
-.inf-sub-filter { display: flex; padding: 8px 16px 0; gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
-.sub-chip {
-  padding: 3px 10px; border-radius: 14px; font-size: 11px; font-weight: 600;
-  cursor: pointer; border: 1px solid var(--border); color: var(--text3); background: transparent;
-  transition: all 0.12s; white-space: nowrap;
-}
-.sub-chip:hover { color: var(--text2); border-color: var(--border2); }
-.sub-chip.on { background: var(--text); border-color: var(--text); color: white; }
+/* sub-filter chips */
+.sub-filter{display:flex;padding:8px 14px 0;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.sf-chip{padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text3);background:transparent;transition:all .12s;white-space:nowrap;}
+.sf-chip:hover{color:var(--text2);border-color:var(--border2);}
+.sf-chip.on{background:var(--text);border-color:var(--text);color:white;}
 
-.item-list { overflow-y: auto; flex: 1; padding: 6px 0 16px; }
+/* yt load button */
+.yt-btn-wrap{padding:8px 14px 0;flex-shrink:0;}
+.yt-btn{width:100%;padding:7px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:7px;font-size:11px;font-weight:700;color:var(--accent);cursor:pointer;font-family:inherit;transition:all .15s;}
+.yt-btn:hover{background:var(--accent-bg);border-color:var(--accent);}
 
-/* INF CARDS */
-.inf-card {
-  margin: 2px 10px; padding: 12px 14px; border-radius: 11px;
-  border: 1.5px solid transparent; cursor: pointer; transition: all 0.15s;
-}
-.inf-card:hover { background: var(--bg); border-color: var(--border); }
-.inf-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.inf-name { font-size: 14px; font-weight: 700; color: var(--text); }
-.inf-sub-badge { font-size: 10px; color: var(--text3); background: var(--bg); padding: 2px 7px; border-radius: 9px; border: 1px solid var(--border); font-weight: 500; flex-shrink: 0; }
+.item-list{overflow-y:auto;flex:1;padding:6px 0 12px;}
 
-/* PRICE GRID */
-.price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-.pgrid-item {
-  display: flex; flex-direction: column;
-  background: var(--accent-bg); border-radius: 7px; padding: 5px 9px;
-}
-.pgrid-type { font-size: 10px; font-weight: 600; color: var(--accent); line-height: 1.2; margin-bottom: 1px; }
-.pgrid-price { font-size: 12px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -0.3px; }
-.pgrid-sub { font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
+/* ── PPL COMPACT 2-COL GRID ── */
+.inf-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px 10px;}
+.inf-card{background:var(--bg);border:1.5px solid transparent;border-radius:10px;padding:10px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:7px;}
+.inf-card:hover{background:var(--white);border-color:var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.ic-top{display:flex;justify-content:space-between;align-items:flex-start;gap:4px;}
+.ic-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.2;}
+.ic-cat{font-size:9px;color:var(--text3);background:var(--white);padding:2px 5px;border-radius:5px;border:1px solid var(--border);font-weight:600;flex-shrink:0;white-space:nowrap;}
+.ic-meta{display:flex;justify-content:space-between;align-items:center;}
+.ic-subs{font-size:10px;color:var(--text3);font-weight:500;}
+.ic-avg{font-size:10px;color:var(--text3);font-weight:500;}
+.ic-prices{display:flex;flex-direction:column;gap:3px;}
+.ic-price-row{display:flex;justify-content:space-between;align-items:center;}
+.ic-ptype{font-size:10px;color:var(--text3);}
+.ic-pval{font-size:12px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.3px;}
+.ic-footer{display:flex;gap:4px;margin-top:1px;}
+.ic-ch-btn{font-size:10px;font-weight:700;color:var(--accent);text-decoration:none;padding:3px 7px;background:var(--accent-bg);border-radius:5px;white-space:nowrap;}
+.ic-ch-btn:hover{text-decoration:none;opacity:.85;}
+.ic-add-btn{flex:1;font-size:11px;font-weight:700;background:var(--accent);color:white;border:none;border-radius:5px;padding:4px;cursor:pointer;font-family:inherit;transition:all .12s;}
+.ic-add-btn:hover{background:#4a3de0;}
+.ic-note{font-size:10px;color:var(--text3);background:rgba(0,0,0,.04);padding:4px 6px;border-radius:5px;line-height:1.3;}
 
-/* FIXED CARDS */
-.fixed-card { margin: 5px 10px; padding: 16px; border-radius: 12px; background: var(--bg); border: 1.5px solid var(--border); }
-.fixed-card h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-.fixed-desc { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
-.fixed-fields { display: flex; flex-direction: column; gap: 10px; }
-.field-row { display: flex; align-items: center; gap: 8px; }
-.field-row label { font-size: 12px; font-weight: 600; color: var(--text2); width: 90px; flex-shrink: 0; }
-.field-input { background: var(--white); border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 14px; font-weight: 700; color: var(--text); outline: none; font-family: inherit; transition: border-color 0.15s; font-variant-numeric: tabular-nums; }
-.field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,78,248,0.1); }
-.w60 { width: 64px; } .w80 { width: 80px; } .w130 { width: 130px; }
-.field-select { background: var(--white); border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 13px; font-weight: 600; color: var(--text); outline: none; font-family: inherit; cursor: pointer; }
-.field-unit { font-size: 12px; color: var(--text3); font-weight: 500; }
-.calc-preview { font-size: 13px; font-weight: 700; color: var(--accent); padding: 7px 12px; background: var(--accent-bg); border-radius: 7px; flex: 1; font-variant-numeric: tabular-nums; }
-.btn-add { margin-top: 12px; width: 100%; padding: 11px; background: var(--accent); color: white; border: none; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.btn-add:hover { background: #4a3de0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(91,78,248,0.3); }
+/* ── FIXED ITEM LIST ── */
+.fixed-list{padding:6px 10px;display:flex;flex-direction:column;gap:4px;}
+.fixed-group-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:8px 4px 4px;}
+.fli{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:9px;border:1.5px solid transparent;cursor:pointer;transition:all .15s;}
+.fli:hover{background:var(--white);border-color:var(--border);box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.fli-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.fli-body{flex:1;min-width:0;}
+.fli-name{font-size:13px;font-weight:700;color:var(--text);}
+.fli-desc{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fli-price{font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.fli-price-sub{font-size:10px;color:var(--text3);}
+.fli-add{background:var(--accent);color:white;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;}
 
-/* RIGHT */
-.right { display: flex; flex-direction: column; overflow: hidden; }
-.month-tabs { display: flex; padding: 0 20px; background: var(--white); border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; }
-.mtab { padding: 16px 16px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; color: var(--text3); transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
-.mtab:hover { color: var(--text2); }
-.mtab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.mbadge { font-size: 10px; font-weight: 700; background: var(--accent-bg); color: var(--accent); border-radius: 9px; padding: 2px 7px; font-variant-numeric: tabular-nums; }
+/* ── RIGHT PANEL ── */
+.right{display:flex;flex-direction:column;overflow:hidden;}
 
-.month-body { flex: 1; overflow-y: auto; padding: 20px; }
+/* month tabs */
+.month-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);padding:0 18px;overflow-x:auto;flex-shrink:0;}
+.m-tab{padding:14px 14px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;color:var(--text3);transition:all .15s;display:flex;align-items:center;gap:6px;}
+.m-tab:hover{color:var(--text2);}
+.m-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.m-badge{font-size:10px;font-weight:700;background:var(--accent-bg);color:var(--accent);border-radius:8px;padding:1px 6px;font-variant-numeric:tabular-nums;}
 
-/* SUMMARY */
-.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
-.scard { background: var(--white); border-radius: 12px; padding: 16px 18px; border: 1.5px solid var(--border); transition: box-shadow 0.15s; }
-.scard:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
-.slabel { font-size: 10px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
-.sval-main  { font-size: 20px; font-weight: 800; letter-spacing: -0.8px; font-variant-numeric: tabular-nums; line-height: 1.2; }
-.sval-sub   { font-size: 11px; color: var(--text3); font-weight: 500; margin-top: 3px; font-variant-numeric: tabular-nums; }
-.sval-main.ok { color: var(--green); }
-.sval-main.over { color: var(--red); }
-.sval-main.neutral { color: var(--text); }
-.progress-track { height: 5px; background: var(--bg); border-radius: 5px; overflow: hidden; margin-top: 8px; }
-.progress-fill  { height: 100%; border-radius: 5px; transition: width 0.4s ease; }
+.right-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
 
-/* PLAN SECTION */
-.plan-section { background: var(--white); border-radius: 12px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 12px; }
-.plan-section-head { padding: 14px 18px; border-bottom: 1px solid var(--border); }
-.plan-section-head-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; }
-.plan-section-head-top.has-budget { margin-bottom: 10px; }
-.cat-budget-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.cat-budget-input { background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px; padding: 5px 9px; font-size: 13px; font-weight: 700; color: var(--text); width: 90px; outline: none; font-family: inherit; font-variant-numeric: tabular-nums; }
-.cat-budget-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,78,248,0.1); }
-.cat-budget-track { flex: 1; min-width: 80px; height: 6px; background: var(--bg); border-radius: 6px; overflow: hidden; }
-.cat-budget-fill  { height: 100%; border-radius: 6px; transition: width 0.4s ease; }
-.cat-budget-stats { font-size: 11px; color: var(--text3); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.cat-budget-stats.warn { color: var(--orange, #d9600a); }
-.cat-budget-stats.over { color: var(--red); }
+/* ── SUMMARY ROW ── */
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.sum-card{background:var(--white);border-radius:11px;padding:14px 16px;border:1.5px solid var(--border);}
+.sum-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.06);}
+.sum-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.sum-val{font-size:18px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;}
+.sum-val.ok{color:var(--green);}
+.sum-val.over{color:var(--red);}
+.sum-val.neu{color:var(--text);}
+.sum-sub{font-size:11px;color:var(--text3);margin-top:3px;font-variant-numeric:tabular-nums;}
+.prog-track{height:5px;background:var(--bg);border-radius:5px;overflow:hidden;margin-top:8px;}
+.prog-fill{height:100%;border-radius:5px;transition:width .4s ease;}
 
-/* 카테고리 예산 개요 카드 */
-.budget-overview { background: var(--white); border-radius: 12px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 18px; }
-.budget-overview-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.budget-overview-head h3 { font-size: 13px; font-weight: 700; color: var(--text); }
-.budget-overview-body { padding: 4px 0; }
-.bov-row { display: grid; grid-template-columns: 100px 110px 1fr 90px 70px; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); }
-.bov-row:last-child { border-bottom: none; }
-.bov-label { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--text); }
-.bov-input-wrap { display: flex; align-items: center; gap: 5px; }
-.bov-input { background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px; padding: 5px 8px; font-size: 13px; font-weight: 700; color: var(--text); width: 80px; outline: none; font-family: inherit; font-variant-numeric: tabular-nums; }
-.bov-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,78,248,0.1); }
-.bov-track { height: 8px; background: var(--bg); border-radius: 8px; overflow: hidden; }
-.bov-fill  { height: 100%; border-radius: 8px; transition: width 0.4s ease; }
-.bov-spent { font-size: 12px; font-weight: 700; color: var(--text2); text-align: right; font-variant-numeric: tabular-nums; }
-.bov-pct   { font-size: 13px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
-.bov-pct.ok   { color: var(--green); }
-.bov-pct.warn { color: #d9600a; }
-.bov-pct.over { color: var(--red); }
-.section-left { display: flex; align-items: center; gap: 9px; }
-.section-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-.dot-inf { background: var(--inf); } .dot-amb { background: var(--amb); }
-.dot-exp { background: var(--exp); } .dot-ad  { background: var(--ad); }
-.dot-viral { background: var(--viral); } .dot-ops { background: var(--ops); }
-.section-name  { font-size: 14px; font-weight: 700; color: var(--text); }
-.section-count { font-size: 11px; color: var(--text3); font-weight: 500; }
-.section-amount { font-size: 15px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
-.section-amount-sub { font-size: 11px; color: var(--text3); font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+/* ── PLAN SECTION ── */
+.plan-section{background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden;}
+.ps-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ps-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ps-name{font-size:14px;font-weight:700;color:var(--text);}
+.ps-count{font-size:11px;color:var(--text3);font-weight:500;}
+.ps-bar-wrap{flex:1;min-width:60px;}
+.ps-bar-track{height:5px;background:var(--bg);border-radius:5px;overflow:hidden;}
+.ps-bar-fill{height:100%;border-radius:5px;transition:width .4s;}
+.ps-budget-area{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.ps-spent{font-size:12px;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ps-pct{font-size:11px;font-weight:800;white-space:nowrap;}
+.ps-pct.ok{color:var(--green);}
+.ps-pct.warn{color:var(--orange);}
+.ps-pct.over{color:var(--red);}
+.ps-budget-input{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700;color:var(--text);width:76px;outline:none;font-family:inherit;font-variant-numeric:tabular-nums;text-align:right;}
+.ps-budget-input:focus{border-color:var(--accent);}
+.ps-budget-unit{font-size:11px;color:var(--text3);}
 
-.empty-msg { padding: 28px; text-align: center; color: var(--text3); font-size: 13px; font-weight: 500; }
+/* plan items */
+.ps-items{padding:4px 8px 8px;}
+.ps-empty{padding:24px;text-align:center;color:var(--text3);font-size:12px;}
+.plan-item{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;transition:background .1s;}
+.plan-item:hover{background:var(--bg);}
+.pi-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pi-info{flex:1;min-width:0;}
+.pi-name{font-size:13px;font-weight:700;color:var(--text);}
+.pi-type{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;margin-top:2px;}
+.pi-prices{text-align:right;flex-shrink:0;}
+.pi-vat{font-size:14px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.3px;}
+.pi-raw{font-size:10px;color:var(--text3);font-variant-numeric:tabular-nums;}
+.pi-memo{background:transparent;border:none;font-size:12px;color:var(--text3);width:100px;outline:none;font-family:inherit;}
+.pi-memo:focus{color:var(--text2);}
+.pi-del{background:none;border:none;color:var(--border2);cursor:pointer;padding:4px;border-radius:5px;font-size:13px;transition:all .12s;}
+.pi-del:hover{color:var(--red);background:var(--red-bg);}
 
-/* TABLE */
-table { width: 100%; border-collapse: collapse; }
-th { padding: 9px 16px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid var(--border); background: #fafbfc; white-space: nowrap; }
-td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: #fafbff; }
-.td-name { font-size: 14px; font-weight: 700; color: var(--text); }
-.td-price { text-align: right; }
-.td-price-main { font-size: 14px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
-.td-price-sub  { font-size: 11px; color: var(--text3); font-variant-numeric: tabular-nums; margin-top: 1px; }
+/* section subtotal */
+.ps-subtotal{padding:8px 16px 10px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);background:#fafbfc;}
+.ps-subtotal-label{font-size:11px;font-weight:600;color:var(--text3);}
+.ps-subtotal-val{font-size:14px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;}
+.ps-subtotal-sub{font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
 
-.type-pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 7px; white-space: nowrap; }
-.pill-inf   { background: var(--inf-bg);   color: var(--inf);   }
-.pill-amb   { background: var(--amb-bg);   color: var(--amb);   }
-.pill-exp   { background: var(--exp-bg);   color: var(--exp);   }
-.pill-ad    { background: var(--ad-bg);    color: var(--ad);    }
-.pill-viral { background: var(--viral-bg); color: var(--viral); }
-.pill-ops   { background: var(--ops-bg);   color: var(--ops);   }
+/* pill colors */
+.pill-inf  {background:var(--inf-bg);  color:var(--inf);}
+.pill-amb  {background:var(--amb-bg);  color:var(--amb);}
+.pill-exp  {background:var(--exp-bg);  color:var(--exp);}
+.pill-ad   {background:var(--ad-bg);   color:var(--ad);}
+.pill-viral{background:var(--viral-bg);color:var(--viral);}
 
-.memo-inp { background: transparent; border: none; font-size: 12px; color: var(--text3); width: 110px; outline: none; font-family: inherit; }
-.memo-inp:focus { color: var(--text2); border-bottom: 1px solid var(--border2); }
-.del-btn { background: none; border: none; color: var(--border2); cursor: pointer; padding: 4px 6px; border-radius: 6px; font-size: 12px; transition: all 0.15s; line-height: 1; }
-.del-btn:hover { color: var(--red); background: var(--red-bg); }
-.total-row td { font-weight: 800; background: #f7f8fc; border-top: 2px solid var(--border); }
+/* dot colors */
+.dot-inf  {background:var(--inf);}
+.dot-amb  {background:var(--amb);}
+.dot-exp  {background:var(--exp);}
+.dot-ad   {background:var(--ad);}
+.dot-viral{background:var(--viral);}
 
-/* MODAL */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 300; align-items: center; justify-content: center; }
-.overlay.show { display: flex; }
-.modal { background: var(--white); border-radius: 18px; padding: 28px; width: 400px; border: 1.5px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.14); }
-.modal-name { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 3px; }
-.modal-sub  { font-size: 13px; color: var(--text3); margin-bottom: 22px; }
-.modal label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
-.modal select, .modal input[type=text] { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 9px; padding: 11px 13px; font-size: 14px; font-weight: 600; color: var(--text); outline: none; font-family: inherit; margin-bottom: 16px; transition: border-color 0.15s; }
-.modal select:focus, .modal input[type=text]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,78,248,0.1); }
-.price-preview { background: var(--accent-bg); border: 1.5px solid rgba(91,78,248,0.2); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
-.pp-label { font-size: 10px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
-.pp-row { display: flex; justify-content: space-between; align-items: baseline; }
-.pp-won  { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.8px; font-variant-numeric: tabular-nums; }
-.pp-kor  { font-size: 14px; font-weight: 700; color: var(--text3); font-variant-numeric: tabular-nums; }
-.pp-divider { border: none; border-top: 1px solid rgba(91,78,248,0.15); margin: 10px 0; }
-.pp-vat-row { display: flex; justify-content: space-between; align-items: baseline; }
-.pp-vat-label { font-size: 11px; color: var(--text3); }
-.pp-vat-won { font-size: 16px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
-.modal-btns { display: flex; gap: 8px; }
-.mbtn-cancel { flex: 1; padding: 12px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 9px; color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.mbtn-cancel:hover { border-color: var(--border2); color: var(--text); }
-.mbtn-ok { flex: 2; padding: 12px; background: var(--accent); border: none; border-radius: 9px; color: white; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.mbtn-ok:hover { background: #4a3de0; box-shadow: 0 4px 14px rgba(91,78,248,0.3); }
+/* ── MODAL (PPL add) ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(5px);z-index:200;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:26px;width:380px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.14);}
+.m-name{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.4px;margin-bottom:2px;}
+.m-sub{font-size:12px;color:var(--text3);margin-bottom:18px;}
+.m-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px;}
+.m-select,.m-text{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:500;color:var(--text);outline:none;font-family:inherit;margin-bottom:13px;}
+.m-select:focus,.m-text:focus{border-color:var(--accent);}
+.price-box{background:var(--accent-bg);border:1.5px solid rgba(91,78,248,.2);border-radius:10px;padding:14px;margin-bottom:16px;}
+.pb-label{font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+.pb-row{display:flex;justify-content:space-between;align-items:baseline;}
+.pb-won{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.6px;font-variant-numeric:tabular-nums;}
+.pb-kor{font-size:13px;font-weight:700;color:var(--text3);font-variant-numeric:tabular-nums;}
+.pb-div{border:none;border-top:1px solid rgba(91,78,248,.15);margin:8px 0;}
+.pb-vat-row{display:flex;justify-content:space-between;}
+.pb-vat-label{font-size:11px;color:var(--text3);}
+.pb-vat-val{font-size:14px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;}
+.m-btns{display:flex;gap:8px;}
+.m-cancel{flex:1;padding:11px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.m-ok{flex:2;padding:11px;background:var(--accent);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.m-ok:hover{background:#4a3de0;}
+
+/* ── FIXED QUICK-ADD MODAL ── */
+.fmodal{width:340px;}
+.fm-field-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.fm-fl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px;}
+.fm-input,.fm-select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:14px;font-weight:600;color:var(--text);outline:none;font-family:inherit;font-variant-numeric:tabular-nums;}
+.fm-input:focus,.fm-select:focus{border-color:var(--accent);}
+.fm-preview{background:var(--accent-bg);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.fm-preview-label{font-size:11px;color:var(--accent);font-weight:700;}
+.fm-preview-val{font-size:16px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo"><div class="logo-mark">🌿</div>온살 마케팅 플래너</div>
+<header class="app-header">
+  <div class="logo"><div class="logo-mark">🌿</div>온살</div>
   <nav id="globalNav"></nav>
-  <div class="header-stats">
+  <div class="header-right">
     <div class="hstat">
       <div class="hstat-label">총 예산</div>
-      <div class="hstat-main neutral">
-        <input class="budget-input" id="budgetInput" type="number" value="10000">만원
-      </div>
+      <div class="hstat-val neu"><input class="budget-input" id="budgetInput" type="number" value="10000">만원</div>
     </div>
     <div class="hstat">
-      <div class="hstat-label">집행 합계 (VAT포함)</div>
-      <div class="hstat-main ok" id="hSpent">0원</div>
-      <div class="hstat-sub" id="hSpentSub"></div>
+      <div class="hstat-label">집행 (VAT포함)</div>
+      <div class="hstat-val ok" id="hSpent">0원</div>
     </div>
     <div class="hstat">
-      <div class="hstat-label">잔여 예산</div>
-      <div class="hstat-main ok" id="hRemain">1억원</div>
-      <div class="hstat-sub" id="hRemainSub">100,000,000원</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-label">소진율</div>
-      <div class="hstat-main neutral" id="hPct">0%</div>
+      <div class="hstat-label">잔여</div>
+      <div class="hstat-val ok" id="hRemain">1억원</div>
     </div>
   </div>
 </header>
 
 <div class="layout">
+
+  <!-- LEFT -->
   <div class="left">
     <div class="left-top">
       <div class="left-title">항목 추가</div>
-      <div id="infSearchWrap"><input class="search-box" id="infSearch" placeholder="인플루언서 검색..." oninput="renderItems()"></div>
+      <div class="search-wrap" id="searchWrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="infSearch" placeholder="인플루언서 검색..." oninput="renderItems()">
+      </div>
     </div>
     <div class="cat-tabs" id="catTabs"></div>
-    <div class="inf-sub-filter" id="infSubFilter"></div>
-    <div id="ytLoadWrap" style="padding:8px 16px 0;display:none">
-      <button id="ytLoadBtn" onclick="loadAllYtData()" style="width:100%;padding:8px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;font-family:inherit;transition:all 0.15s">↺ 구독자 · 조회수 불러오기</button>
+    <div class="sub-filter" id="subFilter"></div>
+    <div class="yt-btn-wrap" id="ytBtnWrap">
+      <button class="yt-btn" id="ytLoadBtn" onclick="loadAllYtData()">↺ 구독자 · 조회수 불러오기</button>
     </div>
     <div class="item-list" id="itemList"></div>
   </div>
 
+  <!-- RIGHT -->
   <div class="right">
     <div class="month-tabs" id="monthTabs"></div>
-    <div class="month-body" id="monthBody"></div>
+    <div class="right-body" id="rightBody"></div>
   </div>
+
 </div>
 
+<!-- PPL add modal -->
 <div class="overlay" id="overlay">
   <div class="modal">
-    <div class="modal-name" id="mName"></div>
-    <div class="modal-sub" id="mSub"></div>
-    <label>콘텐츠 유형</label>
-    <select id="mType" onchange="updateModalPrice()"></select>
-    <label>진행 월</label>
-    <select id="mMonth"></select>
-    <label>메모 (선택)</label>
-    <input type="text" id="mMemo" placeholder="예: 8월 24일 주차 확정">
-    <div class="price-preview">
-      <div class="pp-label">단가 (VAT 별도)</div>
-      <div class="pp-row">
-        <div class="pp-won" id="ppWon">-</div>
-        <div class="pp-kor" id="ppKor">-</div>
-      </div>
-      <hr class="pp-divider">
-      <div class="pp-vat-row">
-        <div class="pp-vat-label">VAT 포함</div>
-        <div class="pp-vat-won" id="ppVat">-</div>
-      </div>
+    <div class="m-name" id="mName"></div>
+    <div class="m-sub" id="mSub"></div>
+    <label class="m-label">콘텐츠 유형</label>
+    <select class="m-select" id="mType" onchange="updateModalPrice()"></select>
+    <label class="m-label">진행 월</label>
+    <select class="m-select" id="mMonth"></select>
+    <label class="m-label">메모 (선택)</label>
+    <input class="m-text" id="mMemo" placeholder="예: 8월 24일 주차 확정">
+    <div class="price-box">
+      <div class="pb-label">단가</div>
+      <div class="pb-row"><div class="pb-won" id="pbWon">-</div><div class="pb-kor" id="pbKor">-</div></div>
+      <hr class="pb-div">
+      <div class="pb-vat-row"><span class="pb-vat-label">VAT 포함</span><span class="pb-vat-val" id="pbVat">-</span></div>
     </div>
-    <div class="modal-btns">
-      <button class="mbtn-cancel" onclick="closeModal()">취소</button>
-      <button class="mbtn-ok" onclick="addFromModal()">플랜에 추가 →</button>
+    <div class="m-btns">
+      <button class="m-cancel" onclick="closeModal()">취소</button>
+      <button class="m-ok" onclick="addFromModal()">플랜에 추가 →</button>
     </div>
   </div>
 </div>
 
-<script>
-const MONTHS = ['6월','7월','8월','9월','10월','11월','12월'];
-const CATS = [
-  { id:'inf',   label:'PPL',        dot:'dot-inf',   pill:'pill-inf'   },
-  { id:'amb',   label:'앰버서더',   dot:'dot-amb',   pill:'pill-amb'   },
-  { id:'exp',   label:'체험단',     dot:'dot-exp',   pill:'pill-exp'   },
-  { id:'ad',    label:'광고',       dot:'dot-ad',    pill:'pill-ad'    },
-  { id:'viral', label:'바이럴',     dot:'dot-viral', pill:'pill-viral' },
-];
+<!-- Fixed item quick-add modal -->
+<div class="overlay" id="foverlay">
+  <div class="modal fmodal">
+    <div class="m-name" id="fmName"></div>
+    <div class="m-sub" id="fmDesc" style="margin-bottom:16px"></div>
+    <div id="fmFields"></div>
+    <div class="fm-preview">
+      <span class="fm-preview-label">VAT 포함 합계</span>
+      <span class="fm-preview-val" id="fmPreview">-</span>
+    </div>
+    <label class="m-label">진행 월</label>
+    <select class="fm-select" id="fmMonth" style="margin-bottom:13px"></select>
+    <label class="m-label">메모 (선택)</label>
+    <input class="fm-input" id="fmMemo" placeholder="메모..." style="margin-bottom:16px">
+    <div class="m-btns">
+      <button class="m-cancel" onclick="closeFModal()">취소</button>
+      <button class="m-ok" onclick="addFixed()">플랜에 추가 →</button>
+    </div>
+  </div>
+</div>
 
-// 인플루언서 서브카테고리
+<script src="/nav.js"></script>
+<script>
+const MONTHS = ['7월','8월','9월','10월','11월','12월'];
+const CATS = [
+  { id:'inf',   label:'PPL',    dot:'dot-inf',   pill:'pill-inf',   col:'#2563eb' },
+  { id:'amb',   label:'앰버서더', dot:'dot-amb',   pill:'pill-amb',   col:'#c2410c' },
+  { id:'exp',   label:'체험단',  dot:'dot-exp',   pill:'pill-exp',   col:'#15803d' },
+  { id:'ad',    label:'광고',    dot:'dot-ad',    pill:'pill-ad',    col:'#7c3aed' },
+  { id:'viral', label:'바이럴',  dot:'dot-viral', pill:'pill-viral', col:'#be185d' },
+];
 const INF_SUBS = ['전체','뷰티','연예인','아이돌','일상/브이로그','부부/육아','라이프스타일','뮤직'];
 
 const INFLUENCERS = [
@@ -369,168 +345,148 @@ const INFLUENCERS = [
   { name:'이리유',         sub:'뷰티', subs:'26.4만', url:'https://www.youtube.com/@iiyu',               prices:[{t:'브랜디드',v:4300},{t:'기획PPL',v:3300},{t:'릴스',v:600},{t:'쇼츠',v:800}] },
   { name:'시네',           sub:'뷰티', subs:'49.9만', url:'https://www.youtube.com/@sine',               prices:[{t:'브랜디드',v:4000},{t:'쇼츠(3채널미러링)',v:3200}] },
   { name:'최모나',         sub:'뷰티', subs:'44.7만', url:'https://www.youtube.com/@choimona',           prices:[{t:'브랜디드',v:4300},{t:'기획PPL',v:3700},{t:'쇼츠',v:1000}] },
-  { name:'코코초',         sub:'뷰티', subs:'39.8만', url:'https://www.youtube.com/@IAMSTARRYYHAYY',   prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000},{t:'쇼츠',v:1000}] },
+  { name:'코코초',         sub:'뷰티', subs:'39.8만', url:'https://www.youtube.com/@IAMSTARRYYHAYY',    prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000},{t:'쇼츠',v:1000}] },
   { name:'민제',           sub:'뷰티', subs:'16.9만', url:'https://www.youtube.com/@meenjechoi',         prices:[{t:'브랜디드',v:1700},{t:'기획PPL',v:1500},{t:'릴스',v:1100},{t:'쇼츠',v:1100}] },
   { name:'보리',           sub:'뷰티', subs:'7.2만',  url:'https://www.youtube.com/@bori7779',           prices:[{t:'기획PPL',v:700},{t:'쇼츠',v:500}] },
-  { name:'준돌',           sub:'뷰티', subs:'5.39만', url:'https://www.youtube.com/@Jun_dol',            prices:[{t:'브랜디드',v:600},{t:'기획PPL',v:500},{t:'기획PPL+릴스',v:550}], note:'8월 24일 주차 가능 / 마켓 공동개발 가능' },
+  { name:'준돌',           sub:'뷰티', subs:'5.39만', url:'https://www.youtube.com/@Jun_dol',            prices:[{t:'브랜디드',v:600},{t:'기획PPL',v:500},{t:'기획PPL+릴스',v:550}], note:'8월 24일 주차 가능 · 마켓 공동개발 가능' },
   // ── 연예인 ──
-  { name:'밉지않은 관종언니', sub:'연예인', subs:'103만',  url:'https://www.youtube.com/@GwanjongUn-ni',  prices:[{t:'브랜디드',v:6500},{t:'기획PPL',v:4500},{t:'기획전패키지',v:6000}], note:'구독자 103만 메가 인플루언서' },
-  { name:'차예련',         sub:'연예인', subs:'13.6만', url:'https://www.youtube.com/@iamchayeryun',     prices:[{t:'브랜디드',v:4500},{t:'기획PPL',v:3500},{t:'2차활용(1개월)',v:2000}], note:'2차활용은 브랜디드 진행시만 가능' },
-  { name:'이은지',         sub:'연예인', subs:'38.6만', url:'https://www.youtube.com/@eunjirang92/videos',      prices:[{t:'브랜디드',v:4000},{t:'기획PPL',v:2500}] },
+  { name:'밉지않은 관종언니', sub:'연예인', subs:'103만',  url:'https://www.youtube.com/@GwanjongUn-ni',  prices:[{t:'브랜디드',v:6500},{t:'기획PPL',v:4500},{t:'기획전패키지',v:6000}], note:'구독자 103만 메가' },
+  { name:'차예련',         sub:'연예인', subs:'13.6만', url:'https://www.youtube.com/@iamchayeryun',     prices:[{t:'브랜디드',v:4500},{t:'기획PPL',v:3500},{t:'2차활용(1개월)',v:2000}], note:'2차활용은 브랜디드시만 가능' },
+  { name:'이은지',         sub:'연예인', subs:'38.6만', url:'https://www.youtube.com/@eunjirang92/videos', prices:[{t:'브랜디드',v:4000},{t:'기획PPL',v:2500}] },
   { name:'인영인영(유인영)',sub:'연예인', subs:'18만',   url:'https://www.youtube.com/@inyounglog',       prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'2차활용',v:2000},{t:'2차활용패키지',v:4000}] },
   { name:'함은정',         sub:'연예인', subs:'8.31만', url:'https://www.youtube.com/@eunjungH',          prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'2차활용',v:2000},{t:'2차활용패키지',v:4000}] },
   { name:'천상여자김지유', sub:'연예인', subs:'14.2만', url:'https://www.youtube.com/@cheonsangkimjiyu', prices:[{t:'기획PPL',v:3000},{t:'인스타 릴스',v:1500},{t:'인스타 피드',v:1200}], note:'BDC 미운영 채널' },
   // ── 아이돌 ──
-  { name:'슥슥팡팡 스튜디오', sub:'아이돌', subs:'18.2만', url:'https://www.youtube.com/@sspp_studio',  prices:[{t:'BDC 브랜디드',v:4000},{t:'믿뷰 브랜디드',v:2500},{t:'BB(삐삐) 브랜디드',v:2500},{t:'도믿걸 월스폰(4회)',v:1000},{t:'도믿걸 1회',v:400}] },
+  { name:'슥슥팡팡 스튜디오', sub:'아이돌', subs:'18.2만', url:'https://www.youtube.com/@sspp_studio',  prices:[{t:'BDC 브랜디드',v:4000},{t:'믿뷰 브랜디드',v:2500},{t:'BB(삐삐) 브랜디드',v:2500},{t:'도믿걸 월스폰',v:1000},{t:'도믿걸 1회',v:400}] },
   { name:'권응비',         sub:'아이돌', subs:'2.69만', url:'https://www.youtube.com/@kwoneungbi',       prices:[{t:'브랜디드',v:3300},{t:'기획PPL',v:2200}], note:'8월 논의 가능' },
   { name:'김소원',         sub:'아이돌', subs:'13.9만', url:'https://www.youtube.com/@SOWON',            prices:[{t:'브랜디드',v:2000},{t:'기획PPL',v:1500}] },
   { name:'채인',           sub:'아이돌', subs:'9.1천',  url:'https://www.youtube.com/@chaein',           prices:[{t:'브랜디드',v:200},{t:'기획PPL',v:100}] },
   // ── 일상/브이로그 ──
-  { name:'규진',           sub:'일상/브이로그', subs:'24.6만', url:'https://www.youtube.com/@gyuuujin',         prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2400}] },
-  { name:'배지현',         sub:'일상/브이로그', subs:'10.6만', url:'https://www.youtube.com/@CH.BaeJihyun',     prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000}] },
-  { name:'내사랑 류이서',  sub:'일상/브이로그', subs:'4.12만', url:'https://www.youtube.com/@Myloveryuyiseo/videos',   prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'초상라이선스',v:1000},{t:'온라인광고',v:2000},{t:'커머스라이선스',v:2000},{t:'편집라이선스',v:1000}] },
-  { name:'뀨우',           sub:'일상/브이로그', subs:'14.4만', url:'https://www.youtube.com/@oe_day',           prices:[{t:'브랜디드',v:850},{t:'기획PPL',v:750}] },
-  { name:'이개은',         sub:'일상/브이로그', subs:'10만',   url:'https://www.youtube.com/@gaeniiee',          prices:[{t:'브랜디드',v:800},{t:'릴스',v:300},{t:'쇼츠',v:300}] },
-  { name:'이밍꾸',         sub:'일상/브이로그', subs:'4.05만', url:'https://www.youtube.com/@EMINGGU',          prices:[{t:'브랜디드',v:400},{t:'기획PPL',v:250}] },
-  { name:'지혜사랑',       sub:'일상/브이로그', subs:'7.48만', url:'https://www.youtube.com/@JIHYESARANG',      prices:[{t:'브랜디드',v:920},{t:'기획PPL',v:770},{t:'쇼츠',v:390}] },
+  { name:'규진',           sub:'일상/브이로그', subs:'24.6만', url:'https://www.youtube.com/@gyuuujin',        prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2400}] },
+  { name:'배지현',         sub:'일상/브이로그', subs:'10.6만', url:'https://www.youtube.com/@CH.BaeJihyun',    prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000}] },
+  { name:'내사랑 류이서',  sub:'일상/브이로그', subs:'4.12만', url:'https://www.youtube.com/@Myloveryuyiseo/videos', prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'초상라이선스',v:1000},{t:'온라인광고',v:2000},{t:'커머스라이선스',v:2000}] },
+  { name:'뀨우',           sub:'일상/브이로그', subs:'14.4만', url:'https://www.youtube.com/@oe_day',          prices:[{t:'브랜디드',v:850},{t:'기획PPL',v:750}] },
+  { name:'이개은',         sub:'일상/브이로그', subs:'10만',   url:'https://www.youtube.com/@gaeniiee',         prices:[{t:'브랜디드',v:800},{t:'릴스',v:300},{t:'쇼츠',v:300}] },
+  { name:'이밍꾸',         sub:'일상/브이로그', subs:'4.05만', url:'https://www.youtube.com/@EMINGGU',         prices:[{t:'브랜디드',v:400},{t:'기획PPL',v:250}] },
+  { name:'지혜사랑',       sub:'일상/브이로그', subs:'7.48만', url:'https://www.youtube.com/@JIHYESARANG',     prices:[{t:'브랜디드',v:920},{t:'기획PPL',v:770},{t:'쇼츠',v:390}] },
   // ── 부부/육아 ──
-  { name:'종지부부',       sub:'부부/육아', subs:'58만',   url:'https://www.youtube.com/@jongji_bubu',    prices:[{t:'브랜디드',v:1200},{t:'릴스',v:600},{t:'쇼츠',v:600}] },
-  { name:'타코사마',       sub:'부부/육아', subs:'38.3만', url:'https://www.youtube.com/@taco_sama_',     prices:[{t:'브랜디드',v:3200},{t:'기획PPL',v:2800},{t:'쇼츠',v:800}] },
-  { name:'소히조이',       sub:'부부/육아', subs:'11만',   url:'https://www.youtube.com/@soheejoy',       prices:[{t:'브랜디드',v:1000},{t:'릴스',v:300},{t:'쇼츠',v:500}] },
-  { name:'류타쿠',         sub:'부부/육아', subs:'8.32만', url:'https://www.youtube.com/@ryutaku_ily',    prices:[{t:'브랜디드',v:800},{t:'기획PPL',v:600},{t:'릴스',v:600},{t:'쇼츠',v:500}] },
+  { name:'종지부부',       sub:'부부/육아', subs:'58만',   url:'https://www.youtube.com/@jongji_bubu',   prices:[{t:'브랜디드',v:1200},{t:'릴스',v:600},{t:'쇼츠',v:600}] },
+  { name:'타코사마',       sub:'부부/육아', subs:'38.3만', url:'https://www.youtube.com/@taco_sama_',    prices:[{t:'브랜디드',v:3200},{t:'기획PPL',v:2800},{t:'쇼츠',v:800}] },
+  { name:'소히조이',       sub:'부부/육아', subs:'11만',   url:'https://www.youtube.com/@soheejoy',      prices:[{t:'브랜디드',v:1000},{t:'릴스',v:300},{t:'쇼츠',v:500}] },
+  { name:'류타쿠',         sub:'부부/육아', subs:'8.32만', url:'https://www.youtube.com/@ryutaku_ily',   prices:[{t:'브랜디드',v:800},{t:'기획PPL',v:600},{t:'릴스',v:600},{t:'쇼츠',v:500}] },
   // ── 라이프스타일 ──
-  { name:'조조캠핑',       sub:'라이프스타일', subs:'80.6만', url:'https://www.youtube.com/@jojocamping',        prices:[{t:'브랜디드',v:2000},{t:'기획PPL',v:1400}], note:'2차활용: 집행금액의 20%' },
-  { name:'어쩔수없는윤화', sub:'라이프스타일', subs:'43.2만', url:'https://www.youtube.com/@어쩔수없는윤화', prices:[{t:'기획PPL',v:2000},{t:'쇼츠',v:800}] },
-  { name:'명예영국인',     sub:'라이프스타일', subs:'45.8만', url:'https://www.youtube.com/@jinbaekofficial',    prices:[{t:'기획PPL',v:4000},{t:'쇼츠',v:3000}] },
-  { name:'리비',           sub:'라이프스타일', subs:'49.9만', url:'https://www.youtube.com/@Leeby',              prices:[{t:'브랜디드',v:1000},{t:'기획PPL',v:800},{t:'쇼츠',v:400}] },
-  { name:'미니피',         sub:'라이프스타일', subs:'12만',   url:'https://www.youtube.com/@미니피', prices:[{t:'기획PPL',v:2100},{t:'쇼츠',v:700}] },
-  { name:'병권',           sub:'라이프스타일', subs:'3.61만', url:'https://www.youtube.com/@ybkonair/featured',           prices:[{t:'브랜디드',v:500},{t:'쇼츠',v:250}] },
+  { name:'조조캠핑',       sub:'라이프스타일', subs:'80.6만', url:'https://www.youtube.com/@jojocamping',       prices:[{t:'브랜디드',v:2000},{t:'기획PPL',v:1400}], note:'2차활용: 집행금액의 20%' },
+  { name:'어쩔수없는윤화', sub:'라이프스타일', subs:'43.2만', url:'https://www.youtube.com/@어쩔수없는윤화',   prices:[{t:'기획PPL',v:2000},{t:'쇼츠',v:800}] },
+  { name:'명예영국인',     sub:'라이프스타일', subs:'45.8만', url:'https://www.youtube.com/@jinbaekofficial',   prices:[{t:'기획PPL',v:4000},{t:'쇼츠',v:3000}] },
+  { name:'리비',           sub:'라이프스타일', subs:'49.9만', url:'https://www.youtube.com/@Leeby',             prices:[{t:'브랜디드',v:1000},{t:'기획PPL',v:800},{t:'쇼츠',v:400}] },
+  { name:'미니피',         sub:'라이프스타일', subs:'12만',   url:'https://www.youtube.com/@미니피',            prices:[{t:'기획PPL',v:2100},{t:'쇼츠',v:700}] },
+  { name:'병권',           sub:'라이프스타일', subs:'3.61만', url:'https://www.youtube.com/@ybkonair/featured',  prices:[{t:'브랜디드',v:500},{t:'쇼츠',v:250}] },
   // ── 뮤직 ──
-  { name:'들어봐! 유리의 숲', sub:'뮤직', subs:'3.91만', url:'https://www.youtube.com/@WelcomeToForest', prices:[{t:'브랜디드',v:5000},{t:'기획PPL',v:3000}], note:'아티스트 섭외비 별도 / 8월 이슈 연계' },
+  { name:'들어봐! 유리의 숲', sub:'뮤직', subs:'3.91만', url:'https://www.youtube.com/@WelcomeToForest', prices:[{t:'브랜디드',v:5000},{t:'기획PPL',v:3000}], note:'아티스트 섭외비 별도' },
 ];
 
 const FIXED_ITEMS = {
-  amb:  [{ name:'앰버서더', desc:'팔로워 5~20만 / 뷰티 카테고리 외', mode:'per', countLabel:'인원(명)', defaultCount:100, unitLabel:'인당 단가(만원)', defaultUnit:30 }],
-  exp:  [
-    // ── 레뷰 ──
-    { name:'레뷰 올인원 (첫계약)', desc:'유효기간 3개월 / 베이직 인당 2.5만 · 프리미어 인당 5만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:50 },
-    { name:'레뷰 올인원 200만',    desc:'베이직 인당 2만 / 프리미어 인당 5만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:200 },
-    { name:'레뷰 올인원 300만',    desc:'베이직 인당 1.5만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:300 },
-    { name:'레뷰 올인원 500만',    desc:'베이직 인당 1만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:500 },
-    { name:'레뷰 프리미어',        desc:'블로그 방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5 },
-    { name:'레뷰 베이직',          desc:'일반 블로그', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:1 },
-    // ── 글로우픽 ──
-    { name:'글로우픽 엠블럼_월간랭킹',   desc:'현물바터 30개 기준 충족 시 진행', mode:'fixed', valLabel:'금액(만원)', defaultVal:200 },
-    { name:'글로우픽 엠블럼_어워드',     desc:'글로우픽어워드 엠블럼', mode:'fixed', valLabel:'금액(만원)', defaultVal:500 },
-    { name:'글로우픽 엠블럼_신제품',     desc:'신제품 출시 연계', mode:'fixed', valLabel:'금액(만원)', defaultVal:100 },
-    { name:'글로우픽 엠블럼_평점/만족도',desc:'픽플 리뷰어 진행 필수', mode:'fixed', valLabel:'금액(만원)', defaultVal:100 },
-    { name:'글로우픽 엠블럼_리뷰라이선스',desc:'1년간 / 포토리뷰 1개당 5만원', mode:'fixed', valLabel:'금액(만원)', defaultVal:200 },
-    { name:'글로우픽 평가단',       desc:'1종 50명 / 2주 사용 후 앱 내 리뷰 작성', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
-    { name:'글로우픽 설문단',       desc:'설문 5개 / 100명 기본 발행 / 엠블럼 포함', mode:'fixed', valLabel:'금액(만원)', defaultVal:200 },
-    { name:'글로우픽 샘플링',       desc:'100~1,000명', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
-    { name:'글로우픽 인스타 리뷰어',desc:'릴스 20명 / 2차활용 무기한 가능', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
-    // ── 화해 ──
-    { name:'화해 꼼평단',    desc:'31~50명 / 자사몰 리뷰 연동 가능 / 꼼평단 엠블럼 제공', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
-    { name:'화해 SNS 리뷰단',desc:'릴스 30~50명 / 6개월 활용 가능', mode:'fixed', valLabel:'금액(만원)', defaultVal:400 },
-    { name:'화해 카톡 플친', desc:'화해 인앱 랜딩 / 외부 랜딩', mode:'fixed', valLabel:'건당 금액(만원)', defaultVal:250 },
-    // ── 서포터즈 / 시딩 ──
-    { name:'서포터즈 인스타', desc:'인스타 채널 서포터즈', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
-    { name:'서포터즈 블로그', desc:'블로그 채널 서포터즈', mode:'per', countLabel:'인원(명)', defaultCount:20, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
-    { name:'나노 시딩',       desc:'무상 제품 제공 — 제품원가만 입력', mode:'fixed', valLabel:'총 제품원가(만원)', defaultVal:0 },
+  amb: [
+    { name:'앰버서더', icon:'🤝', desc:'팔로워 5~20만 · 뷰티 외 카테고리', mode:'per', countLabel:'인원(명)', defaultCount:100, unitLabel:'인당(만원)', defaultUnit:30 },
   ],
-  ad:   [
-    { name:'메타 광고',       desc:'인스타그램 / 페이스북', mode:'fixed', valLabel:'월 집행금액(만원)', defaultVal:1000 },
-    { name:'네이버 SA',       desc:'네이버 검색광고',       mode:'fixed', valLabel:'월 집행금액(만원)', defaultVal:1200 },
-    { name:'네이버 쇼핑광고', desc:'쇼핑 검색광고',         mode:'fixed', valLabel:'월 집행금액(만원)', defaultVal:0 },
+  exp: [
+    // 레뷰
+    { name:'레뷰 올인원 (첫계약)', icon:'📝', desc:'3개월 유효 · 베이직 2.5만/프리미어 5만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:50, group:'레뷰' },
+    { name:'레뷰 올인원 200만',    icon:'📝', desc:'베이직 인당 2만 · 프리미어 인당 5만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:200, group:'레뷰' },
+    { name:'레뷰 올인원 300만',    icon:'📝', desc:'베이직 인당 1.5만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:300, group:'레뷰' },
+    { name:'레뷰 올인원 500만',    icon:'📝', desc:'베이직 인당 1만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:500, group:'레뷰' },
+    { name:'레뷰 프리미어',        icon:'⭐', desc:'방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5, group:'레뷰' },
+    { name:'레뷰 베이직',          icon:'📄', desc:'일반 블로그 · 앱 내 리뷰 작성', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:1, group:'레뷰' },
+    // 글로우픽
+    { name:'글로우픽 엠블럼_월간랭킹',    icon:'🏆', desc:'현물바터 30개 기준 충족 시', mode:'fixed', valLabel:'금액(만원)', defaultVal:200, group:'글로우픽' },
+    { name:'글로우픽 엠블럼_어워드',      icon:'🏆', desc:'글로우픽어워드 엠블럼', mode:'fixed', valLabel:'금액(만원)', defaultVal:500, group:'글로우픽' },
+    { name:'글로우픽 엠블럼_신제품',      icon:'🆕', desc:'신제품 출시 연계', mode:'fixed', valLabel:'금액(만원)', defaultVal:100, group:'글로우픽' },
+    { name:'글로우픽 엠블럼_평점/만족도', icon:'⭐', desc:'픽플 리뷰어 진행 필수', mode:'fixed', valLabel:'금액(만원)', defaultVal:100, group:'글로우픽' },
+    { name:'글로우픽 엠블럼_리뷰라이선스',icon:'📜', desc:'1년간 · 포토리뷰 1개당 5만원', mode:'fixed', valLabel:'금액(만원)', defaultVal:200, group:'글로우픽' },
+    { name:'글로우픽 평가단',             icon:'👥', desc:'1종 50명 · 2주 사용 후 앱 리뷰', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
+    { name:'글로우픽 설문단',             icon:'📊', desc:'설문 5개 · 100명 · 엠블럼 포함', mode:'fixed', valLabel:'금액(만원)', defaultVal:200, group:'글로우픽' },
+    { name:'글로우픽 샘플링',             icon:'🎁', desc:'100~1,000명 제품 배포', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
+    { name:'글로우픽 인스타 리뷰어',      icon:'📸', desc:'릴스 20명 · 2차활용 무기한', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
+    // 화해
+    { name:'화해 꼼평단',    icon:'💄', desc:'31~50명 · 자사몰 리뷰 연동 · 꼼평단 엠블럼', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'화해' },
+    { name:'화해 SNS 리뷰단',icon:'📱', desc:'릴스 30~50명 · 6개월 활용 가능', mode:'fixed', valLabel:'금액(만원)', defaultVal:400, group:'화해' },
+    { name:'화해 카톡 플친', icon:'💬', desc:'화해 인앱 랜딩 / 외부 랜딩', mode:'fixed', valLabel:'건당(만원)', defaultVal:250, group:'화해' },
+    // 서포터즈
+    { name:'서포터즈 인스타', icon:'📸', desc:'인스타 채널 서포터즈 · 월 활동비 지급', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5, group:'서포터즈' },
+    { name:'서포터즈 블로그', icon:'✍️', desc:'블로그 채널 서포터즈 · 월 활동비 지급', mode:'per', countLabel:'인원(명)', defaultCount:20, unitLabel:'인당(만원)', defaultUnit:5, group:'서포터즈' },
+    { name:'나노 시딩',       icon:'📦', desc:'무상 제품 제공 · 제품원가만 입력', mode:'fixed', valLabel:'제품원가(만원)', defaultVal:0, group:'서포터즈' },
   ],
-  viral:[
-    { name:'X(트위터) 바이럴', desc:'전문 대행사 운영', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
-    { name:'쓰레드 바이럴',    desc:'전문 대행사 운영', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
+  ad: [
+    { name:'메타 광고',       icon:'📘', desc:'인스타그램 · 페이스북 DA', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:1000, group:'DA' },
+    { name:'네이버 SA',       icon:'🟢', desc:'네이버 검색광고 · 키워드 입찰', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:1200, group:'SA' },
+    { name:'네이버 쇼핑광고', icon:'🛍️', desc:'쇼핑 검색 · 제품 노출', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:0, group:'SA' },
+    { name:'구글 SA',         icon:'🔵', desc:'구글 검색광고', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:0, group:'SA' },
   ],
-  ops:  [
-    { name:'촬영 소품비', desc:'스튜디오 내 기존 소품 우선 활용', mode:'fixed', valLabel:'비용(만원)', defaultVal:10 },
-    { name:'기타 제작비', desc:'콘텐츠 외주 등',                  mode:'fixed', valLabel:'비용(만원)', defaultVal:0 },
+  viral: [
+    { name:'X(트위터) 바이럴', icon:'🐦', desc:'전문 대행사 · 트위터 버즈 생성', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
+    { name:'쓰레드 바이럴',    icon:'🧵', desc:'전문 대행사 · 쓰레드 버즈', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
   ],
 };
 
+// ── STATE ──
 let plan = {};
 MONTHS.forEach(m => plan[m] = []);
 let activeCat = 'inf';
-let activeMonth = '6월';
+let activeMonth = '7월';
 let activeInfSub = '전체';
 let modalData = null;
+let fModalCtx = null; // { catId, idx }
 
-// 카테고리별 예산 (만원) — localStorage 저장
-const CAT_BUDGET_KEY = 'cat_budgets_v1';
+const CAT_BUDGET_KEY = 'cat_budgets_v2';
 const DEFAULT_CAT_BUDGETS = { inf:5000, amb:2000, exp:1500, ad:2200, viral:200 };
 let catBudgets = { ...DEFAULT_CAT_BUDGETS };
 
 function loadCatBudgets() {
-  try {
-    const raw = localStorage.getItem(CAT_BUDGET_KEY);
-    if (raw) catBudgets = { ...DEFAULT_CAT_BUDGETS, ...JSON.parse(raw) };
-  } catch {}
+  try { const r = localStorage.getItem(CAT_BUDGET_KEY); if(r) catBudgets = {...DEFAULT_CAT_BUDGETS, ...JSON.parse(r)}; } catch{}
 }
 function saveCatBudgets() {
-  try { localStorage.setItem(CAT_BUDGET_KEY, JSON.stringify(catBudgets)); } catch {}
+  try { localStorage.setItem(CAT_BUDGET_KEY, JSON.stringify(catBudgets)); } catch{}
 }
-function setCatBudget(catId, val) {
-  catBudgets[catId] = Math.max(0, parseInt(val) || 0);
-  saveCatBudgets();
-  renderMonthBody();
-  updateHeader();
-}
+function setCatBudget(id, v) { catBudgets[id] = Math.max(0, parseInt(v)||0); saveCatBudgets(); renderRightBody(); updateHeader(); }
 
-// ── YOUTUBE DATA ─────────────────────────────────────────
-const YT_STORAGE_KEY = 'yt_cache_v1';
-let ytCache = {};     // handle → { subscribers, avgViews, videos, updatedAt }
-let ytLoading = {};   // handle → true
+// ── YOUTUBE DATA ──────────────────────────────────────
+const YT_KEY = 'yt_cache_v1';
+let ytCache = {};
+let ytLoading = {};
 
 function loadYtCache() {
   try {
-    const raw = localStorage.getItem(YT_STORAGE_KEY);
+    const raw = localStorage.getItem(YT_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw);
-      // 12시간 이내 데이터만 유효
-      const cutoff = Date.now() - 12 * 60 * 60 * 1000;
-      Object.keys(parsed).forEach(h => {
-        if (new Date(parsed[h].updatedAt).getTime() > cutoff) ytCache[h] = parsed[h];
-      });
+      const p = JSON.parse(raw);
+      const cutoff = Date.now() - 12*60*60*1000;
+      Object.keys(p).forEach(h => { if (new Date(p[h].updatedAt).getTime() > cutoff) ytCache[h] = p[h]; });
     }
   } catch {}
 }
-function saveYtCache() {
-  try { localStorage.setItem(YT_STORAGE_KEY, JSON.stringify(ytCache)); } catch {}
-}
+function saveYtCache() { try { localStorage.setItem(YT_KEY, JSON.stringify(ytCache)); } catch {} }
 
 async function fetchYtData(handle) {
   if (!handle || ytLoading[handle]) return;
   ytLoading[handle] = true;
   try {
     const res = await fetch(`/api/youtube?handle=${encodeURIComponent(handle)}`);
-    if (!res.ok) throw new Error('API error');
+    if (!res.ok) throw new Error('err');
     const data = await res.json();
     ytCache[handle] = data;
     saveYtCache();
-    // 카드 업데이트 (DOM이 있으면)
-    const key = handle.replace('@', '');
-    const subEl = document.getElementById('yt-subs-' + key);
-    const avgEl = document.getElementById('yt-avg-' + key);
-    if (subEl) subEl.textContent = fmtNum(data.subscribers);
-    if (avgEl) avgEl.textContent = fmtNum(data.avgViews);
-  } catch (e) {
-    const key = handle.replace('@', '');
-    const avgEl = document.getElementById('yt-avg-' + key);
-    if (avgEl) avgEl.textContent = '오류';
-  } finally {
-    ytLoading[handle] = false;
-  }
+    const k = handle.replace('@','');
+    const se = document.getElementById('yt-s-'+k);
+    const ae = document.getElementById('yt-a-'+k);
+    if (se) se.textContent = fmtNum(data.subscribers);
+    if (ae) ae.textContent = fmtNum(data.avgViews);
+  } catch {} finally { ytLoading[handle] = false; }
 }
 
 function fmtNum(n) {
-  if (!n || n === 0) return '–';
-  if (n >= 100000000) return (n / 100000000).toFixed(1).replace(/\.0$/, '') + '억';
-  if (n >= 10000)     return (n / 10000).toFixed(1).replace(/\.0$/, '') + '만';
+  if (!n || n===0) return '–';
+  if (n >= 100000000) return (n/100000000).toFixed(1).replace(/\.0$/,'')+'억';
+  if (n >= 10000)     return (n/10000).toFixed(1).replace(/\.0$/,'')+'만';
   return n.toLocaleString('ko-KR');
 }
 
@@ -539,7 +495,6 @@ async function loadAllYtData() {
   if (btn) { btn.textContent = '로딩 중...'; btn.disabled = true; }
   const handles = INFLUENCERS.filter(i => i.url).map(i => i.url.match(/@[^/?#\s]+/)?.[0]).filter(Boolean);
   const uncached = handles.filter(h => !ytCache[h]);
-  // 3개씩 병렬 처리
   for (let i = 0; i < uncached.length; i += 3) {
     await Promise.all(uncached.slice(i, i+3).map(h => fetchYtData(h)));
   }
@@ -547,202 +502,133 @@ async function loadAllYtData() {
   if (btn) { btn.textContent = '↺ 데이터 새로고침'; btn.disabled = false; }
 }
 
-// ── NUMBER FORMAT ────────────────────────────────────────
-// Input unit: 만원 (integer)
-// fmtKor: "4,300만원" / "1억원" / "1억 5,000만원"
-// fmtWon: "43,000,000원"
-function fmtKor(man) {
-  const eok = Math.floor(man / 10000);
-  const rem = man % 10000;
-  if (eok > 0 && rem > 0) return `${eok}억 ${rem.toLocaleString('ko-KR')}만원`;
-  if (eok > 0) return `${eok}억원`;
-  return `${man.toLocaleString('ko-KR')}만원`;
-}
-function fmtWon(man) {
-  return (man * 10000).toLocaleString('ko-KR') + '원';
-}
-// compact for chips: "4,300만" / "1억"
-function fmtShort(man) {
-  const eok = Math.floor(man / 10000);
-  const rem = man % 10000;
-  if (eok > 0 && rem > 0) return `${eok}억 ${rem.toLocaleString('ko-KR')}만`;
-  if (eok > 0) return `${eok}억`;
-  return `${man.toLocaleString('ko-KR')}만`;
-}
+// ── FORMAT ──
+const fmtKor = m => {
+  const e = Math.floor(m/10000), r = m%10000;
+  if (e>0 && r>0) return `${e}억 ${r.toLocaleString('ko-KR')}만원`;
+  if (e>0) return `${e}억원`;
+  return `${m.toLocaleString('ko-KR')}만원`;
+};
+const fmtWon = m => (m*10000).toLocaleString('ko-KR')+'원';
+const fmtShort = m => {
+  const e=Math.floor(m/10000), r=m%10000;
+  if(e>0&&r>0) return `${e}억 ${r.toLocaleString()}만`;
+  if(e>0) return `${e}억`;
+  return `${m.toLocaleString()}만`;
+};
+const allTotal = () => Object.values(plan).flat().reduce((s,i) => s+i.priceVat, 0);
 
-const allTotal = () => Object.values(plan).flat().reduce((s,i) => s + i.priceVat, 0);
-
-// ── HEADER ───────────────────────────────────────────────
+// ── HEADER ──
 function updateHeader() {
   const budget = +document.getElementById('budgetInput').value || 10000;
-  const total  = allTotal();
-  const remain = budget - total;
-  const pct    = budget > 0 ? Math.min(999, Math.round(total/budget*100)) : 0;
-
-  const se = document.getElementById('hSpent'),  ss = document.getElementById('hSpentSub');
-  const re = document.getElementById('hRemain'), rs = document.getElementById('hRemainSub');
-  const pe = document.getElementById('hPct');
-
+  const total = allTotal(), remain = budget - total;
+  const se = document.getElementById('hSpent'), re = document.getElementById('hRemain');
   se.textContent = fmtKor(total);
-  se.className   = 'hstat-main ' + (total > budget ? 'over' : 'ok');
-  ss.textContent = fmtWon(total);
-
+  se.className = 'hstat-val '+(total>budget?'over':'ok');
   re.textContent = fmtKor(remain);
-  re.className   = 'hstat-main ' + (remain < 0 ? 'over' : 'ok');
-  rs.textContent = fmtWon(remain);
-
-  pe.textContent = pct + '%';
-  pe.className   = 'hstat-main ' + (pct >= 100 ? 'over' : pct >= 80 ? 'neutral' : 'ok');
+  re.className = 'hstat-val '+(remain<0?'over':'ok');
 }
 
-// ── LEFT CAT TABS ────────────────────────────────────────
+// ── CAT TABS ──
 function renderCatTabs() {
   document.getElementById('catTabs').innerHTML = CATS.map(c =>
-    `<div class="cat-tab ${c.id===activeCat?'active-'+c.id:''}" onclick="setCat('${c.id}')">${c.label}</div>`
+    `<div class="cat-tab ${c.id===activeCat?'a-'+c.id:''}" onclick="setCat('${c.id}')">${c.label}</div>`
   ).join('');
-  const isInf = activeCat === 'inf';
-  document.getElementById('infSearchWrap').style.display = isInf ? 'block' : 'none';
-  document.getElementById('infSubFilter').style.display  = isInf ? 'flex'  : 'none';
-  document.getElementById('ytLoadWrap').style.display    = isInf ? 'block' : 'none';
+  const isInf = activeCat==='inf';
+  document.getElementById('searchWrap').style.display = isInf ? '' : 'none';
+  document.getElementById('subFilter').style.display  = isInf ? 'flex' : 'none';
+  document.getElementById('ytBtnWrap').style.display  = isInf ? '' : 'none';
 }
-function setCat(id) { activeCat = id; renderCatTabs(); renderItems(); }
+function setCat(id) { activeCat=id; renderCatTabs(); renderItems(); }
 
-// ── INF SUB FILTER ───────────────────────────────────────
-function renderInfSubFilter() {
-  document.getElementById('infSubFilter').innerHTML = INF_SUBS.map(s =>
-    `<span class="sub-chip ${s===activeInfSub?'on':''}" onclick="setInfSub('${s}')">${s}</span>`
+// ── INF SUB FILTER ──
+function renderSubFilter() {
+  document.getElementById('subFilter').innerHTML = INF_SUBS.map(s =>
+    `<span class="sf-chip ${s===activeInfSub?'on':''}" onclick="setInfSub('${s}')">${s}</span>`
   ).join('');
 }
-function setInfSub(s) { activeInfSub = s; renderInfSubFilter(); renderItems(); }
+function setInfSub(s) { activeInfSub=s; renderSubFilter(); renderItems(); }
 
-// ── ITEM LIST ────────────────────────────────────────────
+// ── ITEMS ──
 function renderItems() {
   const el = document.getElementById('itemList');
-
   if (activeCat === 'inf') {
-    const q    = document.getElementById('infSearch').value.toLowerCase();
+    const q = document.getElementById('infSearch').value.toLowerCase();
     const list = INFLUENCERS.filter(i => {
-      const matchQ   = i.name.toLowerCase().includes(q) || i.sub.toLowerCase().includes(q);
-      const matchSub = activeInfSub === '전체' || i.sub === activeInfSub;
-      return matchQ && matchSub;
+      const mq = i.name.toLowerCase().includes(q) || i.sub.toLowerCase().includes(q);
+      const ms = activeInfSub==='전체' || i.sub===activeInfSub;
+      return mq && ms;
     });
-
-    el.innerHTML = list.map(inf => {
-      const handle = inf.url ? (inf.url.match(/@[^/?#\s]+/)?.[0] || '') : '';
-      const ytData = handle ? (ytCache[handle] || null) : null;
-      const subsTxt = ytData ? fmtNum(ytData.subscribers) : (inf.subs || '-');
-      const avgTxt  = ytData ? fmtNum(ytData.avgViews) : (ytLoading[handle] ? '...' : '–');
-      return `
-      <div class="inf-card" onclick="openModal('${inf.name}')">
-        <div class="inf-top">
-          <span class="inf-name">${inf.name}</span>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <span class="inf-sub-badge">${inf.sub}</span>
-            ${inf.url ? `<a href="${inf.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--accent);font-weight:700;text-decoration:none;padding:2px 8px;background:var(--accent-bg);border-radius:6px;white-space:nowrap">↗ 채널</a>` : ''}
+    el.innerHTML = list.length === 0
+      ? '<div style="padding:28px;text-align:center;color:var(--text3);font-size:13px">검색 결과 없음</div>'
+      : `<div class="inf-grid">${list.map(inf => {
+        const handle = inf.url?.match(/@[^/?#\s]+/)?.[0]||'';
+        const yt = handle ? ytCache[handle] : null;
+        const subsTxt = yt ? fmtNum(yt.subscribers) : inf.subs||'–';
+        const avgTxt  = yt ? fmtNum(yt.avgViews) : (ytLoading[handle]?'…':'–');
+        const k = handle.replace('@','');
+        const top2 = inf.prices.slice(0,2);
+        return `
+        <div class="inf-card" onclick="openModal('${inf.name}')">
+          <div class="ic-top">
+            <div class="ic-name">${inf.name}</div>
+            <span class="ic-cat">${inf.sub}</span>
           </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
-          <div style="background:var(--bg);border-radius:7px;padding:6px 10px">
-            <div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:2px">구독자</div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums" id="yt-subs-${handle.replace('@','')}">${subsTxt}</div>
+          <div class="ic-meta">
+            <span class="ic-subs" id="yt-s-${k}">구독 ${subsTxt}</span>
+            <span class="ic-avg" id="yt-a-${k}">조회 ${avgTxt}</span>
           </div>
-          <div style="background:var(--bg);border-radius:7px;padding:6px 10px">
-            <div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:2px">평균 조회수 (롱폼 5개)</div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums" id="yt-avg-${handle.replace('@','')}">${avgTxt}</div>
+          <div class="ic-prices">
+            ${top2.map(p=>`<div class="ic-price-row"><span class="ic-ptype">${p.t}</span><span class="ic-pval">${fmtShort(p.v)}</span></div>`).join('')}
           </div>
-        </div>
-        <div class="price-grid">
-          ${inf.prices.map(p => `
-            <div class="pgrid-item">
-              <span class="pgrid-type">${p.t}</span>
-              <span class="pgrid-price">${fmtShort(p.v)}</span>
-              <span class="pgrid-sub">${fmtWon(p.v)}</span>
-            </div>
-          `).join('')}
-        </div>
-        ${inf.note ? `<div style="font-size:10px;color:var(--text3);margin-top:7px;line-height:1.4;padding:5px 7px;background:var(--bg);border-radius:5px">📌 ${inf.note}</div>` : ''}
-      </div>`;
-    }).join('') || '<div style="padding:28px;text-align:center;color:var(--text3);font-size:13px">검색 결과 없음</div>';
-
+          ${inf.note?`<div class="ic-note">📌 ${inf.note}</div>`:''}
+          <div class="ic-footer">
+            ${inf.url?`<a href="${inf.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="ic-ch-btn">채널↗</a>`:''}
+            <button class="ic-add-btn" onclick="event.stopPropagation();openModal('${inf.name}')">+ 추가</button>
+          </div>
+        </div>`;
+      }).join('')}</div>`;
   } else {
     const items = FIXED_ITEMS[activeCat] || [];
-    el.innerHTML = '<div style="height:6px"></div>' + items.map((item, idx) => {
-      const cid = activeCat;
-      if (item.mode === 'per') {
-        return `<div class="fixed-card">
-          <h4>${item.name}</h4>
-          <div class="fixed-desc">${item.desc}</div>
-          <div class="fixed-fields">
-            <div class="field-row"><label>${item.countLabel}</label>
-              <input type="number" class="field-input w60" id="fc_${cid}_${idx}_count" value="${item.defaultCount}" oninput="updateCalc('${cid}',${idx})">
-              <span class="field-unit">명</span></div>
-            <div class="field-row"><label>${item.unitLabel}</label>
-              <input type="number" class="field-input w80" id="fc_${cid}_${idx}_unit" value="${item.defaultUnit}" oninput="updateCalc('${cid}',${idx})">
-              <span class="field-unit">만원</span></div>
-            <div class="field-row"><label>진행 월</label>
-              <select class="field-select" id="fc_${cid}_${idx}_month">${MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('')}</select></div>
-            <div class="field-row"><label>메모</label>
-              <input type="text" class="field-input w130" id="fc_${cid}_${idx}_memo" placeholder="메모..."></div>
-            <div class="field-row">
-              <span class="calc-preview" id="fc_${cid}_${idx}_preview">${fmtKor(item.defaultCount*item.defaultUnit)} → VAT포함 ${fmtKor(Math.round(item.defaultCount*item.defaultUnit*1.1))}</span></div>
+    // Group by group label
+    const groups = {};
+    items.forEach((item, idx) => {
+      const g = item.group || '기타';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push({ item, idx });
+    });
+    const bgMap = { inf:'#eff6ff', amb:'#fff7ed', exp:'#f0fdf4', ad:'#f5f3ff', viral:'#fdf2f8' };
+    const bg = bgMap[activeCat] || '#f5f5f7';
+    let html = '<div class="fixed-list">';
+    Object.entries(groups).forEach(([gName, entries]) => {
+      if (Object.keys(groups).length > 1) html += `<div class="fixed-group-label">${gName}</div>`;
+      entries.forEach(({item, idx}) => {
+        const priceStr = item.mode==='per'
+          ? `인당 ${item.defaultUnit}만`
+          : `${item.defaultVal}만원`;
+        html += `
+        <div class="fli" onclick="openFModal('${activeCat}',${idx})">
+          <div class="fli-icon" style="background:${bg}">${item.icon||'📌'}</div>
+          <div class="fli-body">
+            <div class="fli-name">${item.name}</div>
+            <div class="fli-desc">${item.desc}</div>
           </div>
-          <button class="btn-add" onclick="addFixed('${cid}',${idx})">플랜에 추가 →</button>
-        </div>`;
-      } else {
-        return `<div class="fixed-card">
-          <h4>${item.name}</h4>
-          <div class="fixed-desc">${item.desc}</div>
-          <div class="fixed-fields">
-            <div class="field-row"><label>${item.valLabel}</label>
-              <input type="number" class="field-input w80" id="fc_${cid}_${idx}_val" value="${item.defaultVal}" oninput="updateCalcFixed('${cid}',${idx})">
-              <span class="field-unit">만원</span></div>
-            <div class="field-row"><label>진행 월</label>
-              <select class="field-select" id="fc_${cid}_${idx}_month">${MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('')}</select></div>
-            <div class="field-row"><label>메모</label>
-              <input type="text" class="field-input w130" id="fc_${cid}_${idx}_memo" placeholder="메모..."></div>
-            <div class="field-row">
-              <span class="calc-preview" id="fc_${cid}_${idx}_preview">VAT포함 ${fmtKor(Math.round(item.defaultVal*1.1))}</span></div>
+          <div style="text-align:right;flex-shrink:0">
+            <div class="fli-price">${priceStr}</div>
+            <div class="fli-price-sub">VAT별도</div>
           </div>
-          <button class="btn-add" onclick="addFixed('${cid}',${idx})">플랜에 추가 →</button>
+          <button class="fli-add" onclick="event.stopPropagation();openFModal('${activeCat}',${idx})">+ 추가</button>
         </div>`;
-      }
-    }).join('') + '<div style="height:8px"></div>';
+      });
+    });
+    html += '</div>';
+    el.innerHTML = html;
   }
 }
 
-function updateCalc(cat, idx) {
-  const c = +document.getElementById(`fc_${cat}_${idx}_count`).value || 0;
-  const u = +document.getElementById(`fc_${cat}_${idx}_unit`).value  || 0;
-  const t = c * u;
-  document.getElementById(`fc_${cat}_${idx}_preview`).textContent =
-    `${fmtKor(t)} → VAT포함 ${fmtKor(Math.round(t*1.1))}`;
-}
-function updateCalcFixed(cat, idx) {
-  const v = +document.getElementById(`fc_${cat}_${idx}_val`).value || 0;
-  document.getElementById(`fc_${cat}_${idx}_preview`).textContent =
-    `VAT포함 ${fmtKor(Math.round(v*1.1))}`;
-}
-
-function addFixed(cat, idx) {
-  const item  = FIXED_ITEMS[cat][idx];
-  const month = document.getElementById(`fc_${cat}_${idx}_month`).value;
-  const memo  = document.getElementById(`fc_${cat}_${idx}_memo`).value;
-  let price, label;
-  if (item.mode === 'per') {
-    const c = +document.getElementById(`fc_${cat}_${idx}_count`).value || 0;
-    const u = +document.getElementById(`fc_${cat}_${idx}_unit`).value  || 0;
-    price = c * u; label = `${c.toLocaleString()}명 × ${fmtKor(u)}`;
-  } else {
-    price = +document.getElementById(`fc_${cat}_${idx}_val`).value || 0;
-    label = item.name;
-  }
-  plan[month].push({ id: Date.now(), cat, name: item.name, type: label, price, priceVat: Math.round(price*1.1), memo });
-  refresh();
-}
-
-// ── MODAL ────────────────────────────────────────────────
+// ── PPL MODAL ──
 function openModal(name) {
-  modalData = INFLUENCERS.find(i => i.name === name);
+  modalData = INFLUENCERS.find(i => i.name===name);
   document.getElementById('mName').textContent = modalData.name;
   document.getElementById('mSub').textContent  = modalData.sub;
   document.getElementById('mType').innerHTML   = modalData.prices.map(p =>
@@ -755,206 +641,204 @@ function openModal(name) {
 }
 function updateModalPrice() {
   const v = +document.getElementById('mType').value;
-  document.getElementById('ppWon').textContent = fmtWon(v);
-  document.getElementById('ppKor').textContent = fmtKor(v);
-  document.getElementById('ppVat').textContent = fmtKor(Math.round(v*1.1));
+  document.getElementById('pbWon').textContent = fmtWon(v);
+  document.getElementById('pbKor').textContent = fmtKor(v);
+  document.getElementById('pbVat').textContent = fmtKor(Math.round(v*1.1));
 }
 function closeModal() { document.getElementById('overlay').classList.remove('show'); }
 function addFromModal() {
-  const typeEl = document.getElementById('mType');
-  const t = typeEl.options[typeEl.selectedIndex].text.split(' — ')[0];
-  const v = +typeEl.value;
-  const month = document.getElementById('mMonth').value;
-  plan[month].push({ id: Date.now(), cat:'inf', name: modalData.name, type: t, price: v, priceVat: Math.round(v*1.1), memo: document.getElementById('mMemo').value });
+  const te = document.getElementById('mType');
+  const t = te.options[te.selectedIndex].text.split(' — ')[0];
+  const v = +te.value, month = document.getElementById('mMonth').value;
+  plan[month].push({ id:Date.now(), cat:'inf', name:modalData.name, type:t, price:v, priceVat:Math.round(v*1.1), memo:document.getElementById('mMemo').value });
   closeModal(); refresh();
 }
 
-// ── MONTH TABS ───────────────────────────────────────────
+// ── FIXED QUICK-ADD MODAL ──
+function openFModal(catId, idx) {
+  fModalCtx = { catId, idx };
+  const item = FIXED_ITEMS[catId][idx];
+  document.getElementById('fmName').textContent = item.name;
+  document.getElementById('fmDesc').textContent = item.desc;
+  document.getElementById('fmMemo').value = '';
+  document.getElementById('fmMonth').innerHTML = MONTHS.map(m =>
+    `<option ${m===activeMonth?'selected':''}>${m}</option>`).join('');
+
+  let fields = '';
+  if (item.mode === 'per') {
+    fields = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div><label class="fm-fl">${item.countLabel}</label><input class="fm-input" id="fm-count" type="number" value="${item.defaultCount}" oninput="updateFPreview()"></div>
+        <div><label class="fm-fl">${item.unitLabel}</label><input class="fm-input" id="fm-unit" type="number" value="${item.defaultUnit}" oninput="updateFPreview()"></div>
+      </div>`;
+  } else {
+    fields = `<div style="margin-bottom:12px"><label class="fm-fl">${item.valLabel}</label><input class="fm-input" id="fm-val" type="number" value="${item.defaultVal}" oninput="updateFPreview()"></div>`;
+  }
+  document.getElementById('fmFields').innerHTML = fields;
+  updateFPreview();
+  document.getElementById('foverlay').classList.add('show');
+}
+function updateFPreview() {
+  const { catId, idx } = fModalCtx || {};
+  if (!catId) return;
+  const item = FIXED_ITEMS[catId][idx];
+  let price = 0;
+  if (item.mode==='per') {
+    price = (+document.getElementById('fm-count')?.value||0) * (+document.getElementById('fm-unit')?.value||0);
+  } else {
+    price = +document.getElementById('fm-val')?.value||0;
+  }
+  document.getElementById('fmPreview').textContent = fmtKor(Math.round(price*1.1));
+}
+function closeFModal() { document.getElementById('foverlay').classList.remove('show'); }
+function addFixed() {
+  const {catId, idx} = fModalCtx;
+  const item = FIXED_ITEMS[catId][idx];
+  const month = document.getElementById('fmMonth').value;
+  const memo  = document.getElementById('fmMemo').value;
+  let price, label;
+  if (item.mode==='per') {
+    const c = +document.getElementById('fm-count').value||0;
+    const u = +document.getElementById('fm-unit').value||0;
+    price = c*u; label = `${c.toLocaleString()}명 × ${u}만`;
+  } else {
+    price = +document.getElementById('fm-val').value||0;
+    label = item.name;
+  }
+  plan[month].push({ id:Date.now(), cat:catId, name:item.name, type:label, price, priceVat:Math.round(price*1.1), memo });
+  closeFModal(); refresh();
+}
+
+// ── MONTH TABS ──
 function renderMonthTabs() {
   document.getElementById('monthTabs').innerHTML = MONTHS.map(m => {
-    const t = plan[m].reduce((s,i) => s + i.priceVat, 0);
-    return `<div class="mtab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">
-      ${m}${t > 0 ? `<span class="mbadge">${fmtShort(t)}</span>` : ''}
+    const t = plan[m].reduce((s,i) => s+i.priceVat, 0);
+    return `<div class="m-tab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">
+      ${m}${t>0?`<span class="m-badge">${fmtShort(t)}</span>`:''}
     </div>`;
   }).join('');
 }
-function setMonth(m) { activeMonth = m; renderMonthTabs(); renderMonthBody(); }
+function setMonth(m) { activeMonth=m; renderMonthTabs(); renderRightBody(); }
 
-// ── MONTH BODY ───────────────────────────────────────────
-function catColor(id) {
-  return { inf:'#2563eb', amb:'#c2410c', exp:'#15803d', ad:'#7c3aed', viral:'#be185d', ops:'#475569' }[id] || '#888';
-}
+// ── RIGHT BODY ──
+function renderRightBody() {
+  const items   = plan[activeMonth];
+  const budget  = +document.getElementById('budgetInput').value||10000;
+  const mVat    = items.reduce((s,i) => s+i.priceVat, 0);
+  const mRaw    = items.reduce((s,i) => s+i.price, 0);
+  const cum     = allTotal();
+  const remain  = budget - cum;
+  const pct     = Math.min(100, budget>0 ? Math.round(cum/budget*100):0);
+  const barCol  = pct>=100?'#e03131':pct>=80?'#d9600a':'#5b4ef8';
 
-function renderMonthBody() {
-  const items    = plan[activeMonth];
-  const budget   = +document.getElementById('budgetInput').value || 10000;
-  const monthVat = items.reduce((s,i) => s + i.priceVat, 0);
-  const monthRaw = items.reduce((s,i) => s + i.price, 0);
-  const cumTotal = allTotal();
-  const remain   = budget - cumTotal;
-  const pct      = Math.min(100, budget > 0 ? Math.round(cumTotal/budget*100) : 0);
-  const barColor = pct >= 100 ? '#e03131' : pct >= 80 ? '#d9600a' : '#5b4ef8';
-
-  // ── 전체 요약 카드 ──
   let html = `
-  <div class="summary-grid">
-    <div class="scard">
-      <div class="slabel">${activeMonth} 집행 (VAT별도)</div>
-      <div class="sval-main neutral">${fmtKor(monthRaw)}</div>
-      <div class="sval-sub">${fmtWon(monthRaw)}</div>
+  <div class="summary-row">
+    <div class="sum-card">
+      <div class="sum-label">${activeMonth} 집행 VAT별도</div>
+      <div class="sum-val neu">${fmtKor(mRaw)}</div>
+      <div class="sum-sub">${fmtWon(mRaw)}</div>
     </div>
-    <div class="scard">
-      <div class="slabel">${activeMonth} 집행 (VAT포함)</div>
-      <div class="sval-main neutral">${fmtKor(monthVat)}</div>
-      <div class="sval-sub">${fmtWon(monthVat)}</div>
+    <div class="sum-card">
+      <div class="sum-label">${activeMonth} 집행 VAT포함</div>
+      <div class="sum-val neu">${fmtKor(mVat)}</div>
+      <div class="sum-sub">${fmtWon(mVat)}</div>
     </div>
-    <div class="scard">
-      <div class="slabel">전체 누적 (VAT포함)</div>
-      <div class="sval-main ${cumTotal > budget ? 'over' : 'neutral'}">${fmtKor(cumTotal)}</div>
-      <div class="sval-sub">${fmtWon(cumTotal)} · 총예산의 ${pct}%</div>
+    <div class="sum-card">
+      <div class="sum-label">전체 누적 VAT포함</div>
+      <div class="sum-val ${cum>budget?'over':'neu'}">${fmtKor(cum)}</div>
+      <div class="sum-sub">총예산의 ${pct}%</div>
     </div>
-    <div class="scard" style="display:flex;flex-direction:column;justify-content:space-between">
+    <div class="sum-card" style="display:flex;flex-direction:column;justify-content:space-between">
       <div>
-        <div class="slabel">총예산 잔여</div>
-        <div class="sval-main ${remain < 0 ? 'over' : 'ok'}">${fmtKor(remain)}</div>
-        <div class="sval-sub">${fmtWon(remain)}</div>
+        <div class="sum-label">잔여 예산</div>
+        <div class="sum-val ${remain<0?'over':'ok'}">${fmtKor(remain)}</div>
+        <div class="sum-sub">${fmtWon(remain)}</div>
       </div>
-      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${barColor}"></div></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${barCol}"></div></div>
     </div>
   </div>`;
 
-  // ── 카테고리 예산 개요 ──
-  html += `<div class="budget-overview">
-    <div class="budget-overview-head">
-      <h3>카테고리별 예산 현황</h3>
-      <span style="font-size:11px;color:var(--text3)">VAT 포함 기준 · 예산은 직접 입력</span>
-    </div>
-    <div class="budget-overview-body">`;
-
   CATS.forEach(cat => {
-    const allCatItems = Object.values(plan).flat().filter(i => i.cat === cat.id);
-    const spent  = allCatItems.reduce((s,i) => s + i.priceVat, 0);
-    const bgt    = catBudgets[cat.id] || 0;
-    const cpct   = bgt > 0 ? Math.min(100, Math.round(spent / bgt * 100)) : (spent > 0 ? 100 : 0);
-    const fill   = bgt > 0 ? Math.min(100, spent / bgt * 100) : (spent > 0 ? 100 : 0);
-    const pctCls = cpct >= 100 ? 'over' : cpct >= 80 ? 'warn' : 'ok';
-    const col    = catColor(cat.id);
-    html += `
-    <div class="bov-row">
-      <div class="bov-label"><div class="section-dot ${cat.dot}" style="flex-shrink:0"></div>${cat.label}</div>
-      <div class="bov-input-wrap">
-        <input class="bov-input" type="number" value="${catBudgets[cat.id] || 0}"
-          onchange="setCatBudget('${cat.id}', this.value)" title="${cat.label} 예산 (만원)">
-        <span style="font-size:11px;color:var(--text3)">만원</span>
-      </div>
-      <div class="bov-track"><div class="bov-fill" style="width:${fill}%;background:${col}"></div></div>
-      <div class="bov-spent">${spent > 0 ? fmtKor(spent) : '–'}</div>
-      <div class="bov-pct ${pctCls}">${bgt > 0 ? cpct + '%' : (spent > 0 ? '예산미설정' : '–')}</div>
-    </div>`;
-  });
-
-  const totalCatBgt = Object.values(catBudgets).reduce((s,v) => s + v, 0);
-  const totalCatPct = totalCatBgt > 0 ? Math.min(100, Math.round(cumTotal / totalCatBgt * 100)) : 0;
-  html += `
-    <div class="bov-row" style="background:#f7f8fc;border-top:2px solid var(--border)">
-      <div class="bov-label" style="font-size:14px">합계</div>
-      <div style="font-size:13px;font-weight:700;color:var(--text2)">${fmtKor(totalCatBgt)}</div>
-      <div class="bov-track"><div class="bov-fill" style="width:${totalCatPct}%;background:#5b4ef8"></div></div>
-      <div class="bov-spent" style="font-size:13px;font-weight:800;color:var(--text)">${fmtKor(cumTotal)}</div>
-      <div class="bov-pct ${totalCatPct >= 100 ? 'over' : totalCatPct >= 80 ? 'warn' : 'ok'}" style="font-size:14px">${totalCatPct}%</div>
-    </div>
-  </div></div>`;
-
-  // ── 카테고리별 플랜 섹션 ──
-  CATS.forEach(cat => {
-    const catItems = items.filter(i => i.cat === cat.id);
-    const catVat   = catItems.reduce((s,i) => s + i.priceVat, 0);
-    const catRaw   = catItems.reduce((s,i) => s + i.price, 0);
-    const bgt      = catBudgets[cat.id] || 0;
-    const cpct     = bgt > 0 ? Math.min(100, Math.round(catVat / bgt * 100)) : 0;
-    const fill     = bgt > 0 ? Math.min(100, catVat / bgt * 100) : 0;
-    const pctCls   = cpct >= 100 ? 'over' : cpct >= 80 ? 'warn' : 'ok';
-    const col      = catColor(cat.id);
+    const catItems = items.filter(i => i.cat===cat.id);
+    const catVat   = catItems.reduce((s,i) => s+i.priceVat, 0);
+    const catRaw   = catItems.reduce((s,i) => s+i.price, 0);
+    const bgt      = catBudgets[cat.id]||0;
+    const cpct     = bgt>0 ? Math.min(100, Math.round(catVat/bgt*100)) : 0;
+    const fill     = bgt>0 ? Math.min(100, catVat/bgt*100) : 0;
+    const pctCls   = cpct>=100?'over':cpct>=80?'warn':'ok';
 
     html += `
     <div class="plan-section">
-      <div class="plan-section-head">
-        <div class="plan-section-head-top ${bgt > 0 || catVat > 0 ? 'has-budget' : ''}">
-          <div class="section-left">
-            <div class="section-dot ${cat.dot}"></div>
-            <span class="section-name">${cat.label}</span>
-            ${catItems.length > 0 ? `<span class="section-count">${catItems.length}건</span>` : ''}
-          </div>
-          <div style="display:flex;align-items:center;gap:14px">
-            <div style="text-align:right">
-              <div class="section-amount">${catVat > 0 ? fmtKor(catVat) : '–'}</div>
-              ${catVat > 0 && bgt > 0 ? `<div class="section-amount-sub ${pctCls}" style="font-weight:700">예산의 ${cpct}%</div>` : ''}
-            </div>
-          </div>
+      <div class="ps-head">
+        <div class="ps-dot ${cat.dot}"></div>
+        <span class="ps-name">${cat.label}</span>
+        ${catItems.length>0?`<span class="ps-count">${catItems.length}건</span>`:''}
+        <div class="ps-bar-wrap">
+          <div class="ps-bar-track"><div class="ps-bar-fill" style="width:${fill}%;background:${cat.col}"></div></div>
         </div>
-        ${bgt > 0 ? `
-        <div class="cat-budget-row">
-          <div class="cat-budget-track"><div class="cat-budget-fill" style="width:${fill}%;background:${col}"></div></div>
-          <span class="cat-budget-stats ${pctCls}">${fmtKor(catVat)} / ${fmtKor(bgt)} · 잔여 ${fmtKor(Math.max(0, bgt - catVat))}</span>
-        </div>` : ''}
-      </div>`;
-    if (catItems.length === 0) {
-      html += `<div class="empty-msg">← [${cat.label}] 탭에서 추가하세요</div>`;
-    } else {
-      html += `<table><thead><tr>
-        <th>이름</th><th>유형</th>
-        <th style="text-align:right">VAT 별도</th>
-        <th style="text-align:right">VAT 포함</th>
-        <th>메모</th><th style="width:32px"></th>
-      </tr></thead><tbody>`;
-      catItems.forEach(i => {
-        html += `<tr>
-          <td class="td-name">${i.name}</td>
-          <td><span class="type-pill ${cat.pill}">${i.type}</span></td>
-          <td class="td-price">
-            <div class="td-price-main">${fmtKor(i.price)}</div>
-            <div class="td-price-sub">${fmtWon(i.price)}</div>
-          </td>
-          <td class="td-price">
-            <div class="td-price-main">${fmtKor(i.priceVat)}</div>
-            <div class="td-price-sub">${fmtWon(i.priceVat)}</div>
-          </td>
-          <td><input class="memo-inp" value="${i.memo}" placeholder="메모..." onchange="updateMemo('${activeMonth}',${i.id},this.value)"></td>
-          <td><button class="del-btn" onclick="delItem('${activeMonth}',${i.id})">✕</button></td>
-        </tr>`;
-      });
-      html += `<tr class="total-row">
-        <td colspan="2" style="font-size:12px;color:var(--text3);font-weight:700">소계</td>
-        <td class="td-price">
-          <div class="td-price-main">${fmtKor(catRaw)}</div>
-          <div class="td-price-sub">${fmtWon(catRaw)}</div>
-        </td>
-        <td class="td-price">
-          <div class="td-price-main">${fmtKor(catVat)}</div>
-          <div class="td-price-sub">${fmtWon(catVat)}</div>
-        </td>
-        <td colspan="2"></td>
-      </tr></tbody></table>`;
-    }
-    html += `</div>`;
+        <div class="ps-budget-area">
+          ${catVat>0?`<span class="ps-spent">${fmtKor(catVat)}</span>`:''}
+          ${bgt>0&&catVat>0?`<span class="ps-pct ${pctCls}">${cpct}%</span>`:''}
+          <input class="ps-budget-input" type="number" value="${bgt}" placeholder="예산" title="카테고리 예산 (만원)" onchange="setCatBudget('${cat.id}',this.value)">
+          <span class="ps-budget-unit">만원</span>
+        </div>
+      </div>
+      <div class="ps-items">
+        ${catItems.length===0
+          ? `<div class="ps-empty">← 왼쪽 [${cat.label}] 탭에서 추가하세요</div>`
+          : catItems.map(i => `
+            <div class="plan-item">
+              <div class="pi-avatar">${i.name[0]}</div>
+              <div class="pi-info">
+                <div class="pi-name">${i.name}</div>
+                <span class="pi-type ${cat.pill}">${i.type}</span>
+              </div>
+              <div class="pi-prices">
+                <div class="pi-vat">${fmtKor(i.priceVat)}</div>
+                <div class="pi-raw">${fmtWon(i.price)}</div>
+              </div>
+              <input class="pi-memo" value="${i.memo}" placeholder="메모..." onchange="updateMemo('${activeMonth}',${i.id},this.value)">
+              <button class="pi-del" onclick="delItem('${activeMonth}',${i.id})">✕</button>
+            </div>`).join('')
+        }
+      </div>
+      ${catItems.length>0 ? `
+      <div class="ps-subtotal">
+        <span class="ps-subtotal-label">소계</span>
+        <div style="display:flex;gap:8px;align-items:baseline">
+          <span class="ps-subtotal-val">${fmtKor(catVat)}</span>
+          <span class="ps-subtotal-sub">${fmtWon(catRaw)} VAT별도</span>
+        </div>
+      </div>` : ''}
+    </div>`;
   });
 
-  document.getElementById('monthBody').innerHTML = html;
+  document.getElementById('rightBody').innerHTML = html;
 }
 
-function delItem(month, id) { plan[month] = plan[month].filter(i => i.id !== id); refresh(); }
-function updateMemo(month, id, val) { const i = plan[month].find(i => i.id === id); if(i) i.memo = val; }
-function refresh() { renderMonthTabs(); renderMonthBody(); updateHeader(); }
+function delItem(month, id) {
+  plan[month] = plan[month].filter(i => i.id!==id);
+  refresh();
+}
+function updateMemo(month, id, val) {
+  const item = plan[month].find(i => i.id===id);
+  if (item) item.memo = val;
+}
+function refresh() { renderMonthTabs(); renderRightBody(); updateHeader(); }
 
+// ── INIT ──
 document.getElementById('budgetInput').addEventListener('input', refresh);
 document.getElementById('overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('foverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeFModal(); });
 
 loadYtCache();
 loadCatBudgets();
-renderCatTabs(); renderInfSubFilter(); renderItems(); renderMonthTabs(); renderMonthBody(); updateHeader();
-// 캐시 있으면 자동으로 카드에 반영 (새로고침 불필요)
-document.getElementById('ytLoadWrap').style.display = 'block';
+renderCatTabs();
+renderSubFilter();
+renderItems();
+renderMonthTabs();
+renderRightBody();
+updateHeader();
 </script>
-<script src="/nav.js"></script>
 </body>
 </html>
