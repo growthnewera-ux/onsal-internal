@@ -136,6 +136,42 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 
 /* stats bar */
 .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+
+/* ── 월별 운영 테이블 ── */
+.mo-month-btn{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--white);transition:all .15s;}
+.mo-month-btn:hover{border-color:var(--border2);color:var(--text);}
+.mo-month-btn.active{background:var(--accent);border-color:var(--accent);color:white;}
+.mo-sum-card{background:var(--white);border-radius:10px;padding:12px 16px;border:1.5px solid var(--border);}
+.mo-sum-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.mo-sum-val{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.4px;}
+.mo-table-wrap{overflow-x:auto;}
+.mo-table{width:100%;border-collapse:collapse;min-width:1100px;}
+.mo-table th{padding:9px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:#fafbfc;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;}
+.mo-table td{padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.mo-table tr:last-child td{border-bottom:none;}
+.mo-table tr:hover td{background:#fafbff;}
+/* inline input cells */
+.mo-input{background:transparent;border:none;border-bottom:1px solid transparent;width:100%;font-size:12px;color:var(--text);outline:none;font-family:inherit;padding:2px 2px;transition:border-color .12s;min-width:60px;}
+.mo-input:focus{border-bottom-color:var(--accent);background:var(--accent-bg);border-radius:4px;padding:2px 5px;}
+.mo-input::placeholder{color:var(--text3);}
+.mo-select{background:transparent;border:none;font-size:12px;color:var(--text);outline:none;font-family:inherit;cursor:pointer;width:100%;}
+.mo-check{width:18px;height:18px;cursor:pointer;accent-color:var(--accent);}
+.mo-amb-cell{display:flex;align-items:center;gap:8px;min-width:130px;}
+.mo-amb-pic{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--accent);}
+.mo-amb-info{min-width:0;}
+.mo-amb-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;}
+.mo-amb-handle{font-size:10px;color:var(--text3);}
+.mo-pay-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;cursor:pointer;}
+.mo-pay-unpaid {background:#fff0f0;color:#e03131;}
+.mo-pay-pending{background:#fff3e8;color:#d9600a;}
+.mo-pay-paid   {background:#e6f7ef;color:#12a05c;}
+.mo-status-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;}
+.mo-st-planned   {background:#eff6ff;color:#2563eb;}
+.mo-st-inprogress{background:#fefce8;color:#b45309;}
+.mo-st-published {background:#e6f7ef;color:#12a05c;}
+.mo-st-verified  {background:#f5f3ff;color:#7c3aed;}
+.mo-link-btn{font-size:10px;font-weight:700;color:var(--accent);text-decoration:none;padding:2px 6px;background:var(--accent-bg);border-radius:4px;white-space:nowrap;}
+.mo-empty{padding:40px;text-align:center;color:var(--text3);font-size:13px;}
 .stat-card{background:var(--white);border-radius:12px;padding:16px 18px;border:1.5px solid var(--border);}
 .stat-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
 .stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.6px;}
@@ -150,7 +186,8 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 
 <div class="sub-tabs">
   <div class="sub-tab active" id="tab-candidates" onclick="setSubTab('candidates')">후보풀</div>
-  <div class="sub-tab" id="tab-contracted" onclick="setSubTab('contracted')">계약 앰버서더</div>
+  <div class="sub-tab" id="tab-contracted" onclick="setSubTab('contracted')">앰버서더</div>
+  <div class="sub-tab" id="tab-monthly" onclick="setSubTab('monthly')">📋 월별 운영</div>
 </div>
 
 <div class="main">
@@ -183,6 +220,24 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     </div>
     <div class="stats-bar" id="amb-stats"></div>
     <div id="amb-list"></div>
+  </div>
+
+  <!-- ── 월별 운영 ── -->
+  <div id="view-monthly" style="display:none">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="toolbar-title">월별 앰버서더 운영</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn-secondary" onclick="exportMonthlyCSV()" title="이번 달 데이터 CSV 다운로드">📥 CSV 내보내기</button>
+      </div>
+    </div>
+    <!-- 월 탭 -->
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px" id="monthly-month-tabs"></div>
+    <!-- 요약 바 -->
+    <div id="monthly-summary" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px"></div>
+    <!-- 스프레드시트 테이블 -->
+    <div id="monthly-table-wrap" style="background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden"></div>
   </div>
 
 </div>
@@ -419,13 +474,18 @@ const save = () => {
 const fmt = n => parseInt(n||0).toLocaleString('ko-KR');
 
 // ── SUB TABS ──
+let activeMonthlyMonth = MONTHS[0];
+
 function setSubTab(t) {
   activeSubTab = t;
-  document.getElementById('tab-candidates').classList.toggle('active', t==='candidates');
-  document.getElementById('tab-contracted').classList.toggle('active', t==='contracted');
-  document.getElementById('view-candidates').style.display = t==='candidates' ? '' : 'none';
-  document.getElementById('view-contracted').style.display = t==='contracted' ? '' : 'none';
-  if (t==='contracted') renderAmbs(); else renderCands();
+  ['candidates','contracted','monthly'].forEach(id => {
+    document.getElementById('tab-'+id)?.classList.toggle('active', t===id);
+    const v = document.getElementById('view-'+id);
+    if(v) v.style.display = t===id ? '' : 'none';
+  });
+  if (t==='contracted') renderAmbs();
+  else if (t==='monthly') renderMonthlyView();
+  else renderCands();
 }
 
 // ── STATUS HELPERS ──
@@ -971,6 +1031,187 @@ function saveMission() {
     note:      document.getElementById('m-note').value.trim(),
   };
   save(); closeMissionModal(); renderAmbs();
+}
+
+// ── 월별 운영 ──────────────────────────────────────────────
+function renderMonthlyView() {
+  // 월 탭
+  document.getElementById('monthly-month-tabs').innerHTML = MONTHS.map(m =>
+    `<button class="mo-month-btn ${m===activeMonthlyMonth?'active':''}" onclick="setMonthlyMonth('${m}')">${m}</button>`
+  ).join('');
+  renderMonthlyTable();
+}
+
+function setMonthlyMonth(m) { activeMonthlyMonth = m; renderMonthlyView(); }
+
+function renderMonthlyTable() {
+  const month = activeMonthlyMonth;
+  if (!ambassadors.length) {
+    document.getElementById('monthly-summary').innerHTML = '';
+    document.getElementById('monthly-table-wrap').innerHTML = '<div class="mo-empty">계약된 앰버서더가 없어요. "앰버서더" 탭에서 추가하세요.</div>';
+    return;
+  }
+
+  // 요약 계산
+  const total    = ambassadors.length;
+  const shipped  = ambassadors.filter(a => a.missions?.[month]?.shipped).length;
+  const posted   = ambassadors.filter(a => { const m=a.missions?.[month]; return m?.igUrl||m?.ytUrl||m?.postUrl; }).length;
+  const paid     = ambassadors.filter(a => a.missions?.[month]?.payStatus==='paid').length;
+  const totalFee = ambassadors.reduce((s,a) => s + (+a.missions?.[month]?.payAmount||0), 0);
+
+  document.getElementById('monthly-summary').innerHTML = [
+    ['앰버서더', total+'명', ''],
+    ['제품 발송', shipped+'/'+total+'명', shipped===total?'#12a05c':'#d9600a'],
+    ['게시 완료', posted+'/'+total+'명', posted===total?'#12a05c':'#d9600a'],
+    ['지급 완료', paid+'/'+total+'명', paid===total?'#12a05c':'#d9600a'],
+    ['총 광고비', totalFee?fmt(totalFee)+'만원':'–', ''],
+  ].map(([l,v,c]) => `<div class="mo-sum-card"><div class="mo-sum-label">${l}</div><div class="mo-sum-val" style="${c?'color:'+c:''}">${v}</div></div>`).join('');
+
+  // 테이블
+  const rows = ambassadors.map(a => {
+    const mis = a.missions?.[month] || {};
+    if (!a.missions) a.missions = {};
+    if (!a.missions[month]) a.missions[month] = {
+      product:'', freeProducts:'', shipped:false, postUrl:'', ytUrl:'', igUrl:'',
+      deliveryName:'', deliveryPhone:'', deliveryZip:'', deliveryAddress:'',
+      payAmount:'', payStatus:'unpaid', status:'planned', guide:'', contentType:'yt_ig', deadline:'', note:''
+    };
+
+    // 프사
+    const igHandle = (a.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]||'';
+    const pic = igHandle
+      ? `<img src="https://unavatar.io/instagram/${igHandle}" onerror="this.outerHTML='<div class=\\'mo-amb-pic\\'>${a.name[0]}</div>'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0" loading="lazy">`
+      : `<div class="mo-amb-pic">${a.name[0]}</div>`;
+
+    // 플랫폼 뱃지
+    const platMap = {yt:'🎥',ig:'📸',tt:'🎵'};
+    const platBadges = (a.platforms||[]).map(p=>`<span style="font-size:10px">${platMap[p]||p}</span>`).join('');
+
+    // 지급 상태 배지
+    const payMap = {unpaid:{cls:'mo-pay-unpaid',lbl:'미지급'},pending:{cls:'mo-pay-pending',lbl:'지급예정'},paid:{cls:'mo-pay-paid',lbl:'지급완료'}};
+    const payInfo = payMap[mis.payStatus||'unpaid'];
+
+    // 진행 상태
+    const stMap = {planned:'mo-st-planned',inprogress:'mo-st-inprogress',published:'mo-st-published',verified:'mo-st-verified'};
+    const stLbl = {planned:'예정',inprogress:'진행중',published:'게시완료',verified:'확인완료'};
+    const stCls = stMap[mis.status||'planned'];
+
+    // 게시 URL
+    const postUrl = mis.postUrl || mis.igUrl || mis.ytUrl || '';
+
+    return `<tr data-amb="${a.id}" data-month="${month}">
+      <td>
+        <div class="mo-amb-cell">
+          ${pic}
+          <div class="mo-amb-info">
+            <div class="mo-amb-name">${a.name}</div>
+            <div class="mo-amb-handle">${a.handle||''} ${platBadges}</div>
+          </div>
+        </div>
+      </td>
+      <td><input class="mo-input" value="${mis.product||''}" placeholder="제품명..." onchange="saveMO('${a.id}','${month}','product',this.value)"></td>
+      <td><input class="mo-input" value="${mis.freeProducts||''}" placeholder="무상 제품 (콤마 구분)" style="min-width:140px" onchange="saveMO('${a.id}','${month}','freeProducts',this.value)"></td>
+      <td style="text-align:center">
+        <input type="checkbox" class="mo-check" ${mis.shipped?'checked':''} onchange="saveMO('${a.id}','${month}','shipped',this.checked)">
+      </td>
+      <td>
+        ${postUrl ? `<a href="${postUrl}" target="_blank" class="mo-link-btn">보기↗</a>` : ''}
+        <input class="mo-input" value="${postUrl}" placeholder="https://..." style="min-width:120px;margin-top:2px" onchange="saveMO('${a.id}','${month}','postUrl',this.value)">
+      </td>
+      <td><input class="mo-input" value="${mis.deliveryName||''}" placeholder="이름" style="min-width:60px" onchange="saveMO('${a.id}','${month}','deliveryName',this.value)"></td>
+      <td><input class="mo-input" value="${mis.deliveryPhone||''}" placeholder="연락처" style="min-width:90px" onchange="saveMO('${a.id}','${month}','deliveryPhone',this.value)"></td>
+      <td><input class="mo-input" value="${mis.deliveryZip||''}" placeholder="우편번호" style="min-width:60px" onchange="saveMO('${a.id}','${month}','deliveryZip',this.value)"></td>
+      <td><input class="mo-input" value="${mis.deliveryAddress||''}" placeholder="주소" style="min-width:140px" onchange="saveMO('${a.id}','${month}','deliveryAddress',this.value)"></td>
+      <td>
+        <input class="mo-input" type="number" value="${mis.payAmount||''}" placeholder="만원" style="min-width:60px" onchange="saveMO('${a.id}','${month}','payAmount',this.value)">
+      </td>
+      <td>
+        <select class="mo-select" onchange="saveMO('${a.id}','${month}','payStatus',this.value)">
+          <option value="unpaid" ${(mis.payStatus||'unpaid')==='unpaid'?'selected':''}>미지급</option>
+          <option value="pending" ${mis.payStatus==='pending'?'selected':''}>지급예정</option>
+          <option value="paid" ${mis.payStatus==='paid'?'selected':''}>지급완료</option>
+        </select>
+      </td>
+      <td>
+        <select class="mo-select" onchange="saveMO('${a.id}','${month}','status',this.value)">
+          <option value="planned" ${(mis.status||'planned')==='planned'?'selected':''}>예정</option>
+          <option value="inprogress" ${mis.status==='inprogress'?'selected':''}>진행중</option>
+          <option value="published" ${mis.status==='published'?'selected':''}>게시완료</option>
+          <option value="verified" ${mis.status==='verified'?'selected':''}>확인완료</option>
+        </select>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('monthly-table-wrap').innerHTML = `
+    <div class="mo-table-wrap">
+      <table class="mo-table">
+        <thead><tr>
+          <th style="min-width:140px">앰버서더</th>
+          <th style="min-width:120px">광고 제품</th>
+          <th style="min-width:160px">무상 제품</th>
+          <th style="min-width:50px;text-align:center">발송</th>
+          <th style="min-width:150px">게시글 URL</th>
+          <th style="min-width:70px">이름</th>
+          <th style="min-width:100px">연락처</th>
+          <th style="min-width:70px">우편번호</th>
+          <th style="min-width:160px">주소</th>
+          <th style="min-width:70px">광고비(만)</th>
+          <th style="min-width:90px">지급 상태</th>
+          <th style="min-width:90px">진행 상태</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function saveMO(ambId, month, field, value) {
+  const a = ambassadors.find(x => x.id === ambId);
+  if (!a) return;
+  if (!a.missions) a.missions = {};
+  if (!a.missions[month]) a.missions[month] = {};
+  a.missions[month][field] = value;
+  save();
+  // 요약만 재렌더 (테이블 전체 재렌더 안 함 — 입력 포커스 유지)
+  const month2 = activeMonthlyMonth;
+  const total   = ambassadors.length;
+  const shipped = ambassadors.filter(a => a.missions?.[month2]?.shipped).length;
+  const posted  = ambassadors.filter(a => { const m=a.missions?.[month2]; return m?.igUrl||m?.ytUrl||m?.postUrl; }).length;
+  const paid    = ambassadors.filter(a => a.missions?.[month2]?.payStatus==='paid').length;
+  const totalFee= ambassadors.reduce((s,a) => s + (+a.missions?.[month2]?.payAmount||0), 0);
+  document.getElementById('monthly-summary').innerHTML = [
+    ['앰버서더', total+'명', ''],
+    ['제품 발송', shipped+'/'+total+'명', shipped===total?'#12a05c':'#d9600a'],
+    ['게시 완료', posted+'/'+total+'명', posted===total?'#12a05c':'#d9600a'],
+    ['지급 완료', paid+'/'+total+'명', paid===total?'#12a05c':'#d9600a'],
+    ['총 광고비', totalFee?fmt(totalFee)+'만원':'–', ''],
+  ].map(([l,v,c]) => `<div class="mo-sum-card"><div class="mo-sum-label">${l}</div><div class="mo-sum-val" style="${c?'color:'+c:''}">${v}</div></div>`).join('');
+}
+
+function exportMonthlyCSV() {
+  const month = activeMonthlyMonth;
+  const headers = ['앰버서더','핸들','플랫폼','광고 제품','무상 제품','발송','게시글 URL','이름','연락처','우편번호','주소','광고비(만원)','지급 상태','진행 상태'];
+  const platLbl = {yt:'유튜브',ig:'인스타',tt:'틱톡'};
+  const payLbl  = {unpaid:'미지급',pending:'지급예정',paid:'지급완료'};
+  const stLbl   = {planned:'예정',inprogress:'진행중',published:'게시완료',verified:'확인완료'};
+  const rows = ambassadors.map(a => {
+    const m = a.missions?.[month] || {};
+    const postUrl = m.postUrl||m.igUrl||m.ytUrl||'';
+    return [
+      a.name, a.handle||'',
+      (a.platforms||[]).map(p=>platLbl[p]||p).join('/'),
+      m.product||'', m.freeProducts||'', m.shipped?'✓':'',
+      postUrl, m.deliveryName||'', m.deliveryPhone||'',
+      m.deliveryZip||'', m.deliveryAddress||'',
+      m.payAmount||'', payLbl[m.payStatus||'unpaid'], stLbl[m.status||'planned']
+    ];
+  });
+  const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `앰버서더_${month}_운영현황.csv`;
+  link.click();
 }
 
 // overlays close on backdrop click
