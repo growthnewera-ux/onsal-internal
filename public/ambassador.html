@@ -1208,48 +1208,62 @@ function renderAmbs() {
  // 확장 행
  '<tr id="amb-expand-' + a.id + '" style="display:none"><td colspan="5">' +
  '<div class="amb-expand-inner">' +
- '<div class="ae-field"><span class="ae-label">수령인 (앰버서더명)</span><input class="ae-input" value="' + (a.contractName||a.name||'') + '" placeholder="이름" onchange="saveAmbContract(\'' + a.id + '\',\'contractName\',this.value)"></div>' +
+ // 수령인/연락처/우편번호/주소
+ '<div class="ae-field"><span class="ae-label">수령인</span><input class="ae-input" value="' + (a.contractName||a.name||'') + '" placeholder="이름" onchange="saveAmbContract(\'' + a.id + '\',\'contractName\',this.value)"></div>' +
  '<div class="ae-field"><span class="ae-label">연락처</span><input class="ae-input" value="' + (a.contractPhone||'') + '" placeholder="010-XXXX-XXXX" oninput="formatPhone(this,\'' + a.id + '\')"></div>' +
  '<div class="ae-field"><span class="ae-label">우편번호</span>' +
    '<div style="display:flex;gap:6px"><input class="ae-input" id="zip-'+a.id+'" value="' + (a.contractZip||'') + '" placeholder="우편번호" readonly style="width:80px;background:#f0f0f0">' +
    '<button class="ae-btn" onclick="openDaumPostcode(\''+a.id+'\')">주소 검색</button></div></div>' +
- '<div class="ae-field" style="grid-column:span 2"><span class="ae-label">주소</span><input class="ae-input" id="addr-'+a.id+'" value="' + (a.contractAddress||'') + '" placeholder="도로명 주소 (주소 검색 버튼 이용)" onchange="saveAmbContract(\'' + a.id + '\',\'contractAddress\',this.value)"></div>' +
- '<div class="ae-field"><span class="ae-label">계약서 경로/URL</span>' +
- '<input class="ae-input" value="' + (a.contractFile||'') + '" placeholder="파일 경로 또는 URL" onchange="saveAmbContract(\'' + a.id + '\',\'contractFile\',this.value)">' +
- (a.contractFile ? '<a href="' + a.contractFile + '" target="_blank" class="ae-link" style="font-size:11px;margin-top:2px">↗ 열기</a>' : '') +
- '</div>' +
+ '<div class="ae-field" style="grid-column:span 2"><span class="ae-label">주소</span><input class="ae-input" id="addr-'+a.id+'" value="' + (a.contractAddress||'') + '" placeholder="도로명 주소" onchange="saveAmbContract(\'' + a.id + '\',\'contractAddress\',this.value)"></div>' +
+ // 플랫폼 URL 편집 (빈 URL 수정 가능)
+ (a.platforms||[]).map(p => {
+   const pMap = {yt:{label:'유튜브 채널 URL',field:'ytUrl',ph:'https://youtube.com/@...'},ig:{label:'인스타그램 URL',field:'igUrl',ph:'https://instagram.com/...'},tt:{label:'틱톡 URL',field:'ttUrl',ph:'https://tiktok.com/@...'}};
+   const pm = pMap[p]; if(!pm) return '';
+   return '<div class="ae-field"><span class="ae-label">'+pm.label+'</span><div style="display:flex;gap:6px;align-items:center"><input class="ae-input" value="'+(a[pm.field]||'')+'" placeholder="'+pm.ph+'" onchange="saveAmbContract(\''+a.id+'\',\''+pm.field+'\',this.value)">'+(a[pm.field]?'<a href="'+a[pm.field]+'" target="_blank" class="ae-link" style="white-space:nowrap">↗</a>':'')+'</div></div>';
+ }).join('') +
+ // 품의서 → 계약서 순서
  '<div class="ae-field"><span class="ae-label">품의서 링크</span>' +
- '<input class="ae-input" value="' + (a.approvalLink||'') + '" placeholder="URL" onchange="saveAmbContract(\'' + a.id + '\',\'approvalLink\',this.value)">' +
- (a.approvalLink ? '<a href="' + a.approvalLink + '" target="_blank" class="ae-link" style="font-size:11px;margin-top:2px">↗ 열기</a>' : '') +
- '</div>' +
- (a.note ? '<div class="ae-field" style="grid-column:span 3"><span class="ae-label">메모</span><div style="font-size:12px;color:var(--text3);background:var(--bg);padding:7px 10px;border-radius:7px"> ' + a.note + '</div></div>' : '') +
- // 월별 지급 스케줄
+ '<div style="display:flex;gap:6px;align-items:center"><input class="ae-input" value="' + (a.approvalLink||'') + '" placeholder="URL" onchange="saveAmbContract(\'' + a.id + '\',\'approvalLink\',this.value)">' +
+ (a.approvalLink ? '<a href="' + a.approvalLink + '" target="_blank" class="ae-link" style="white-space:nowrap">↗</a>' : '') +
+ '</div></div>' +
+ '<div class="ae-field"><span class="ae-label">계약서 경로/URL</span>' +
+ '<div style="display:flex;gap:6px;align-items:center"><input class="ae-input" value="' + (a.contractFile||'') + '" placeholder="파일 경로 또는 URL" onchange="saveAmbContract(\'' + a.id + '\',\'contractFile\',this.value)">' +
+ (a.contractFile ? '<a href="' + a.contractFile + '" target="_blank" class="ae-link" style="white-space:nowrap">↗</a>' : '') +
+ '</div></div>' +
+ (a.note ? '<div class="ae-field" style="grid-column:span 3"><span class="ae-label">메모</span><div style="font-size:12px;color:var(--text3);background:var(--bg);padding:7px 10px;border-radius:7px">' + a.note + '</div></div>' : '') +
+ // 월별 지급 스케줄 — 상태 클릭 토글
  (function() {
    if (!a.contractStart || !a.contractEnd || !a.fee) return '';
    const fee = +(a.fee||0);
    const start = new Date(a.contractStart);
    const end   = new Date(a.contractEnd);
-   const rows = [];
+   const schedRows = [];
    let cur = new Date(start.getFullYear(), start.getMonth(), 1);
-   let total = 0;
    while (cur <= end) {
-     total += fee;
+     const monthKey = cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0');
      const isPast = cur < now;
      const isNow  = cur.getFullYear()===now.getFullYear() && cur.getMonth()===now.getMonth();
      const label  = cur.toLocaleDateString('ko-KR',{year:'numeric',month:'long'});
-     const style  = isNow ? 'font-weight:700;color:var(--accent)' : isPast ? 'color:var(--text3)' : 'color:var(--text)';
-     rows.push('<tr><td style="padding:5px 10px;font-size:12px;' + style + '">' + label + (isNow?' (이번달)':'') + '</td>' +
-       '<td style="padding:5px 10px;font-size:12px;text-align:right;' + style + '">' + fee.toLocaleString('ko-KR') + '만원</td>' +
-       '<td style="padding:5px 10px;font-size:11px;color:var(--text3);text-align:right">' + (isPast?'지급됨':isNow?'이번달':'예정') + '</td></tr>');
+     const savedStatus = a.monthlyPayStatus?.[monthKey];
+     const isPaid = savedStatus === 'paid';
+     const statusStyle = isPaid ? 'background:#e6f7ef;color:#12a05c' : isPast ? 'background:#f8fafc;color:#9098ae' : isNow ? 'background:#eff6ff;color:#2563eb' : 'background:#f8fafc;color:#9098ae';
+     const statusLabel = isPaid ? '지급완료' : (isPast ? '미처리' : (isNow ? '이번달' : '예정'));
+     schedRows.push(
+       '<tr><td style="padding:6px 10px;font-size:12px;color:'+(isNow?'var(--accent)':isPast?'var(--text3)':'var(--text)')+'">' + label + '</td>' +
+       '<td style="padding:6px 10px;font-size:12px;font-weight:700;text-align:right">' + fee.toLocaleString('ko-KR') + '만원</td>' +
+       '<td style="padding:6px 10px;text-align:right">' +
+         '<button onclick="togglePayStatus(\''+a.id+'\',\''+monthKey+'\')" style="'+statusStyle+';border:none;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit" id="pstatus-'+a.id+'-'+monthKey+'">'+statusLabel+'</button>' +
+       '</td></tr>'
+     );
      cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
    }
-   const months = rows.length;
+   const months = schedRows.length;
    return '<div class="ae-field" style="grid-column:1/-1">' +
-     '<span class="ae-label">월별 지급 스케줄 (' + months + '개월 · 총 ' + (fee*months).toLocaleString('ko-KR') + '만원)</span>' +
-     '<div style="background:var(--white);border:1px solid var(--border);border-radius:7px;overflow:hidden;max-height:200px;overflow-y:auto">' +
+     '<span class="ae-label">월별 지급 스케줄 (' + months + '개월 · 총 ' + (fee*months).toLocaleString('ko-KR') + '만원) — 클릭하면 지급 상태 변경</span>' +
+     '<div style="background:var(--white);border:1px solid var(--border);border-radius:7px;overflow:hidden;max-height:220px;overflow-y:auto">' +
      '<table style="width:100%;border-collapse:collapse">' +
      '<thead><tr style="background:#fafbfc"><th style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-align:left">월</th><th style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-align:right">광고비</th><th style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-align:right">상태</th></tr></thead>' +
-     '<tbody>' + rows.join('') + '</tbody>' +
+     '<tbody>' + schedRows.join('') + '</tbody>' +
      '<tfoot><tr style="border-top:2px solid var(--border);background:#f7f8fc"><td style="padding:7px 10px;font-size:12px;font-weight:700">합계</td><td style="padding:7px 10px;font-size:13px;font-weight:800;text-align:right;color:var(--accent)">' + (fee*months).toLocaleString('ko-KR') + '만원</td><td></td></tr></tfoot>' +
      '</table></div></div>';
  })() +
