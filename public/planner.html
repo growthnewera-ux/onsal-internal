@@ -7,17 +7,17 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
 :root {
-  --bg:#f4f5f7; --white:#fff; --border:#e2e4e9; --border2:#d0d3db;
-  --text:#111318; --text2:#4a4f5e; --text3:#9098ae;
-  --accent:#5b4ef8; --accent-bg:#ede9ff;
-  --green:#12a05c; --green-bg:#e6f7ef;
-  --red:#e03131; --red-bg:#fff0f0;
-  --orange:#d9600a;
-  --inf:#2563eb; --inf-bg:#eff6ff;
-  --amb:#c2410c; --amb-bg:#fff7ed;
-  --exp:#15803d; --exp-bg:#f0fdf4;
-  --ad:#7c3aed;  --ad-bg:#f5f3ff;
-  --viral:#be185d; --viral-bg:#fdf2f8;
+ --bg:#f4f5f7; --white:#fff; --border:#e2e4e9; --border2:#d0d3db;
+ --text:#111318; --text2:#4a4f5e; --text3:#9098ae;
+ --accent:#5b4ef8; --accent-bg:#ede9ff;
+ --green:#12a05c; --green-bg:#e6f7ef;
+ --red:#e03131; --red-bg:#fff0f0;
+ --orange:#d9600a;
+ --inf:#2563eb; --inf-bg:#eff6ff;
+ --amb:#c2410c; --amb-bg:#fff7ed;
+ --exp:#15803d; --exp-bg:#f0fdf4;
+ --ad:#7c3aed; --ad-bg:#f5f3ff;
+ --viral:#be185d; --viral-bg:#fdf2f8;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
@@ -202,152 +202,152 @@ table.dbt td{padding:9px 14px;font-size:12px;}
 <body>
 
 <header class="app-header">
-  <div class="logo"><div class="logo-mark">🌿</div>온살</div>
-  <nav id="globalNav"></nav>
-  <div class="header-right">
-    <div class="hstat">
-      <div class="hstat-label">총 예산</div>
-      <div class="hstat-val neu"><input class="budget-input" id="budgetInput" type="number" value="10000">만원</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-label">집행 (VAT포함)</div>
-      <div class="hstat-val ok" id="hSpent">0원</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-label">잔여</div>
-      <div class="hstat-val ok" id="hRemain">1억원</div>
-    </div>
-  </div>
+ <div class="logo"><div class="logo-mark"></div>온살</div>
+ <nav id="globalNav"></nav>
+ <div class="header-right">
+ <div class="hstat">
+ <div class="hstat-label">총 예산</div>
+ <div class="hstat-val neu"><input class="budget-input" id="budgetInput" type="number" value="10000">만원</div>
+ </div>
+ <div class="hstat">
+ <div class="hstat-label">집행 (VAT포함)</div>
+ <div class="hstat-val ok" id="hSpent">0원</div>
+ </div>
+ <div class="hstat">
+ <div class="hstat-label">잔여</div>
+ <div class="hstat-val ok" id="hRemain">1억원</div>
+ </div>
+ </div>
 </header>
 
 <div class="month-tabs" id="monthTabs"></div>
 
 <div class="main">
-  <div class="summary-strip" id="summaryStrip"></div>
-  <div class="cat-grid" id="catGrid"></div>
-  <div id="inlinePicker" style="display:none"></div>
-  <div class="plan-section" id="planTable"></div>
+ <div class="summary-strip" id="summaryStrip"></div>
+ <div class="cat-grid" id="catGrid"></div>
+ <div id="inlinePicker" style="display:none"></div>
+ <div class="plan-section" id="planTable"></div>
 </div>
 
 <!-- Fixed item quick-add modal -->
 <div class="overlay" id="foverlay">
-  <div class="modal">
-    <div class="m-name" id="fmName"></div>
-    <div class="m-sub" id="fmDesc"></div>
-    <div id="fmFields"></div>
-    <div class="ppb">
-      <span class="ppb-label">VAT 포함 합계</span>
-      <span class="ppb-val" id="fmPreview">–</span>
-    </div>
-    <label class="m-label">진행 월</label>
-    <select class="m-select" id="fmMonth"></select>
-    <label class="m-label">메모 (선택)</label>
-    <input class="m-input" id="fmMemo" placeholder="메모...">
-    <div class="m-btns">
-      <button class="m-cancel" onclick="closeFModal()">취소</button>
-      <button class="m-ok" onclick="addFixed()">추가 →</button>
-    </div>
-  </div>
+ <div class="modal">
+ <div class="m-name" id="fmName"></div>
+ <div class="m-sub" id="fmDesc"></div>
+ <div id="fmFields"></div>
+ <div class="ppb">
+ <span class="ppb-label">VAT 포함 합계</span>
+ <span class="ppb-val" id="fmPreview">–</span>
+ </div>
+ <label class="m-label">진행 월</label>
+ <select class="m-select" id="fmMonth"></select>
+ <label class="m-label">메모 (선택)</label>
+ <input class="m-input" id="fmMemo" placeholder="메모...">
+ <div class="m-btns">
+ <button class="m-cancel" onclick="closeFModal()">취소</button>
+ <button class="m-ok" onclick="addFixed()">추가 →</button>
+ </div>
+ </div>
 </div>
 
 <!-- Influencer DB modal -->
 <div class="overlay" id="dbOverlay">
-  <div class="db-modal">
-    <div class="db-head">
-      <span style="font-size:16px;font-weight:800">📋 인플루언서 DB</span>
-      <button onclick="document.getElementById('dbOverlay').classList.remove('show')" style="background:none;border:none;font-size:18px;color:var(--text3);cursor:pointer">✕</button>
-    </div>
-    <div class="db-body">
-      <table class="dbt" style="width:100%;border-collapse:collapse">
-        <thead><tr><th>이름</th><th>카테고리</th><th>구독자</th><th>브랜디드</th><th>기획PPL</th><th>기타 단가</th><th>채널</th></tr></thead>
-        <tbody id="dbTableBody"></tbody>
-      </table>
-    </div>
-  </div>
+ <div class="db-modal">
+ <div class="db-head">
+ <span style="font-size:16px;font-weight:800"> 인플루언서 DB</span>
+ <button onclick="document.getElementById('dbOverlay').classList.remove('show')" style="background:none;border:none;font-size:18px;color:var(--text3);cursor:pointer"></button>
+ </div>
+ <div class="db-body">
+ <table class="dbt" style="width:100%;border-collapse:collapse">
+ <thead><tr><th>이름</th><th>카테고리</th><th>구독자</th><th>브랜디드</th><th>기획PPL</th><th>기타 단가</th><th>채널</th></tr></thead>
+ <tbody id="dbTableBody"></tbody>
+ </table>
+ </div>
+ </div>
 </div>
 
 <script src="/nav.js"></script>
 <script>
 const MONTHS = ['7월','8월','9월','10월','11월','12월'];
 const CATS = [
-  { id:'inf',   label:'PPL',    col:'#2563eb', bg:'var(--inf-bg)',   pill:'pill-inf'   },
-  { id:'amb',   label:'앰버서더', col:'#c2410c', bg:'var(--amb-bg)',   pill:'pill-amb'   },
-  { id:'exp',   label:'체험단',  col:'#15803d', bg:'var(--exp-bg)',   pill:'pill-exp'   },
-  { id:'ad',    label:'광고',    col:'#7c3aed', bg:'var(--ad-bg)',    pill:'pill-ad'    },
-  { id:'viral', label:'바이럴',  col:'#be185d', bg:'var(--viral-bg)', pill:'pill-viral' },
+ { id:'inf', label:'PPL', col:'#2563eb', bg:'var(--inf-bg)', pill:'pill-inf' },
+ { id:'amb', label:'앰버서더', col:'#c2410c', bg:'var(--amb-bg)', pill:'pill-amb' },
+ { id:'exp', label:'체험단', col:'#15803d', bg:'var(--exp-bg)', pill:'pill-exp' },
+ { id:'ad', label:'광고', col:'#7c3aed', bg:'var(--ad-bg)', pill:'pill-ad' },
+ { id:'viral', label:'바이럴', col:'#be185d', bg:'var(--viral-bg)', pill:'pill-viral' },
 ];
 const INF_SUBS = ['전체','뷰티','연예인','아이돌','일상/브이로그','부부/육아','라이프스타일','뮤직'];
 
 const INFLUENCERS = [
-  { name:'이리유',            sub:'뷰티',         subs:'26.4만', url:'https://www.youtube.com/@iiyu',                prices:[{t:'브랜디드',v:4300},{t:'기획PPL',v:3300},{t:'릴스',v:600},{t:'쇼츠',v:800}] },
-  { name:'시네',              sub:'뷰티',         subs:'49.9만', url:'https://www.youtube.com/@sine',                prices:[{t:'브랜디드',v:4000},{t:'쇼츠(3채널미러링)',v:3200}] },
-  { name:'최모나',            sub:'뷰티',         subs:'44.7만', url:'https://www.youtube.com/@choimona',            prices:[{t:'브랜디드',v:4300},{t:'기획PPL',v:3700},{t:'쇼츠',v:1000}] },
-  { name:'코코초',            sub:'뷰티',         subs:'39.8만', url:'https://www.youtube.com/@IAMSTARRYYHAYY',     prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000},{t:'쇼츠',v:1000}] },
-  { name:'민제',              sub:'뷰티',         subs:'16.9만', url:'https://www.youtube.com/@meenjechoi',          prices:[{t:'브랜디드',v:1700},{t:'기획PPL',v:1500},{t:'릴스',v:1100},{t:'쇼츠',v:1100}] },
-  { name:'보리',              sub:'뷰티',         subs:'7.2만',  url:'https://www.youtube.com/@bori7779',            prices:[{t:'기획PPL',v:700},{t:'쇼츠',v:500}] },
-  { name:'준돌',              sub:'뷰티',         subs:'5.39만', url:'https://www.youtube.com/@Jun_dol',             prices:[{t:'브랜디드',v:600},{t:'기획PPL',v:500},{t:'기획PPL+릴스',v:550}], note:'8월 24일 주차 가능' },
-  { name:'밉지않은 관종언니', sub:'연예인',       subs:'103만',  url:'https://www.youtube.com/@GwanjongUn-ni',       prices:[{t:'브랜디드',v:6500},{t:'기획PPL',v:4500},{t:'기획전패키지',v:6000}], note:'구독자 103만 메가' },
-  { name:'차예련',            sub:'연예인',       subs:'13.6만', url:'https://www.youtube.com/@iamchayeryun',        prices:[{t:'브랜디드',v:4500},{t:'기획PPL',v:3500},{t:'2차활용(1개월)',v:2000}], note:'2차활용은 브랜디드시만' },
-  { name:'이은지',            sub:'연예인',       subs:'38.6만', url:'https://www.youtube.com/@eunjirang92',         prices:[{t:'브랜디드',v:4000},{t:'기획PPL',v:2500}] },
-  { name:'인영인영(유인영)',  sub:'연예인',       subs:'18만',   url:'https://www.youtube.com/@inyounglog',          prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'2차활용',v:2000},{t:'2차활용패키지',v:4000}] },
-  { name:'함은정',            sub:'연예인',       subs:'8.31만', url:'https://www.youtube.com/@eunjungH',            prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'2차활용',v:2000},{t:'2차활용패키지',v:4000}] },
-  { name:'천상여자김지유',    sub:'연예인',       subs:'14.2만', url:'https://www.youtube.com/@cheonsangkimjiyu',    prices:[{t:'기획PPL',v:3000},{t:'인스타 릴스',v:1500},{t:'인스타 피드',v:1200}], note:'BDC 미운영' },
-  { name:'슥슥팡팡 스튜디오', sub:'아이돌',      subs:'18.2만', url:'https://www.youtube.com/@sspp_studio',         prices:[{t:'BDC 브랜디드',v:4000},{t:'믿뷰 브랜디드',v:2500},{t:'BB(삐삐) 브랜디드',v:2500},{t:'도믿걸 월스폰',v:1000},{t:'도믿걸 1회',v:400}] },
-  { name:'권응비',            sub:'아이돌',      subs:'2.69만', url:'https://www.youtube.com/@kwoneungbi',           prices:[{t:'브랜디드',v:3300},{t:'기획PPL',v:2200}], note:'8월 논의 가능' },
-  { name:'김소원',            sub:'아이돌',      subs:'13.9만', url:'https://www.youtube.com/@SOWON',               prices:[{t:'브랜디드',v:2000},{t:'기획PPL',v:1500}] },
-  { name:'채인',              sub:'아이돌',      subs:'9.1천',  url:'https://www.youtube.com/@chaein',              prices:[{t:'브랜디드',v:200},{t:'기획PPL',v:100}] },
-  { name:'규진',              sub:'일상/브이로그',subs:'24.6만', url:'https://www.youtube.com/@gyuuujin',            prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2400}] },
-  { name:'배지현',            sub:'일상/브이로그',subs:'10.6만', url:'https://www.youtube.com/@CH.BaeJihyun',        prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000}] },
-  { name:'내사랑 류이서',     sub:'일상/브이로그',subs:'4.12만', url:'https://www.youtube.com/@Myloveryuyiseo',      prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'초상라이선스',v:1000},{t:'온라인광고',v:2000}] },
-  { name:'뀨우',              sub:'일상/브이로그',subs:'14.4만', url:'https://www.youtube.com/@oe_day',              prices:[{t:'브랜디드',v:850},{t:'기획PPL',v:750}] },
-  { name:'이개은',            sub:'일상/브이로그',subs:'10만',   url:'https://www.youtube.com/@gaeniiee',            prices:[{t:'브랜디드',v:800},{t:'릴스',v:300},{t:'쇼츠',v:300}] },
-  { name:'이밍꾸',            sub:'일상/브이로그',subs:'4.05만', url:'https://www.youtube.com/@EMINGGU',             prices:[{t:'브랜디드',v:400},{t:'기획PPL',v:250}] },
-  { name:'지혜사랑',          sub:'일상/브이로그',subs:'7.48만', url:'https://www.youtube.com/@JIHYESARANG',         prices:[{t:'브랜디드',v:920},{t:'기획PPL',v:770},{t:'쇼츠',v:390}] },
-  { name:'종지부부',          sub:'부부/육아',   subs:'58만',   url:'https://www.youtube.com/@jongji_bubu',          prices:[{t:'브랜디드',v:1200},{t:'릴스',v:600},{t:'쇼츠',v:600}] },
-  { name:'타코사마',          sub:'부부/육아',   subs:'38.3만', url:'https://www.youtube.com/@taco_sama_',           prices:[{t:'브랜디드',v:3200},{t:'기획PPL',v:2800},{t:'쇼츠',v:800}] },
-  { name:'소히조이',          sub:'부부/육아',   subs:'11만',   url:'https://www.youtube.com/@soheejoy',             prices:[{t:'브랜디드',v:1000},{t:'릴스',v:300},{t:'쇼츠',v:500}] },
-  { name:'류타쿠',            sub:'부부/육아',   subs:'8.32만', url:'https://www.youtube.com/@ryutaku_ily',          prices:[{t:'브랜디드',v:800},{t:'기획PPL',v:600},{t:'릴스',v:600},{t:'쇼츠',v:500}] },
-  { name:'조조캠핑',          sub:'라이프스타일',subs:'80.6만', url:'https://www.youtube.com/@jojocamping',          prices:[{t:'브랜디드',v:2000},{t:'기획PPL',v:1400}], note:'2차활용: 집행금액 20%' },
-  { name:'어쩔수없는윤화',    sub:'라이프스타일',subs:'43.2만', url:'https://www.youtube.com/@%EC%96%B4%EC%A9%94%EC%88%98%EC%97%86%EB%8A%94%EC%9C%A4%ED%99%94', prices:[{t:'기획PPL',v:2000},{t:'쇼츠',v:800}] },
-  { name:'명예영국인',        sub:'라이프스타일',subs:'45.8만', url:'https://www.youtube.com/@jinbaekofficial',       prices:[{t:'기획PPL',v:4000},{t:'쇼츠',v:3000}] },
-  { name:'리비',              sub:'라이프스타일',subs:'49.9만', url:'https://www.youtube.com/@Leeby',                prices:[{t:'브랜디드',v:1000},{t:'기획PPL',v:800},{t:'쇼츠',v:400}] },
-  { name:'미니피',            sub:'라이프스타일',subs:'12만',   url:'https://www.youtube.com/@%EB%AF%B8%EB%8B%88%ED%94%BC', prices:[{t:'기획PPL',v:2100},{t:'쇼츠',v:700}] },
-  { name:'병권',              sub:'라이프스타일',subs:'3.61만', url:'https://www.youtube.com/@ybkonair',             prices:[{t:'브랜디드',v:500},{t:'쇼츠',v:250}] },
-  { name:'들어봐! 유리의 숲', sub:'뮤직',        subs:'3.91만', url:'https://www.youtube.com/@WelcomeToForest',      prices:[{t:'브랜디드',v:5000},{t:'기획PPL',v:3000}], note:'아티스트 섭외비 별도' },
+ { name:'이리유', sub:'뷰티', subs:'26.4만', url:'https://www.youtube.com/@iiyu', prices:[{t:'브랜디드',v:4300},{t:'기획PPL',v:3300},{t:'릴스',v:600},{t:'쇼츠',v:800}] },
+ { name:'시네', sub:'뷰티', subs:'49.9만', url:'https://www.youtube.com/@sine', prices:[{t:'브랜디드',v:4000},{t:'쇼츠(3채널미러링)',v:3200}] },
+ { name:'최모나', sub:'뷰티', subs:'44.7만', url:'https://www.youtube.com/@choimona', prices:[{t:'브랜디드',v:4300},{t:'기획PPL',v:3700},{t:'쇼츠',v:1000}] },
+ { name:'코코초', sub:'뷰티', subs:'39.8만', url:'https://www.youtube.com/@IAMSTARRYYHAYY', prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000},{t:'쇼츠',v:1000}] },
+ { name:'민제', sub:'뷰티', subs:'16.9만', url:'https://www.youtube.com/@meenjechoi', prices:[{t:'브랜디드',v:1700},{t:'기획PPL',v:1500},{t:'릴스',v:1100},{t:'쇼츠',v:1100}] },
+ { name:'보리', sub:'뷰티', subs:'7.2만', url:'https://www.youtube.com/@bori7779', prices:[{t:'기획PPL',v:700},{t:'쇼츠',v:500}] },
+ { name:'준돌', sub:'뷰티', subs:'5.39만', url:'https://www.youtube.com/@Jun_dol', prices:[{t:'브랜디드',v:600},{t:'기획PPL',v:500},{t:'기획PPL+릴스',v:550}], note:'8월 24일 주차 가능' },
+ { name:'밉지않은 관종언니', sub:'연예인', subs:'103만', url:'https://www.youtube.com/@GwanjongUn-ni', prices:[{t:'브랜디드',v:6500},{t:'기획PPL',v:4500},{t:'기획전패키지',v:6000}], note:'구독자 103만 메가' },
+ { name:'차예련', sub:'연예인', subs:'13.6만', url:'https://www.youtube.com/@iamchayeryun', prices:[{t:'브랜디드',v:4500},{t:'기획PPL',v:3500},{t:'2차활용(1개월)',v:2000}], note:'2차활용은 브랜디드시만' },
+ { name:'이은지', sub:'연예인', subs:'38.6만', url:'https://www.youtube.com/@eunjirang92', prices:[{t:'브랜디드',v:4000},{t:'기획PPL',v:2500}] },
+ { name:'인영인영(유인영)', sub:'연예인', subs:'18만', url:'https://www.youtube.com/@inyounglog', prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'2차활용',v:2000},{t:'2차활용패키지',v:4000}] },
+ { name:'함은정', sub:'연예인', subs:'8.31만', url:'https://www.youtube.com/@eunjungH', prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'2차활용',v:2000},{t:'2차활용패키지',v:4000}] },
+ { name:'천상여자김지유', sub:'연예인', subs:'14.2만', url:'https://www.youtube.com/@cheonsangkimjiyu', prices:[{t:'기획PPL',v:3000},{t:'인스타 릴스',v:1500},{t:'인스타 피드',v:1200}], note:'BDC 미운영' },
+ { name:'슥슥팡팡 스튜디오', sub:'아이돌', subs:'18.2만', url:'https://www.youtube.com/@sspp_studio', prices:[{t:'BDC 브랜디드',v:4000},{t:'믿뷰 브랜디드',v:2500},{t:'BB(삐삐) 브랜디드',v:2500},{t:'도믿걸 월스폰',v:1000},{t:'도믿걸 1회',v:400}] },
+ { name:'권응비', sub:'아이돌', subs:'2.69만', url:'https://www.youtube.com/@kwoneungbi', prices:[{t:'브랜디드',v:3300},{t:'기획PPL',v:2200}], note:'8월 논의 가능' },
+ { name:'김소원', sub:'아이돌', subs:'13.9만', url:'https://www.youtube.com/@SOWON', prices:[{t:'브랜디드',v:2000},{t:'기획PPL',v:1500}] },
+ { name:'채인', sub:'아이돌', subs:'9.1천', url:'https://www.youtube.com/@chaein', prices:[{t:'브랜디드',v:200},{t:'기획PPL',v:100}] },
+ { name:'규진', sub:'일상/브이로그',subs:'24.6만', url:'https://www.youtube.com/@gyuuujin', prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2400}] },
+ { name:'배지현', sub:'일상/브이로그',subs:'10.6만', url:'https://www.youtube.com/@CH.BaeJihyun', prices:[{t:'브랜디드',v:3000},{t:'기획PPL',v:2000}] },
+ { name:'내사랑 류이서', sub:'일상/브이로그',subs:'4.12만', url:'https://www.youtube.com/@Myloveryuyiseo', prices:[{t:'브랜디드',v:2500},{t:'기획PPL',v:1500},{t:'초상라이선스',v:1000},{t:'온라인광고',v:2000}] },
+ { name:'뀨우', sub:'일상/브이로그',subs:'14.4만', url:'https://www.youtube.com/@oe_day', prices:[{t:'브랜디드',v:850},{t:'기획PPL',v:750}] },
+ { name:'이개은', sub:'일상/브이로그',subs:'10만', url:'https://www.youtube.com/@gaeniiee', prices:[{t:'브랜디드',v:800},{t:'릴스',v:300},{t:'쇼츠',v:300}] },
+ { name:'이밍꾸', sub:'일상/브이로그',subs:'4.05만', url:'https://www.youtube.com/@EMINGGU', prices:[{t:'브랜디드',v:400},{t:'기획PPL',v:250}] },
+ { name:'지혜사랑', sub:'일상/브이로그',subs:'7.48만', url:'https://www.youtube.com/@JIHYESARANG', prices:[{t:'브랜디드',v:920},{t:'기획PPL',v:770},{t:'쇼츠',v:390}] },
+ { name:'종지부부', sub:'부부/육아', subs:'58만', url:'https://www.youtube.com/@jongji_bubu', prices:[{t:'브랜디드',v:1200},{t:'릴스',v:600},{t:'쇼츠',v:600}] },
+ { name:'타코사마', sub:'부부/육아', subs:'38.3만', url:'https://www.youtube.com/@taco_sama_', prices:[{t:'브랜디드',v:3200},{t:'기획PPL',v:2800},{t:'쇼츠',v:800}] },
+ { name:'소히조이', sub:'부부/육아', subs:'11만', url:'https://www.youtube.com/@soheejoy', prices:[{t:'브랜디드',v:1000},{t:'릴스',v:300},{t:'쇼츠',v:500}] },
+ { name:'류타쿠', sub:'부부/육아', subs:'8.32만', url:'https://www.youtube.com/@ryutaku_ily', prices:[{t:'브랜디드',v:800},{t:'기획PPL',v:600},{t:'릴스',v:600},{t:'쇼츠',v:500}] },
+ { name:'조조캠핑', sub:'라이프스타일',subs:'80.6만', url:'https://www.youtube.com/@jojocamping', prices:[{t:'브랜디드',v:2000},{t:'기획PPL',v:1400}], note:'2차활용: 집행금액 20%' },
+ { name:'어쩔수없는윤화', sub:'라이프스타일',subs:'43.2만', url:'https://www.youtube.com/@%EC%96%B4%EC%A9%94%EC%88%98%EC%97%86%EB%8A%94%EC%9C%A4%ED%99%94', prices:[{t:'기획PPL',v:2000},{t:'쇼츠',v:800}] },
+ { name:'명예영국인', sub:'라이프스타일',subs:'45.8만', url:'https://www.youtube.com/@jinbaekofficial', prices:[{t:'기획PPL',v:4000},{t:'쇼츠',v:3000}] },
+ { name:'리비', sub:'라이프스타일',subs:'49.9만', url:'https://www.youtube.com/@Leeby', prices:[{t:'브랜디드',v:1000},{t:'기획PPL',v:800},{t:'쇼츠',v:400}] },
+ { name:'미니피', sub:'라이프스타일',subs:'12만', url:'https://www.youtube.com/@%EB%AF%B8%EB%8B%88%ED%94%BC', prices:[{t:'기획PPL',v:2100},{t:'쇼츠',v:700}] },
+ { name:'병권', sub:'라이프스타일',subs:'3.61만', url:'https://www.youtube.com/@ybkonair', prices:[{t:'브랜디드',v:500},{t:'쇼츠',v:250}] },
+ { name:'들어봐! 유리의 숲', sub:'뮤직', subs:'3.91만', url:'https://www.youtube.com/@WelcomeToForest', prices:[{t:'브랜디드',v:5000},{t:'기획PPL',v:3000}], note:'아티스트 섭외비 별도' },
 ];
 
 const FIXED_ITEMS = {
-  amb:[{ name:'앰버서더', icon:'🤝', desc:'팔로워 5~20만 · 뷰티 외', mode:'per', countLabel:'인원(명)', defaultCount:100, unitLabel:'인당(만원)', defaultUnit:30 }],
-  exp:[
-    { name:'레뷰 올인원 (첫계약)', icon:'📝', desc:'3개월 유효 · 베이직 2.5만/프리미어 5만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:50, group:'레뷰' },
-    { name:'레뷰 올인원 200만',    icon:'📝', desc:'베이직 인당 2만 · 프리미어 인당 5만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:200, group:'레뷰' },
-    { name:'레뷰 올인원 500만',    icon:'📝', desc:'베이직 인당 1만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:500, group:'레뷰' },
-    { name:'레뷰 프리미어', icon:'⭐', desc:'방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5, group:'레뷰' },
-    { name:'레뷰 베이직',   icon:'📄', desc:'일반 블로그 · 앱 내 리뷰', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:1, group:'레뷰' },
-    { name:'글로우픽 엠블럼_월간랭킹',     icon:'🏆', desc:'현물바터 30개 기준 충족 시', mode:'fixed', valLabel:'금액(만원)', defaultVal:200, group:'글로우픽' },
-    { name:'글로우픽 엠블럼_어워드',       icon:'🏆', desc:'글로우픽어워드 엠블럼', mode:'fixed', valLabel:'금액(만원)', defaultVal:500, group:'글로우픽' },
-    { name:'글로우픽 엠블럼_신제품',       icon:'🆕', desc:'신제품 출시 연계', mode:'fixed', valLabel:'금액(만원)', defaultVal:100, group:'글로우픽' },
-    { name:'글로우픽 평가단',              icon:'👥', desc:'1종 50명 · 2주 사용 후 앱 리뷰', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
-    { name:'글로우픽 설문단',              icon:'📊', desc:'설문 5개 · 100명 · 엠블럼 포함', mode:'fixed', valLabel:'금액(만원)', defaultVal:200, group:'글로우픽' },
-    { name:'글로우픽 샘플링',              icon:'🎁', desc:'100~1,000명 제품 배포', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
-    { name:'글로우픽 인스타 리뷰어',       icon:'📸', desc:'릴스 20명 · 2차활용 무기한', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
-    { name:'화해 꼼평단',    icon:'💄', desc:'31~50명 · 자사몰 리뷰 연동', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'화해' },
-    { name:'화해 SNS 리뷰단',icon:'📱', desc:'릴스 30~50명 · 6개월 활용', mode:'fixed', valLabel:'금액(만원)', defaultVal:400, group:'화해' },
-    { name:'화해 카톡 플친', icon:'💬', desc:'화해 인앱/외부 랜딩', mode:'fixed', valLabel:'건당(만원)', defaultVal:250, group:'화해' },
-    { name:'서포터즈 인스타', icon:'📸', desc:'인스타 채널 서포터즈 · 월 활동비', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5, group:'서포터즈' },
-    { name:'서포터즈 블로그', icon:'✍️', desc:'블로그 채널 서포터즈 · 월 활동비', mode:'per', countLabel:'인원(명)', defaultCount:20, unitLabel:'인당(만원)', defaultUnit:5, group:'서포터즈' },
-    { name:'나노 시딩',       icon:'📦', desc:'무상 제품 제공 · 제품원가만 입력', mode:'fixed', valLabel:'제품원가(만원)', defaultVal:0, group:'서포터즈' },
-  ],
-  ad:[
-    { name:'메타 광고',       icon:'📘', desc:'인스타그램 · 페이스북 DA', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:1000, group:'DA' },
-    { name:'네이버 SA',       icon:'🟢', desc:'네이버 검색광고 · 키워드 입찰', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:1200, group:'SA' },
-    { name:'네이버 쇼핑광고', icon:'🛍️', desc:'쇼핑 검색 · 제품 노출', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:0, group:'SA' },
-    { name:'구글 SA',         icon:'🔵', desc:'구글 검색광고', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:0, group:'SA' },
-  ],
-  viral:[
-    { name:'X(트위터) 바이럴', icon:'🐦', desc:'전문 대행사 · 트위터 버즈', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
-    { name:'쓰레드 바이럴',    icon:'🧵', desc:'전문 대행사 · 쓰레드 버즈', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
-  ],
+ amb:[{ name:'앰버서더', icon:'', desc:'팔로워 5~20만 · 뷰티 외', mode:'per', countLabel:'인원(명)', defaultCount:100, unitLabel:'인당(만원)', defaultUnit:30 }],
+ exp:[
+ { name:'레뷰 올인원 (첫계약)', icon:'', desc:'3개월 유효 · 베이직 2.5만/프리미어 5만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:50, group:'레뷰' },
+ { name:'레뷰 올인원 200만', icon:'', desc:'베이직 인당 2만 · 프리미어 인당 5만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:200, group:'레뷰' },
+ { name:'레뷰 올인원 500만', icon:'', desc:'베이직 인당 1만', mode:'fixed', valLabel:'패키지(만원)', defaultVal:500, group:'레뷰' },
+ { name:'레뷰 프리미어', icon:'', desc:'방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5, group:'레뷰' },
+ { name:'레뷰 베이직', icon:'', desc:'일반 블로그 · 앱 내 리뷰', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:1, group:'레뷰' },
+ { name:'글로우픽 엠블럼_월간랭킹', icon:'', desc:'현물바터 30개 기준 충족 시', mode:'fixed', valLabel:'금액(만원)', defaultVal:200, group:'글로우픽' },
+ { name:'글로우픽 엠블럼_어워드', icon:'', desc:'글로우픽어워드 엠블럼', mode:'fixed', valLabel:'금액(만원)', defaultVal:500, group:'글로우픽' },
+ { name:'글로우픽 엠블럼_신제품', icon:'', desc:'신제품 출시 연계', mode:'fixed', valLabel:'금액(만원)', defaultVal:100, group:'글로우픽' },
+ { name:'글로우픽 평가단', icon:'', desc:'1종 50명 · 2주 사용 후 앱 리뷰', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
+ { name:'글로우픽 설문단', icon:'', desc:'설문 5개 · 100명 · 엠블럼 포함', mode:'fixed', valLabel:'금액(만원)', defaultVal:200, group:'글로우픽' },
+ { name:'글로우픽 샘플링', icon:'', desc:'100~1,000명 제품 배포', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
+ { name:'글로우픽 인스타 리뷰어', icon:'', desc:'릴스 20명 · 2차활용 무기한', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'글로우픽' },
+ { name:'화해 꼼평단', icon:'', desc:'31~50명 · 자사몰 리뷰 연동', mode:'fixed', valLabel:'금액(만원)', defaultVal:300, group:'화해' },
+ { name:'화해 SNS 리뷰단',icon:'', desc:'릴스 30~50명 · 6개월 활용', mode:'fixed', valLabel:'금액(만원)', defaultVal:400, group:'화해' },
+ { name:'화해 카톡 플친', icon:'', desc:'화해 인앱/외부 랜딩', mode:'fixed', valLabel:'건당(만원)', defaultVal:250, group:'화해' },
+ { name:'서포터즈 인스타', icon:'', desc:'인스타 채널 서포터즈 · 월 활동비', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5, group:'서포터즈' },
+ { name:'서포터즈 블로그', icon:'', desc:'블로그 채널 서포터즈 · 월 활동비', mode:'per', countLabel:'인원(명)', defaultCount:20, unitLabel:'인당(만원)', defaultUnit:5, group:'서포터즈' },
+ { name:'나노 시딩', icon:'', desc:'무상 제품 제공 · 제품원가만 입력', mode:'fixed', valLabel:'제품원가(만원)', defaultVal:0, group:'서포터즈' },
+ ],
+ ad:[
+ { name:'메타 광고', icon:'', desc:'인스타그램 · 페이스북 DA', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:1000, group:'DA' },
+ { name:'네이버 SA', icon:'', desc:'네이버 검색광고 · 키워드 입찰', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:1200, group:'SA' },
+ { name:'네이버 쇼핑광고', icon:'', desc:'쇼핑 검색 · 제품 노출', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:0, group:'SA' },
+ { name:'구글 SA', icon:'', desc:'구글 검색광고', mode:'fixed', valLabel:'월 집행(만원)', defaultVal:0, group:'SA' },
+ ],
+ viral:[
+ { name:'X(트위터) 바이럴', icon:'', desc:'전문 대행사 · 트위터 버즈', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
+ { name:'쓰레드 바이럴', icon:'', desc:'전문 대행사 · 쓰레드 버즈', mode:'fixed', valLabel:'월 비용(만원)', defaultVal:100 },
+ ],
 };
 
 // ── STATE ──
@@ -372,36 +372,36 @@ function setCatBudget(id,v){catBudgets[id]=Math.max(0,parseInt(v)||0);saveCatBud
 const YT_KEY = 'yt_cache_v1';
 let ytCache = {}, ytLoading = {};
 function loadYtCache(){
-  try{const r=localStorage.getItem(YT_KEY);if(r){const p=JSON.parse(r),c=Date.now()-12*3600000;Object.keys(p).forEach(h=>{if(new Date(p[h].updatedAt).getTime()>c)ytCache[h]=p[h];});}}catch{}
+ try{const r=localStorage.getItem(YT_KEY);if(r){const p=JSON.parse(r),c=Date.now()-12*3600000;Object.keys(p).forEach(h=>{if(new Date(p[h].updatedAt).getTime()>c)ytCache[h]=p[h];});}}catch{}
 }
 function saveYtCache(){try{localStorage.setItem(YT_KEY,JSON.stringify(ytCache));}catch{}}
 
 function isAsciiHandle(h){ return /^@[\x20-\x7E]+$/.test(h); }
 
 async function fetchYtData(handle){
-  if(!handle||ytLoading[handle]||!isAsciiHandle(handle)) return;
-  ytLoading[handle]=true;
-  try{
-    const res=await fetch(`/api/youtube?handle=${encodeURIComponent(handle)}`);
-    if(!res.ok) throw new Error('not ok');
-    const d=await res.json();
-    if(d.error) throw new Error(d.error);
-    ytCache[handle]=d; saveYtCache();
-  }catch(e){
-    console.warn('YT fetch failed for',handle,e.message);
-  }finally{ ytLoading[handle]=false; }
-  if(activePicker==='inf') renderPickerBody();
+ if(!handle||ytLoading[handle]||!isAsciiHandle(handle)) return;
+ ytLoading[handle]=true;
+ try{
+ const res=await fetch(`/api/youtube?handle=${encodeURIComponent(handle)}`);
+ if(!res.ok) throw new Error('not ok');
+ const d=await res.json();
+ if(d.error) throw new Error(d.error);
+ ytCache[handle]=d; saveYtCache();
+ }catch(e){
+ console.warn('YT fetch failed for',handle,e.message);
+ }finally{ ytLoading[handle]=false; }
+ if(activePicker==='inf') renderPickerBody();
 }
 
 function fmtNum(n){if(!n||n===0)return'–';if(n>=1e8)return(n/1e8).toFixed(1).replace(/\.0$/,'')+'억';if(n>=1e4)return(n/1e4).toFixed(1).replace(/\.0$/,'')+'만';return n.toLocaleString('ko-KR');}
 
 async function loadAllYtData(){
-  const btn=document.getElementById('ytBtn'); if(btn){btn.textContent='로딩…';btn.disabled=true;}
-  const handles=INFLUENCERS.filter(i=>i.url).map(i=>i.url.match(/@[^/?#\s]+/)?.[0]).filter(h=>h&&isAsciiHandle(h));
-  const uncached=handles.filter(h=>!ytCache[h]);
-  for(let i=0;i<uncached.length;i+=3) await Promise.all(uncached.slice(i,i+3).map(h=>fetchYtData(h)));
-  if(btn){btn.textContent='↺ 조회수';btn.disabled=false;}
-  if(activePicker==='inf') renderPickerBody();
+ const btn=document.getElementById('ytBtn'); if(btn){btn.textContent='로딩…';btn.disabled=true;}
+ const handles=INFLUENCERS.filter(i=>i.url).map(i=>i.url.match(/@[^/?#\s]+/)?.[0]).filter(h=>h&&isAsciiHandle(h));
+ const uncached=handles.filter(h=>!ytCache[h]);
+ for(let i=0;i<uncached.length;i+=3) await Promise.all(uncached.slice(i,i+3).map(h=>fetchYtData(h)));
+ if(btn){btn.textContent='↺ 조회수';btn.disabled=false;}
+ if(activePicker==='inf') renderPickerBody();
 }
 
 // ── FORMAT ──
@@ -412,349 +412,349 @@ const allTotal=()=>Object.values(plan).flat().reduce((s,i)=>s+i.priceVat,0);
 
 // 계약 앰버서더 월별 비용 자동 읽기
 function getAmbFees(month) {
-  try {
-    const ambs = JSON.parse(localStorage.getItem('onsal_ambassadors_v1') || '[]');
-    return ambs.filter(a => {
-      const start = MONTHS.indexOf(a.contractStart || '7월');
-      const end   = MONTHS.indexOf(a.contractEnd   || '12월');
-      const cur   = MONTHS.indexOf(month);
-      return cur >= 0 && cur >= start && cur <= end;
-    }).map(a => ({ name: a.name, handle: a.handle || '', fee: +(a.fee || 0) }));
-  } catch { return []; }
+ try {
+ const ambs = JSON.parse(localStorage.getItem('onsal_ambassadors_v1') || '[]');
+ return ambs.filter(a => {
+ const start = MONTHS.indexOf(a.contractStart || '7월');
+ const end = MONTHS.indexOf(a.contractEnd || '12월');
+ const cur = MONTHS.indexOf(month);
+ return cur >= 0 && cur >= start && cur <= end;
+ }).map(a => ({ name: a.name, handle: a.handle || '', fee: +(a.fee || 0) }));
+ } catch { return []; }
 }
 
 // ── HEADER ──
 function updateHeader(){
-  const budget=+document.getElementById('budgetInput').value||10000;
-  const total=allTotal(),remain=budget-total;
-  const se=document.getElementById('hSpent'),re=document.getElementById('hRemain');
-  se.textContent=fmtKor(total); se.className='hstat-val '+(total>budget?'over':'ok');
-  re.textContent=fmtKor(remain); re.className='hstat-val '+(remain<0?'over':'ok');
+ const budget=+document.getElementById('budgetInput').value||10000;
+ const total=allTotal(),remain=budget-total;
+ const se=document.getElementById('hSpent'),re=document.getElementById('hRemain');
+ se.textContent=fmtKor(total); se.className='hstat-val '+(total>budget?'over':'ok');
+ re.textContent=fmtKor(remain); re.className='hstat-val '+(remain<0?'over':'ok');
 }
 
 // ── MONTH TABS ──
 function renderMonthTabs(){
-  document.getElementById('monthTabs').innerHTML=MONTHS.map(m=>{
-    const t=plan[m].reduce((s,i)=>s+i.priceVat,0);
-    return`<div class="m-tab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}${t>0?`<span class="m-badge">${fmtShort(t)}</span>`:''}</div>`;
-  }).join('');
+ document.getElementById('monthTabs').innerHTML=MONTHS.map(m=>{
+ const t=plan[m].reduce((s,i)=>s+i.priceVat,0);
+ return`<div class="m-tab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}${t>0?`<span class="m-badge">${fmtShort(t)}</span>`:''}</div>`;
+ }).join('');
 }
 function setMonth(m){activeMonth=m;renderMonthTabs();renderSummary();renderCatGrid();renderPlanTable();}
 
 // ── SUMMARY ──
 function renderSummary(){
-  const budget=+document.getElementById('budgetInput').value||10000;
-  const items=plan[activeMonth];
-  const mVat=items.reduce((s,i)=>s+i.priceVat,0),mRaw=items.reduce((s,i)=>s+i.price,0);
-  const cum=allTotal(),remain=budget-cum;
-  const pct=Math.min(100,budget>0?Math.round(cum/budget*100):0);
-  const bc=pct>=100?'#e03131':pct>=80?'#d9600a':'#5b4ef8';
-  document.getElementById('summaryStrip').innerHTML=`
-    <div class="sum-item"><div class="sum-label">${activeMonth} 집행 VAT별도</div><div class="sum-val neu">${fmtKor(mRaw)}</div><div class="sum-sub">${fmtWon(mRaw)}</div></div>
-    <div class="sum-item"><div class="sum-label">${activeMonth} 집행 VAT포함</div><div class="sum-val neu">${fmtKor(mVat)}</div><div class="sum-sub">${fmtWon(mVat)}</div></div>
-    <div class="sum-item"><div class="sum-label">전체 누적 VAT포함</div><div class="sum-val ${cum>budget?'over':'neu'}">${fmtKor(cum)}</div><div class="sum-sub">총예산의 ${pct}%</div></div>
-    <div class="sum-item"><div class="sum-label">잔여 예산</div><div class="sum-val ${remain<0?'over':'ok'}">${fmtKor(remain)}</div><div class="sum-sub">${fmtWon(remain)}<div class="prog-track" style="margin-top:6px"><div class="prog-fill" style="width:${pct}%;background:${bc}"></div></div></div></div>`;
+ const budget=+document.getElementById('budgetInput').value||10000;
+ const items=plan[activeMonth];
+ const mVat=items.reduce((s,i)=>s+i.priceVat,0),mRaw=items.reduce((s,i)=>s+i.price,0);
+ const cum=allTotal(),remain=budget-cum;
+ const pct=Math.min(100,budget>0?Math.round(cum/budget*100):0);
+ const bc=pct>=100?'#e03131':pct>=80?'#d9600a':'#5b4ef8';
+ document.getElementById('summaryStrip').innerHTML=`
+ <div class="sum-item"><div class="sum-label">${activeMonth} 집행 VAT별도</div><div class="sum-val neu">${fmtKor(mRaw)}</div><div class="sum-sub">${fmtWon(mRaw)}</div></div>
+ <div class="sum-item"><div class="sum-label">${activeMonth} 집행 VAT포함</div><div class="sum-val neu">${fmtKor(mVat)}</div><div class="sum-sub">${fmtWon(mVat)}</div></div>
+ <div class="sum-item"><div class="sum-label">전체 누적 VAT포함</div><div class="sum-val ${cum>budget?'over':'neu'}">${fmtKor(cum)}</div><div class="sum-sub">총예산의 ${pct}%</div></div>
+ <div class="sum-item"><div class="sum-label">잔여 예산</div><div class="sum-val ${remain<0?'over':'ok'}">${fmtKor(remain)}</div><div class="sum-sub">${fmtWon(remain)}<div class="prog-track" style="margin-top:6px"><div class="prog-fill" style="width:${pct}%;background:${bc}"></div></div></div></div>`;
 }
 
 // ── CAT CARDS ──
 function renderCatGrid(){
-  const items=plan[activeMonth];
-  // 앰버서더 자동 합산
-  const ambFees = getAmbFees(activeMonth);
-  const ambAutoTotal = ambFees.reduce((s,a)=>s+a.fee,0);
+ const items=plan[activeMonth];
+ // 앰버서더 자동 합산
+ const ambFees = getAmbFees(activeMonth);
+ const ambAutoTotal = ambFees.reduce((s,a)=>s+a.fee,0);
 
-  document.getElementById('catGrid').innerHTML=CATS.map(cat=>{
-    const catItems=items.filter(i=>i.cat===cat.id);
-    const manualVat=Object.values(plan).flat().filter(i=>i.cat===cat.id).reduce((s,i)=>s+i.priceVat,0);
-    // 앰버서더 카드는 계약 앰버서더 자동 합산 포함
-    const autoAmt = cat.id==='amb' ? ambAutoTotal : 0;
-    const allCatVat = manualVat + autoAmt;
-    const bgt=catBudgets[cat.id]||0;
-    const cpct=bgt>0?Math.min(100,Math.round(allCatVat/bgt*100)):0;
-    const fill=bgt>0?Math.min(100,allCatVat/bgt*100):0;
-    const pc=bgt===0?'zero':cpct>=100?'over':cpct>=80?'warn':'ok';
-    const isActive=activePicker===cat.id;
-    return`
-    <div class="cat-card ${isActive?'active':''}" onclick="togglePicker('${cat.id}')">
-      <div class="cct">
-        <div class="cct-left">
-          <div class="cat-dot" style="background:${cat.col}"></div>
-          <span class="cat-name">${cat.label}</span>
-          ${catItems.length>0?`<span class="cat-cnt">${catItems.length}</span>`:''}
-          ${cat.id==='amb'&&ambFees.length>0?`<span style="font-size:10px;color:var(--amb);background:var(--amb-bg);padding:1px 6px;border-radius:6px;font-weight:600">계약 ${ambFees.length}명</span>`:''}
-        </div>
-        <button class="cat-add-btn" style="background:${cat.col}18;color:${cat.col};border:1.5px solid ${cat.col}40"
-          onclick="event.stopPropagation();togglePicker('${cat.id}')">+ 추가</button>
-      </div>
-      <div class="ccm">
-        <div class="cc-bar-track"><div class="cc-bar-fill" style="width:${fill}%;background:${cat.col}"></div></div>
-        <div class="cc-amounts">
-          <div>
-            <span class="cc-spent">${allCatVat>0?fmtKor(allCatVat):'집행 없음'}</span>
-            ${cat.id==='amb'&&autoAmt>0?`<div style="font-size:10px;color:var(--text3);margin-top:1px">자동 ${fmtKor(autoAmt)} 포함</div>`:''}
-          </div>
-          <div style="display:flex;align-items:center;gap:5px">
-            <span class="cc-pct ${pc}">${bgt>0?cpct+'%':'예산없음'}</span>
-            <div class="cc-bgt-wrap" onclick="event.stopPropagation()">
-              <input class="cc-bgt-input" type="number" value="${bgt}" title="예산(만원)" onchange="setCatBudget('${cat.id}',this.value)">
-              <span style="font-size:10px;color:var(--text3)">만</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      ${catItems.length>0 ? `
-      <div style="border-top:1px solid var(--border);padding:7px 14px">
-        <div style="font-size:11px;color:var(--text3)">${catItems.length}건 선택됨 · 클릭해서 편집</div>
-      </div>` : ''}
-    </div>`;
-  }).join('');
+ document.getElementById('catGrid').innerHTML=CATS.map(cat=>{
+ const catItems=items.filter(i=>i.cat===cat.id);
+ const manualVat=Object.values(plan).flat().filter(i=>i.cat===cat.id).reduce((s,i)=>s+i.priceVat,0);
+ // 앰버서더 카드는 계약 앰버서더 자동 합산 포함
+ const autoAmt = cat.id==='amb' ? ambAutoTotal : 0;
+ const allCatVat = manualVat + autoAmt;
+ const bgt=catBudgets[cat.id]||0;
+ const cpct=bgt>0?Math.min(100,Math.round(allCatVat/bgt*100)):0;
+ const fill=bgt>0?Math.min(100,allCatVat/bgt*100):0;
+ const pc=bgt===0?'zero':cpct>=100?'over':cpct>=80?'warn':'ok';
+ const isActive=activePicker===cat.id;
+ return`
+ <div class="cat-card ${isActive?'active':''}" onclick="togglePicker('${cat.id}')">
+ <div class="cct">
+ <div class="cct-left">
+ <div class="cat-dot" style="background:${cat.col}"></div>
+ <span class="cat-name">${cat.label}</span>
+ ${catItems.length>0?`<span class="cat-cnt">${catItems.length}</span>`:''}
+ ${cat.id==='amb'&&ambFees.length>0?`<span style="font-size:10px;color:var(--amb);background:var(--amb-bg);padding:1px 6px;border-radius:6px;font-weight:600">계약 ${ambFees.length}명</span>`:''}
+ </div>
+ <button class="cat-add-btn" style="background:${cat.col}18;color:${cat.col};border:1.5px solid ${cat.col}40"
+ onclick="event.stopPropagation();togglePicker('${cat.id}')">+ 추가</button>
+ </div>
+ <div class="ccm">
+ <div class="cc-bar-track"><div class="cc-bar-fill" style="width:${fill}%;background:${cat.col}"></div></div>
+ <div class="cc-amounts">
+ <div>
+ <span class="cc-spent">${allCatVat>0?fmtKor(allCatVat):'집행 없음'}</span>
+ ${cat.id==='amb'&&autoAmt>0?`<div style="font-size:10px;color:var(--text3);margin-top:1px">자동 ${fmtKor(autoAmt)} 포함</div>`:''}
+ </div>
+ <div style="display:flex;align-items:center;gap:5px">
+ <span class="cc-pct ${pc}">${bgt>0?cpct+'%':'예산없음'}</span>
+ <div class="cc-bgt-wrap" onclick="event.stopPropagation()">
+ <input class="cc-bgt-input" type="number" value="${bgt}" title="예산(만원)" onchange="setCatBudget('${cat.id}',this.value)">
+ <span style="font-size:10px;color:var(--text3)">만</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ ${catItems.length>0 ? `
+ <div style="border-top:1px solid var(--border);padding:7px 14px">
+ <div style="font-size:11px;color:var(--text3)">${catItems.length}건 선택됨 · 클릭해서 편집</div>
+ </div>` : ''}
+ </div>`;
+ }).join('');
 }
 
 // ── INLINE PICKER ──
 function togglePicker(catId){
-  if(activePicker===catId){ closePicker(); return; }
-  activePicker=catId; infSelections={};
-  pickerSubFilter='전체';
-  renderPickerContainer();
-  renderCatGrid();
-  document.getElementById('inlinePicker').scrollIntoView({behavior:'smooth',block:'nearest'});
+ if(activePicker===catId){ closePicker(); return; }
+ activePicker=catId; infSelections={};
+ pickerSubFilter='전체';
+ renderPickerContainer();
+ renderCatGrid();
+ document.getElementById('inlinePicker').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function closePicker(){ activePicker=null; infSelections={}; document.getElementById('inlinePicker').style.display='none'; renderCatGrid(); }
 
 function renderPickerContainer(){
-  const cat=CATS.find(c=>c.id===activePicker);
-  const isInf=activePicker==='inf';
-  const el=document.getElementById('inlinePicker');
-  el.style.display='';
-  const selCount=Object.keys(infSelections).length;
-  const selTotal=Object.values(infSelections).reduce((s,v)=>s+v.price,0);
+ const cat=CATS.find(c=>c.id===activePicker);
+ const isInf=activePicker==='inf';
+ const el=document.getElementById('inlinePicker');
+ el.style.display='';
+ const selCount=Object.keys(infSelections).length;
+ const selTotal=Object.values(infSelections).reduce((s,v)=>s+v.price,0);
 
-  el.innerHTML=`
-    <div class="ip-header">
-      <div class="ip-title">
-        <div class="cat-dot" style="background:${cat.col}"></div>
-        ${cat.label} ${isInf?'인플루언서 선택':'항목 선택'}
-      </div>
-      ${isInf?`<input class="ip-search" id="pickerSearch" placeholder="이름 검색..." oninput="renderPickerBody()">`:''}
-      ${isInf?`<div class="ip-filters" id="pickerFilters"></div>`:''}
-      <div class="ip-tools">
-        ${isInf?`<button class="ip-tool-btn yt" id="ytBtn" onclick="loadAllYtData()">↺ 조회수</button>`:''}
-        ${isInf?`<button class="ip-tool-btn" onclick="openDBModal()">📋 전체 리스트</button>`:''}
-      </div>
-      ${isInf?`
-      <div class="ip-sel-bar">
-        <span class="ip-sel-info" id="pickerSelInfo">선택 0개</span>
-        <button class="ip-add-btn" id="pickerAddBtn" onclick="addSelectedToPlan()" disabled>플랜에 추가 →</button>
-      </div>`:''}
-      <button class="ip-close-btn" onclick="closePicker()">✕</button>
-    </div>
-    <div class="ip-body" id="pickerBody"></div>`;
+ el.innerHTML=`
+ <div class="ip-header">
+ <div class="ip-title">
+ <div class="cat-dot" style="background:${cat.col}"></div>
+ ${cat.label} ${isInf?'인플루언서 선택':'항목 선택'}
+ </div>
+ ${isInf?`<input class="ip-search" id="pickerSearch" placeholder="이름 검색..." oninput="renderPickerBody()">`:''}
+ ${isInf?`<div class="ip-filters" id="pickerFilters"></div>`:''}
+ <div class="ip-tools">
+ ${isInf?`<button class="ip-tool-btn yt" id="ytBtn" onclick="loadAllYtData()">↺ 조회수</button>`:''}
+ ${isInf?`<button class="ip-tool-btn" onclick="openDBModal()"> 전체 리스트</button>`:''}
+ </div>
+ ${isInf?`
+ <div class="ip-sel-bar">
+ <span class="ip-sel-info" id="pickerSelInfo">선택 0개</span>
+ <button class="ip-add-btn" id="pickerAddBtn" onclick="addSelectedToPlan()" disabled>플랜에 추가 →</button>
+ </div>`:''}
+ <button class="ip-close-btn" onclick="closePicker()"></button>
+ </div>
+ <div class="ip-body" id="pickerBody"></div>`;
 
-  if(isInf) renderPickerFilters();
-  renderPickerBody();
+ if(isInf) renderPickerFilters();
+ renderPickerBody();
 }
 
 function renderPickerFilters(){
-  const el=document.getElementById('pickerFilters');
-  if(!el) return;
-  el.innerHTML=INF_SUBS.map(s=>`<span class="ip-chip ${s===pickerSubFilter?'on':''}" onclick="setPickerFilter('${s}')">${s}</span>`).join('');
+ const el=document.getElementById('pickerFilters');
+ if(!el) return;
+ el.innerHTML=INF_SUBS.map(s=>`<span class="ip-chip ${s===pickerSubFilter?'on':''}" onclick="setPickerFilter('${s}')">${s}</span>`).join('');
 }
 function setPickerFilter(s){ pickerSubFilter=s; renderPickerFilters(); renderPickerBody(); }
 
 function renderPickerBody(){
-  const el=document.getElementById('pickerBody');
-  if(!el||!activePicker) return;
-  if(activePicker==='inf') renderInfPicker(el);
-  else renderFixedPicker(el, activePicker);
+ const el=document.getElementById('pickerBody');
+ if(!el||!activePicker) return;
+ if(activePicker==='inf') renderInfPicker(el);
+ else renderFixedPicker(el, activePicker);
 }
 
 function renderInfPicker(el){
-  const q=(document.getElementById('pickerSearch')?.value||'').toLowerCase();
-  const list=INFLUENCERS.filter(i=>{
-    const mq=i.name.toLowerCase().includes(q)||i.sub.toLowerCase().includes(q);
-    const ms=pickerSubFilter==='전체'||i.sub===pickerSubFilter;
-    return mq&&ms;
-  });
-  el.innerHTML=`<div class="inf-card-grid">${list.map(inf=>{
-    const handle=inf.url?.match(/@[^/?#\s]+/)?.[0]||'';
-    const yt=handle?ytCache[handle]:null;
-    const sel=infSelections[inf.name];
-    const isSelected=!!sel;
-    // 구독자: API 결과 있으면 사용, 없으면 정적값
-    const subsText=yt?fmtNum(yt.subscribers):(inf.subs||'–');
-    // 조회수: ASCII 핸들이면 API 시도, 한국어이면 표시 안 함
-    const canFetch=isAsciiHandle(handle);
-    const avgText=yt?fmtNum(yt.avgViews):(canFetch?(ytLoading[handle]?'로딩…':'–'):'');
-    return`
-    <div class="inf-card-item ${isSelected?'selected':''}" onclick="toggleInf('${inf.name}')">
-      <div class="ici-check">${isSelected?'✓':''}</div>
-      <div class="ici-name">${inf.name}</div>
-      <div class="ici-meta">
-        <span class="ici-cat">${inf.sub}</span>
-        <span class="ici-stat">구독 ${subsText}</span>
-        ${avgText?`<span class="ici-stat">조회 ${avgText}</span>`:''}
-      </div>
-      <div class="ici-prices" onclick="event.stopPropagation()">
-        ${inf.prices.map(p=>`<span class="ici-price ${sel?.type===p.t?'active':''}" onclick="selectPrice('${inf.name}','${p.t}',${p.v})">${p.t}<br><b>${fmtShort(p.v)}</b></span>`).join('')}
-      </div>
-      ${inf.note?`<div class="ici-note">📌 ${inf.note}</div>`:''}
-      <div class="ici-footer">
-        ${inf.url?`<a href="${inf.url}" target="_blank" class="ici-ch" onclick="event.stopPropagation()">채널↗</a>`:'<span></span>'}
-      </div>
-    </div>`;
-  }).join('')}</div>`;
-  updatePickerFooter();
+ const q=(document.getElementById('pickerSearch')?.value||'').toLowerCase();
+ const list=INFLUENCERS.filter(i=>{
+ const mq=i.name.toLowerCase().includes(q)||i.sub.toLowerCase().includes(q);
+ const ms=pickerSubFilter==='전체'||i.sub===pickerSubFilter;
+ return mq&&ms;
+ });
+ el.innerHTML=`<div class="inf-card-grid">${list.map(inf=>{
+ const handle=inf.url?.match(/@[^/?#\s]+/)?.[0]||'';
+ const yt=handle?ytCache[handle]:null;
+ const sel=infSelections[inf.name];
+ const isSelected=!!sel;
+ // 구독자: API 결과 있으면 사용, 없으면 정적값
+ const subsText=yt?fmtNum(yt.subscribers):(inf.subs||'–');
+ // 조회수: ASCII 핸들이면 API 시도, 한국어이면 표시 안 함
+ const canFetch=isAsciiHandle(handle);
+ const avgText=yt?fmtNum(yt.avgViews):(canFetch?(ytLoading[handle]?'로딩…':'–'):'');
+ return`
+ <div class="inf-card-item ${isSelected?'selected':''}" onclick="toggleInf('${inf.name}')">
+ <div class="ici-check">${isSelected?'':''}</div>
+ <div class="ici-name">${inf.name}</div>
+ <div class="ici-meta">
+ <span class="ici-cat">${inf.sub}</span>
+ <span class="ici-stat">구독 ${subsText}</span>
+ ${avgText?`<span class="ici-stat">조회 ${avgText}</span>`:''}
+ </div>
+ <div class="ici-prices" onclick="event.stopPropagation()">
+ ${inf.prices.map(p=>`<span class="ici-price ${sel?.type===p.t?'active':''}" onclick="selectPrice('${inf.name}','${p.t}',${p.v})">${p.t}<br><b>${fmtShort(p.v)}</b></span>`).join('')}
+ </div>
+ ${inf.note?`<div class="ici-note"> ${inf.note}</div>`:''}
+ <div class="ici-footer">
+ ${inf.url?`<a href="${inf.url}" target="_blank" class="ici-ch" onclick="event.stopPropagation()">채널↗</a>`:'<span></span>'}
+ </div>
+ </div>`;
+ }).join('')}</div>`;
+ updatePickerFooter();
 }
 
 function renderFixedPicker(el, catId){
-  const items=FIXED_ITEMS[catId]||[];
-  const cat=CATS.find(c=>c.id===catId);
-  const groups={};
-  items.forEach((item,idx)=>{ const g=item.group||''; if(!groups[g])groups[g]=[]; groups[g].push({item,idx}); });
-  let html='<div style="padding-bottom:8px">';
-  Object.entries(groups).forEach(([gName,entries])=>{
-    if(gName) html+=`<div class="fitem-group-label">${gName}</div>`;
-    entries.forEach(({item,idx})=>{
-      const priceStr=item.mode==='per'?`인당 ${item.defaultUnit}만원`:`${item.defaultVal}만원`;
-      html+=`<div class="fitem-row">
-        <div class="fitem-icon" style="background:${cat.bg}">${item.icon||'📌'}</div>
-        <div class="fitem-info"><div class="fitem-name">${item.name}</div><div class="fitem-desc">${item.desc}</div></div>
-        <span class="fitem-price">${priceStr}</span>
-        <button class="fitem-add-btn" onclick="openFModal('${catId}',${idx})">+ 추가</button>
-      </div>`;
-    });
-  });
-  html+='</div>';
-  el.innerHTML=html;
+ const items=FIXED_ITEMS[catId]||[];
+ const cat=CATS.find(c=>c.id===catId);
+ const groups={};
+ items.forEach((item,idx)=>{ const g=item.group||''; if(!groups[g])groups[g]=[]; groups[g].push({item,idx}); });
+ let html='<div style="padding-bottom:8px">';
+ Object.entries(groups).forEach(([gName,entries])=>{
+ if(gName) html+=`<div class="fitem-group-label">${gName}</div>`;
+ entries.forEach(({item,idx})=>{
+ const priceStr=item.mode==='per'?`인당 ${item.defaultUnit}만원`:`${item.defaultVal}만원`;
+ html+=`<div class="fitem-row">
+ <div class="fitem-icon" style="background:${cat.bg}">${item.icon||''}</div>
+ <div class="fitem-info"><div class="fitem-name">${item.name}</div><div class="fitem-desc">${item.desc}</div></div>
+ <span class="fitem-price">${priceStr}</span>
+ <button class="fitem-add-btn" onclick="openFModal('${catId}',${idx})">+ 추가</button>
+ </div>`;
+ });
+ });
+ html+='</div>';
+ el.innerHTML=html;
 }
 
 function toggleInf(name){
-  const inf=INFLUENCERS.find(i=>i.name===name);
-  if(!inf) return;
-  if(infSelections[name]) delete infSelections[name];
-  else { const p=inf.prices[0]; infSelections[name]={type:p.t,price:p.v}; }
-  renderInfPicker(document.getElementById('pickerBody'));
+ const inf=INFLUENCERS.find(i=>i.name===name);
+ if(!inf) return;
+ if(infSelections[name]) delete infSelections[name];
+ else { const p=inf.prices[0]; infSelections[name]={type:p.t,price:p.v}; }
+ renderInfPicker(document.getElementById('pickerBody'));
 }
 function selectPrice(name,type,price){
-  if(!infSelections[name]) infSelections[name]={};
-  infSelections[name]={type,price};
-  renderInfPicker(document.getElementById('pickerBody'));
+ if(!infSelections[name]) infSelections[name]={};
+ infSelections[name]={type,price};
+ renderInfPicker(document.getElementById('pickerBody'));
 }
 function updatePickerFooter(){
-  const sel=Object.entries(infSelections);
-  const total=sel.reduce((s,[,v])=>s+v.price,0);
-  const info=document.getElementById('pickerSelInfo');
-  const btn=document.getElementById('pickerAddBtn');
-  if(info) info.textContent=sel.length>0?`선택 ${sel.length}개 · ${fmtKor(total)}`:'선택 0개';
-  if(btn){ btn.disabled=sel.length===0; btn.textContent=sel.length>0?`${sel.length}개 플랜에 추가 →`:'플랜에 추가 →'; }
+ const sel=Object.entries(infSelections);
+ const total=sel.reduce((s,[,v])=>s+v.price,0);
+ const info=document.getElementById('pickerSelInfo');
+ const btn=document.getElementById('pickerAddBtn');
+ if(info) info.textContent=sel.length>0?`선택 ${sel.length}개 · ${fmtKor(total)}`:'선택 0개';
+ if(btn){ btn.disabled=sel.length===0; btn.textContent=sel.length>0?`${sel.length}개 플랜에 추가 →`:'플랜에 추가 →'; }
 }
 function addSelectedToPlan(){
-  Object.entries(infSelections).forEach(([name,{type,price}])=>{
-    plan[activeMonth].push({id:Date.now()+Math.random(),cat:'inf',name,type,price,priceVat:Math.round(price*1.1),memo:''});
-  });
-  infSelections={};
-  closePicker();
-  renderPlanTable();
-  renderMonthTabs();
-  updateHeader();
+ Object.entries(infSelections).forEach(([name,{type,price}])=>{
+ plan[activeMonth].push({id:Date.now()+Math.random(),cat:'inf',name,type,price,priceVat:Math.round(price*1.1),memo:''});
+ });
+ infSelections={};
+ closePicker();
+ renderPlanTable();
+ renderMonthTabs();
+ updateHeader();
 }
 
 // ── PLAN TABLE ──
 function renderPlanTable(){
-  const items=plan[activeMonth];
-  const ambFees=getAmbFees(activeMonth);
-  const ambAutoTotal=ambFees.reduce((s,a)=>s+a.fee,0);
-  const manualVat=items.reduce((s,i)=>s+i.priceVat,0);
-  const manualRaw=items.reduce((s,i)=>s+i.price,0);
-  const totalVat=manualVat+ambAutoTotal;
-  const el=document.getElementById('planTable');
-  if(items.length===0 && ambFees.length===0){
-    el.innerHTML=`<div class="plan-head"><span class="plan-head-title">이번달 플랜 · ${activeMonth}</span><span style="font-size:12px;color:var(--text3)">카테고리 카드를 클릭해 추가하세요</span></div><div class="empty-plan">아직 추가된 항목이 없어요</div>`;
-    return;
-  }
-  let rows='';
-  CATS.forEach(cat=>{
-    items.filter(i=>i.cat===cat.id).forEach(i=>{
-      rows+=`<tr>
-        <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cat.col};margin-right:6px;vertical-align:middle"></span><span class="type-pill ${cat.pill}">${cat.label}</span></td>
-        <td class="td-name">${i.name}</td>
-        <td style="font-size:12px;color:var(--text3)">${i.type}</td>
-        <td class="td-right"><div class="td-pm">${fmtKor(i.priceVat)}</div><div class="td-ps">${fmtWon(i.price)} VAT별도</div></td>
-        <td><input class="memo-inp" value="${i.memo}" placeholder="메모..." onchange="updateMemo('${activeMonth}',${i.id},this.value)"></td>
-        <td><button class="del-btn" onclick="delItem('${activeMonth}',${i.id})">✕</button></td>
-      </tr>`;
-    });
-  });
-  // 계약 앰버서더 자동 합산 rows
-  if(ambFees.length>0){
-    const ambCat=CATS.find(c=>c.id==='amb');
-    rows+=`<tr style="background:#fff7ed"><td colspan="6" style="padding:8px 16px;font-size:11px;font-weight:700;color:var(--amb)">📌 계약 앰버서더 자동 집계 (${activeMonth})</td></tr>`;
-    ambFees.forEach(a=>{
-      rows+=`<tr style="background:#fffbf7">
-        <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${ambCat.col};margin-right:6px;vertical-align:middle"></span><span class="type-pill ${ambCat.pill}">앰버서더</span></td>
-        <td class="td-name">${a.name} <span style="font-size:11px;color:var(--text3)">${a.handle}</span></td>
-        <td style="font-size:12px;color:var(--text3)">월 계약비</td>
-        <td class="td-right"><div class="td-pm">${fmtKor(a.fee)}</div><div class="td-ps">VAT별도</div></td>
-        <td colspan="2" style="font-size:11px;color:var(--text3)">앰버서더 탭에서 관리</td>
-      </tr>`;
-    });
-  }
-  el.innerHTML=`
-    <div class="plan-head">
-      <span class="plan-head-title">이번달 플랜 · ${activeMonth} · ${items.length}건</span>
-      <span class="plan-head-total">${fmtKor(totalVat)} <span style="font-size:11px;font-weight:500;color:var(--text3)">(VAT별도 ${fmtKor(totalRaw)})</span></span>
-    </div>
-    <table>
-      <thead><tr><th>카테고리</th><th>이름</th><th>유형</th><th style="text-align:right">금액</th><th>메모</th><th style="width:40px"></th></tr></thead>
-      <tbody>${rows}</tbody>
-      <tfoot><tr class="total-row">
-        <td colspan="3" style="font-size:12px;color:var(--text3)">합계</td>
-        <td class="td-right"><div class="td-pm">${fmtKor(totalVat)}</div><div class="td-ps">${fmtWon(totalRaw)} VAT별도</div></td>
-        <td colspan="2"></td>
-      </tr></tfoot>
-    </table>`;
+ const items=plan[activeMonth];
+ const ambFees=getAmbFees(activeMonth);
+ const ambAutoTotal=ambFees.reduce((s,a)=>s+a.fee,0);
+ const manualVat=items.reduce((s,i)=>s+i.priceVat,0);
+ const manualRaw=items.reduce((s,i)=>s+i.price,0);
+ const totalVat=manualVat+ambAutoTotal;
+ const el=document.getElementById('planTable');
+ if(items.length===0 && ambFees.length===0){
+ el.innerHTML=`<div class="plan-head"><span class="plan-head-title">이번달 플랜 · ${activeMonth}</span><span style="font-size:12px;color:var(--text3)">카테고리 카드를 클릭해 추가하세요</span></div><div class="empty-plan">아직 추가된 항목이 없어요</div>`;
+ return;
+ }
+ let rows='';
+ CATS.forEach(cat=>{
+ items.filter(i=>i.cat===cat.id).forEach(i=>{
+ rows+=`<tr>
+ <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cat.col};margin-right:6px;vertical-align:middle"></span><span class="type-pill ${cat.pill}">${cat.label}</span></td>
+ <td class="td-name">${i.name}</td>
+ <td style="font-size:12px;color:var(--text3)">${i.type}</td>
+ <td class="td-right"><div class="td-pm">${fmtKor(i.priceVat)}</div><div class="td-ps">${fmtWon(i.price)} VAT별도</div></td>
+ <td><input class="memo-inp" value="${i.memo}" placeholder="메모..." onchange="updateMemo('${activeMonth}',${i.id},this.value)"></td>
+ <td><button class="del-btn" onclick="delItem('${activeMonth}',${i.id})"></button></td>
+ </tr>`;
+ });
+ });
+ // 계약 앰버서더 자동 합산 rows
+ if(ambFees.length>0){
+ const ambCat=CATS.find(c=>c.id==='amb');
+ rows+=`<tr style="background:#fff7ed"><td colspan="6" style="padding:8px 16px;font-size:11px;font-weight:700;color:var(--amb)"> 계약 앰버서더 자동 집계 (${activeMonth})</td></tr>`;
+ ambFees.forEach(a=>{
+ rows+=`<tr style="background:#fffbf7">
+ <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${ambCat.col};margin-right:6px;vertical-align:middle"></span><span class="type-pill ${ambCat.pill}">앰버서더</span></td>
+ <td class="td-name">${a.name} <span style="font-size:11px;color:var(--text3)">${a.handle}</span></td>
+ <td style="font-size:12px;color:var(--text3)">월 계약비</td>
+ <td class="td-right"><div class="td-pm">${fmtKor(a.fee)}</div><div class="td-ps">VAT별도</div></td>
+ <td colspan="2" style="font-size:11px;color:var(--text3)">앰버서더 탭에서 관리</td>
+ </tr>`;
+ });
+ }
+ el.innerHTML=`
+ <div class="plan-head">
+ <span class="plan-head-title">이번달 플랜 · ${activeMonth} · ${items.length}건</span>
+ <span class="plan-head-total">${fmtKor(totalVat)} <span style="font-size:11px;font-weight:500;color:var(--text3)">(VAT별도 ${fmtKor(totalRaw)})</span></span>
+ </div>
+ <table>
+ <thead><tr><th>카테고리</th><th>이름</th><th>유형</th><th style="text-align:right">금액</th><th>메모</th><th style="width:40px"></th></tr></thead>
+ <tbody>${rows}</tbody>
+ <tfoot><tr class="total-row">
+ <td colspan="3" style="font-size:12px;color:var(--text3)">합계</td>
+ <td class="td-right"><div class="td-pm">${fmtKor(totalVat)}</div><div class="td-ps">${fmtWon(totalRaw)} VAT별도</div></td>
+ <td colspan="2"></td>
+ </tr></tfoot>
+ </table>`;
 }
 
 // ── FIXED MODAL ──
 function openFModal(catId,idx){
-  fModalCtx={catId,idx};
-  const item=FIXED_ITEMS[catId][idx];
-  document.getElementById('fmName').textContent=item.name;
-  document.getElementById('fmDesc').textContent=item.desc;
-  document.getElementById('fmMemo').value='';
-  document.getElementById('fmMonth').innerHTML=MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('');
-  document.getElementById('fmFields').innerHTML=item.mode==='per'
-    ?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><div><label class="m-label">${item.countLabel}</label><input class="m-input" id="fm-count" type="number" value="${item.defaultCount}" oninput="updateFPreview()" style="margin-bottom:0"></div><div><label class="m-label">${item.unitLabel}</label><input class="m-input" id="fm-unit" type="number" value="${item.defaultUnit}" oninput="updateFPreview()" style="margin-bottom:0"></div></div>`
-    :`<div style="margin-bottom:12px"><label class="m-label">${item.valLabel}</label><input class="m-input" id="fm-val" type="number" value="${item.defaultVal}" oninput="updateFPreview()" style="margin-bottom:0"></div>`;
-  updateFPreview();
-  document.getElementById('foverlay').classList.add('show');
+ fModalCtx={catId,idx};
+ const item=FIXED_ITEMS[catId][idx];
+ document.getElementById('fmName').textContent=item.name;
+ document.getElementById('fmDesc').textContent=item.desc;
+ document.getElementById('fmMemo').value='';
+ document.getElementById('fmMonth').innerHTML=MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('');
+ document.getElementById('fmFields').innerHTML=item.mode==='per'
+ ?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><div><label class="m-label">${item.countLabel}</label><input class="m-input" id="fm-count" type="number" value="${item.defaultCount}" oninput="updateFPreview()" style="margin-bottom:0"></div><div><label class="m-label">${item.unitLabel}</label><input class="m-input" id="fm-unit" type="number" value="${item.defaultUnit}" oninput="updateFPreview()" style="margin-bottom:0"></div></div>`
+ :`<div style="margin-bottom:12px"><label class="m-label">${item.valLabel}</label><input class="m-input" id="fm-val" type="number" value="${item.defaultVal}" oninput="updateFPreview()" style="margin-bottom:0"></div>`;
+ updateFPreview();
+ document.getElementById('foverlay').classList.add('show');
 }
 function updateFPreview(){
-  const {catId,idx}=fModalCtx||{};if(!catId)return;
-  const item=FIXED_ITEMS[catId][idx];
-  const p=item.mode==='per'?(+document.getElementById('fm-count')?.value||0)*(+document.getElementById('fm-unit')?.value||0):(+document.getElementById('fm-val')?.value||0);
-  document.getElementById('fmPreview').textContent=fmtKor(Math.round(p*1.1));
+ const {catId,idx}=fModalCtx||{};if(!catId)return;
+ const item=FIXED_ITEMS[catId][idx];
+ const p=item.mode==='per'?(+document.getElementById('fm-count')?.value||0)*(+document.getElementById('fm-unit')?.value||0):(+document.getElementById('fm-val')?.value||0);
+ document.getElementById('fmPreview').textContent=fmtKor(Math.round(p*1.1));
 }
 function closeFModal(){document.getElementById('foverlay').classList.remove('show');}
 function addFixed(){
-  const {catId,idx}=fModalCtx;const item=FIXED_ITEMS[catId][idx];
-  const month=document.getElementById('fmMonth').value;const memo=document.getElementById('fmMemo').value;
-  let price,label;
-  if(item.mode==='per'){const c=+document.getElementById('fm-count').value||0,u=+document.getElementById('fm-unit').value||0;price=c*u;label=`${c.toLocaleString()}명 × ${u}만`;}
-  else{price=+document.getElementById('fm-val').value||0;label=item.name;}
-  plan[month].push({id:Date.now(),cat:catId,name:item.name,type:label,price,priceVat:Math.round(price*1.1),memo});
-  closeFModal();renderPlanTable();renderCatGrid();renderMonthTabs();updateHeader();
+ const {catId,idx}=fModalCtx;const item=FIXED_ITEMS[catId][idx];
+ const month=document.getElementById('fmMonth').value;const memo=document.getElementById('fmMemo').value;
+ let price,label;
+ if(item.mode==='per'){const c=+document.getElementById('fm-count').value||0,u=+document.getElementById('fm-unit').value||0;price=c*u;label=`${c.toLocaleString()}명 × ${u}만`;}
+ else{price=+document.getElementById('fm-val').value||0;label=item.name;}
+ plan[month].push({id:Date.now(),cat:catId,name:item.name,type:label,price,priceVat:Math.round(price*1.1),memo});
+ closeFModal();renderPlanTable();renderCatGrid();renderMonthTabs();updateHeader();
 }
 
 // ── DB MODAL ──
 function openDBModal(){
-  document.getElementById('dbTableBody').innerHTML=INFLUENCERS.map(inf=>{
-    const branded=inf.prices.find(p=>p.t==='브랜디드'||p.t.includes('브랜디드'));
-    const ppl=inf.prices.find(p=>p.t.includes('PPL')||p.t.includes('기획'));
-    const others=inf.prices.filter(p=>p!==branded&&p!==ppl);
-    return`<tr><td style="font-weight:700">${inf.name}</td><td><span style="font-size:11px;color:var(--text3);background:var(--bg);padding:2px 6px;border-radius:5px">${inf.sub}</span></td><td>${inf.subs||'–'}</td><td style="font-weight:600">${branded?fmtKor(branded.v):'–'}</td><td style="font-weight:600">${ppl?fmtKor(ppl.v):'–'}</td><td style="font-size:11px;color:var(--text3)">${others.map(p=>`${p.t} ${fmtShort(p.v)}`).join(', ')||'–'}</td><td>${inf.url?`<a href="${inf.url}" target="_blank" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none">채널↗</a>`:'–'}</td></tr>`;
-  }).join('');
-  document.getElementById('dbOverlay').classList.add('show');
+ document.getElementById('dbTableBody').innerHTML=INFLUENCERS.map(inf=>{
+ const branded=inf.prices.find(p=>p.t==='브랜디드'||p.t.includes('브랜디드'));
+ const ppl=inf.prices.find(p=>p.t.includes('PPL')||p.t.includes('기획'));
+ const others=inf.prices.filter(p=>p!==branded&&p!==ppl);
+ return`<tr><td style="font-weight:700">${inf.name}</td><td><span style="font-size:11px;color:var(--text3);background:var(--bg);padding:2px 6px;border-radius:5px">${inf.sub}</span></td><td>${inf.subs||'–'}</td><td style="font-weight:600">${branded?fmtKor(branded.v):'–'}</td><td style="font-weight:600">${ppl?fmtKor(ppl.v):'–'}</td><td style="font-size:11px;color:var(--text3)">${others.map(p=>`${p.t} ${fmtShort(p.v)}`).join(', ')||'–'}</td><td>${inf.url?`<a href="${inf.url}" target="_blank" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none">채널↗</a>`:'–'}</td></tr>`;
+ }).join('');
+ document.getElementById('dbOverlay').classList.add('show');
 }
 
 // ── CRUD ──

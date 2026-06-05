@@ -60,87 +60,87 @@ tr:hover td{background:#fafbff;}
 </head>
 <body>
 <header class="app-header">
-  <div class="logo"><div class="logo-mark">🌿</div>온살</div>
-  <nav id="globalNav"></nav>
+ <div class="logo"><div class="logo-mark"></div>온살</div>
+ <nav id="globalNav"></nav>
 </header>
 <div class="main">
-  <div class="page-title">📝 체험단 관리</div>
-  <div class="page-sub">레뷰 · 글로우픽 · 화해 · 서포터즈 체험단 캠페인을 월별로 관리해요</div>
+ <div class="page-title"> 체험단 관리</div>
+ <div class="page-sub">레뷰 · 글로우픽 · 화해 · 서포터즈 체험단 캠페인을 월별로 관리해요</div>
 
-  <div class="month-tabs" id="monthTabs"></div>
-  <div class="stats-row" id="statsRow"></div>
+ <div class="month-tabs" id="monthTabs"></div>
+ <div class="stats-row" id="statsRow"></div>
 
-  <!-- 레뷰 -->
-  <div class="section" id="sec-revu">
-    <div class="section-head">
-      <div class="section-title"><div class="platform-dot" style="background:#5b4ef8"></div>레뷰 (Revu)</div>
-      <button class="btn-add" onclick="addCampaign('revu')">+ 캠페인 추가</button>
-    </div>
-    <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>인당(만원)</th><th>총 비용</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
-    <tbody id="body-revu"></tbody></table>
-    <div class="add-row-btn" onclick="addCampaign('revu')">＋ 레뷰 캠페인 추가</div>
-  </div>
+ <!-- 레뷰 -->
+ <div class="section" id="sec-revu">
+ <div class="section-head">
+ <div class="section-title"><div class="platform-dot" style="background:#5b4ef8"></div>레뷰 (Revu)</div>
+ <button class="btn-add" onclick="addCampaign('revu')">+ 캠페인 추가</button>
+ </div>
+ <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>인당(만원)</th><th>총 비용</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+ <tbody id="body-revu"></tbody></table>
+ <div class="add-row-btn" onclick="addCampaign('revu')">＋ 레뷰 캠페인 추가</div>
+ </div>
 
-  <!-- 글로우픽 -->
-  <div class="section" id="sec-glowpick">
-    <div class="section-head">
-      <div class="section-title"><div class="platform-dot" style="background:#e91e8c"></div>글로우픽 (Glowpick)</div>
-      <button class="btn-add" onclick="addCampaign('glowpick')">+ 추가</button>
-    </div>
-    <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>비용(만원)</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
-    <tbody id="body-glowpick"></tbody></table>
-    <div class="add-row-btn" onclick="addCampaign('glowpick')">＋ 글로우픽 캠페인 추가</div>
-  </div>
+ <!-- 글로우픽 -->
+ <div class="section" id="sec-glowpick">
+ <div class="section-head">
+ <div class="section-title"><div class="platform-dot" style="background:#e91e8c"></div>글로우픽 (Glowpick)</div>
+ <button class="btn-add" onclick="addCampaign('glowpick')">+ 추가</button>
+ </div>
+ <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>비용(만원)</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+ <tbody id="body-glowpick"></tbody></table>
+ <div class="add-row-btn" onclick="addCampaign('glowpick')">＋ 글로우픽 캠페인 추가</div>
+ </div>
 
-  <!-- 화해 -->
-  <div class="section" id="sec-hwahae">
-    <div class="section-head">
-      <div class="section-title"><div class="platform-dot" style="background:#ff6b35"></div>화해 (Hwahae)</div>
-      <button class="btn-add" onclick="addCampaign('hwahae')">+ 추가</button>
-    </div>
-    <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>비용(만원)</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
-    <tbody id="body-hwahae"></tbody></table>
-    <div class="add-row-btn" onclick="addCampaign('hwahae')">＋ 화해 캠페인 추가</div>
-  </div>
+ <!-- 화해 -->
+ <div class="section" id="sec-hwahae">
+ <div class="section-head">
+ <div class="section-title"><div class="platform-dot" style="background:#ff6b35"></div>화해 (Hwahae)</div>
+ <button class="btn-add" onclick="addCampaign('hwahae')">+ 추가</button>
+ </div>
+ <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>비용(만원)</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+ <tbody id="body-hwahae"></tbody></table>
+ <div class="add-row-btn" onclick="addCampaign('hwahae')">＋ 화해 캠페인 추가</div>
+ </div>
 
-  <!-- 서포터즈 -->
-  <div class="section" id="sec-supporters">
-    <div class="section-head">
-      <div class="section-title"><div class="platform-dot" style="background:#34c759"></div>서포터즈</div>
-      <button class="btn-add" onclick="addCampaign('supporters')">+ 추가</button>
-    </div>
-    <table><thead><tr><th>채널</th><th>인원</th><th>활동비(만원/인)</th><th>총 비용</th><th>활동 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
-    <tbody id="body-supporters"></tbody></table>
-    <div class="add-row-btn" onclick="addCampaign('supporters')">＋ 서포터즈 추가</div>
-  </div>
+ <!-- 서포터즈 -->
+ <div class="section" id="sec-supporters">
+ <div class="section-head">
+ <div class="section-title"><div class="platform-dot" style="background:#34c759"></div>서포터즈</div>
+ <button class="btn-add" onclick="addCampaign('supporters')">+ 추가</button>
+ </div>
+ <table><thead><tr><th>채널</th><th>인원</th><th>활동비(만원/인)</th><th>총 비용</th><th>활동 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+ <tbody id="body-supporters"></tbody></table>
+ <div class="add-row-btn" onclick="addCampaign('supporters')">＋ 서포터즈 추가</div>
+ </div>
 </div>
 
 <!-- 추가 모달 -->
 <div class="overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="m-title" id="modal-title">캠페인 추가</div>
-    <label class="m-label">캠페인명 / 유형</label>
-    <input class="m-input" id="m-campaign" placeholder="예: 레뷰 프리미어, 꼼평단 등">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      <div><label class="m-label">인원(명)</label><input class="m-input" id="m-count" type="number" placeholder="30" style="margin-bottom:0"></div>
-      <div><label class="m-label">비용/인당(만원)</label><input class="m-input" id="m-cost" type="number" placeholder="5" style="margin-bottom:0"></div>
-    </div>
-    <label class="m-label">신청/활동 기간</label>
-    <input class="m-input" id="m-period" placeholder="예: 7/13 ~ 7/27">
-    <label class="m-label">상태</label>
-    <select class="m-select-full" id="m-status">
-      <option value="wait">신청 대기</option>
-      <option value="send">제품 발송</option>
-      <option value="post">게시 완료</option>
-      <option value="done">확인 완료</option>
-    </select>
-    <label class="m-label">메모</label>
-    <input class="m-input" id="m-note" placeholder="특이사항...">
-    <div class="m-btns">
-      <button class="m-cancel" onclick="closeModal()">취소</button>
-      <button class="m-ok" onclick="saveModal()">추가</button>
-    </div>
-  </div>
+ <div class="modal">
+ <div class="m-title" id="modal-title">캠페인 추가</div>
+ <label class="m-label">캠페인명 / 유형</label>
+ <input class="m-input" id="m-campaign" placeholder="예: 레뷰 프리미어, 꼼평단 등">
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+ <div><label class="m-label">인원(명)</label><input class="m-input" id="m-count" type="number" placeholder="30" style="margin-bottom:0"></div>
+ <div><label class="m-label">비용/인당(만원)</label><input class="m-input" id="m-cost" type="number" placeholder="5" style="margin-bottom:0"></div>
+ </div>
+ <label class="m-label">신청/활동 기간</label>
+ <input class="m-input" id="m-period" placeholder="예: 7/13 ~ 7/27">
+ <label class="m-label">상태</label>
+ <select class="m-select-full" id="m-status">
+ <option value="wait">신청 대기</option>
+ <option value="send">제품 발송</option>
+ <option value="post">게시 완료</option>
+ <option value="done">확인 완료</option>
+ </select>
+ <label class="m-label">메모</label>
+ <input class="m-input" id="m-note" placeholder="특이사항...">
+ <div class="m-btns">
+ <button class="m-cancel" onclick="closeModal()">취소</button>
+ <button class="m-ok" onclick="saveModal()">추가</button>
+ </div>
+ </div>
 </div>
 
 <script src="/nav.js"></script>
@@ -156,89 +156,89 @@ const save = () => localStorage.setItem(KEY, JSON.stringify(data));
 const fmt = n => parseInt(n||0).toLocaleString('ko-KR');
 
 function renderMonthTabs(){
-  document.getElementById('monthTabs').innerHTML = MONTHS.map(m =>
-    `<div class="m-tab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}</div>`
-  ).join('');
+ document.getElementById('monthTabs').innerHTML = MONTHS.map(m =>
+ `<div class="m-tab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}</div>`
+ ).join('');
 }
 function setMonth(m){ activeMonth=m; renderMonthTabs(); renderAll(); }
 
 function renderAll(){
-  ['revu','glowpick','hwahae','supporters'].forEach(renderPlatform);
-  renderStats();
+ ['revu','glowpick','hwahae','supporters'].forEach(renderPlatform);
+ renderStats();
 }
 
 function renderPlatform(platform){
-  const campaigns = data[activeMonth]?.[platform]||[];
-  const el = document.getElementById('body-'+platform);
-  if(!el) return;
-  if(campaigns.length===0){ el.innerHTML=`<tr class="empty-row"><td colspan="9">아직 캠페인이 없어요</td></tr>`; return; }
-  el.innerHTML = campaigns.map((c,i) => {
-    const total = (c.count||0)*(c.cost||0);
-    const st = STATUS[c.status||'wait'];
-    return `<tr>
-      <td style="font-weight:700">${c.campaign||'–'}</td>
-      ${platform!=='supporters'?`<td style="font-size:12px;color:var(--text3)">${c.type||'–'}</td>`:''}
-      <td><input class="ct-input" type="number" value="${c.count||''}" placeholder="0" style="width:50px" onchange="updateField('${platform}',${i},'count',this.value)">명</td>
-      <td><input class="ct-input" type="number" value="${c.cost||''}" placeholder="0" style="width:50px" onchange="updateField('${platform}',${i},'cost',this.value)">만</td>
-      <td style="font-weight:700;font-variant-numeric:tabular-nums">${total>0?fmt(total)+'만원':'–'}</td>
-      <td><input class="ct-input" value="${c.period||''}" placeholder="기간..." style="width:110px" onchange="updateField('${platform}',${i},'period',this.value)"></td>
-      <td>
-        <select class="ct-select" onchange="updateField('${platform}',${i},'status',this.value)">
-          ${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${(c.status||'wait')===k?'selected':''}>${v.lbl}</option>`).join('')}
-        </select>
-      </td>
-      <td><input class="ct-input" value="${c.note||''}" placeholder="메모..." style="width:100px" onchange="updateField('${platform}',${i},'note',this.value)"></td>
-      <td><button class="del-btn" onclick="deleteCampaign('${platform}',${i})">✕</button></td>
-    </tr>`;
-  }).join('');
+ const campaigns = data[activeMonth]?.[platform]||[];
+ const el = document.getElementById('body-'+platform);
+ if(!el) return;
+ if(campaigns.length===0){ el.innerHTML=`<tr class="empty-row"><td colspan="9">아직 캠페인이 없어요</td></tr>`; return; }
+ el.innerHTML = campaigns.map((c,i) => {
+ const total = (c.count||0)*(c.cost||0);
+ const st = STATUS[c.status||'wait'];
+ return `<tr>
+ <td style="font-weight:700">${c.campaign||'–'}</td>
+ ${platform!=='supporters'?`<td style="font-size:12px;color:var(--text3)">${c.type||'–'}</td>`:''}
+ <td><input class="ct-input" type="number" value="${c.count||''}" placeholder="0" style="width:50px" onchange="updateField('${platform}',${i},'count',this.value)">명</td>
+ <td><input class="ct-input" type="number" value="${c.cost||''}" placeholder="0" style="width:50px" onchange="updateField('${platform}',${i},'cost',this.value)">만</td>
+ <td style="font-weight:700;font-variant-numeric:tabular-nums">${total>0?fmt(total)+'만원':'–'}</td>
+ <td><input class="ct-input" value="${c.period||''}" placeholder="기간..." style="width:110px" onchange="updateField('${platform}',${i},'period',this.value)"></td>
+ <td>
+ <select class="ct-select" onchange="updateField('${platform}',${i},'status',this.value)">
+ ${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${(c.status||'wait')===k?'selected':''}>${v.lbl}</option>`).join('')}
+ </select>
+ </td>
+ <td><input class="ct-input" value="${c.note||''}" placeholder="메모..." style="width:100px" onchange="updateField('${platform}',${i},'note',this.value)"></td>
+ <td><button class="del-btn" onclick="deleteCampaign('${platform}',${i})"></button></td>
+ </tr>`;
+ }).join('');
 }
 
 function renderStats(){
-  const d = data[activeMonth]||{};
-  const all = [...(d.revu||[]),...(d.glowpick||[]),...(d.hwahae||[]),...(d.supporters||[])];
-  const totalCost = all.reduce((s,c)=>s+(c.count||0)*(c.cost||0),0);
-  const posted = all.filter(c=>c.status==='post'||c.status==='done').length;
-  const people = all.reduce((s,c)=>s+(+c.count||0),0);
-  document.getElementById('statsRow').innerHTML = [
-    ['총 캠페인',all.length+'개',''],
-    ['총 인원',fmt(people)+'명',''],
-    ['게시 완료',posted+'/'+all.length+'건',posted>0?'#12a05c':''],
-    ['총 예산',totalCost>0?fmt(totalCost)+'만원':'–',''],
-  ].map(([l,v,c])=>`<div class="stat"><div class="stat-label">${l}</div><div class="stat-val" style="${c?'color:'+c:''}">${v}</div></div>`).join('');
+ const d = data[activeMonth]||{};
+ const all = [...(d.revu||[]),...(d.glowpick||[]),...(d.hwahae||[]),...(d.supporters||[])];
+ const totalCost = all.reduce((s,c)=>s+(c.count||0)*(c.cost||0),0);
+ const posted = all.filter(c=>c.status==='post'||c.status==='done').length;
+ const people = all.reduce((s,c)=>s+(+c.count||0),0);
+ document.getElementById('statsRow').innerHTML = [
+ ['총 캠페인',all.length+'개',''],
+ ['총 인원',fmt(people)+'명',''],
+ ['게시 완료',posted+'/'+all.length+'건',posted>0?'#12a05c':''],
+ ['총 예산',totalCost>0?fmt(totalCost)+'만원':'–',''],
+ ].map(([l,v,c])=>`<div class="stat"><div class="stat-label">${l}</div><div class="stat-val" style="${c?'color:'+c:''}">${v}</div></div>`).join('');
 }
 
 function updateField(platform, idx, field, val){
-  if(!data[activeMonth]?.[platform]?.[idx]) return;
-  data[activeMonth][platform][idx][field] = field==='count'||field==='cost'?+val:val;
-  save(); renderAll();
+ if(!data[activeMonth]?.[platform]?.[idx]) return;
+ data[activeMonth][platform][idx][field] = field==='count'||field==='cost'?+val:val;
+ save(); renderAll();
 }
 function deleteCampaign(platform, idx){
-  if(!confirm('삭제할까요?')) return;
-  data[activeMonth][platform].splice(idx,1);
-  save(); renderAll();
+ if(!confirm('삭제할까요?')) return;
+ data[activeMonth][platform].splice(idx,1);
+ save(); renderAll();
 }
 function addCampaign(platform){
-  modalCtx = platform;
-  document.getElementById('modal-title').textContent = {revu:'레뷰 캠페인 추가',glowpick:'글로우픽 추가',hwahae:'화해 추가',supporters:'서포터즈 추가'}[platform];
-  ['m-campaign','m-period','m-note'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('m-count').value='';
-  document.getElementById('m-cost').value='';
-  document.getElementById('m-status').value='wait';
-  document.getElementById('modalOverlay').classList.add('show');
+ modalCtx = platform;
+ document.getElementById('modal-title').textContent = {revu:'레뷰 캠페인 추가',glowpick:'글로우픽 추가',hwahae:'화해 추가',supporters:'서포터즈 추가'}[platform];
+ ['m-campaign','m-period','m-note'].forEach(id=>document.getElementById(id).value='');
+ document.getElementById('m-count').value='';
+ document.getElementById('m-cost').value='';
+ document.getElementById('m-status').value='wait';
+ document.getElementById('modalOverlay').classList.add('show');
 }
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
 function saveModal(){
-  const name = document.getElementById('m-campaign').value.trim();
-  if(!name) return alert('캠페인명을 입력해주세요');
-  data[activeMonth][modalCtx].push({
-    campaign: name,
-    count: +document.getElementById('m-count').value||0,
-    cost:  +document.getElementById('m-cost').value||0,
-    period: document.getElementById('m-period').value.trim(),
-    status: document.getElementById('m-status').value,
-    note:   document.getElementById('m-note').value.trim(),
-  });
-  save(); closeModal(); renderAll();
+ const name = document.getElementById('m-campaign').value.trim();
+ if(!name) return alert('캠페인명을 입력해주세요');
+ data[activeMonth][modalCtx].push({
+ campaign: name,
+ count: +document.getElementById('m-count').value||0,
+ cost: +document.getElementById('m-cost').value||0,
+ period: document.getElementById('m-period').value.trim(),
+ status: document.getElementById('m-status').value,
+ note: document.getElementById('m-note').value.trim(),
+ });
+ save(); closeModal(); renderAll();
 }
 document.getElementById('modalOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
 renderMonthTabs(); renderAll();

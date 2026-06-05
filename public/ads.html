@@ -7,13 +7,13 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
 :root {
-  --bg:#f4f5f7; --white:#fff; --border:#e2e4e9; --border2:#d0d3db;
-  --text:#111318; --text2:#4a4f5e; --text3:#9098ae;
-  --accent:#5b4ef8; --accent-bg:#ede9ff;
-  --green:#12a05c; --green-bg:#e6f7ef;
-  --red:#e03131; --red-bg:#fff0f0;
-  --orange:#d9600a;
-  --naver:#03c75a; --meta:#1877f2; --google:#4285f4;
+ --bg:#f4f5f7; --white:#fff; --border:#e2e4e9; --border2:#d0d3db;
+ --text:#111318; --text2:#4a4f5e; --text3:#9098ae;
+ --accent:#5b4ef8; --accent-bg:#ede9ff;
+ --green:#12a05c; --green-bg:#e6f7ef;
+ --red:#e03131; --red-bg:#fff0f0;
+ --orange:#d9600a;
+ --naver:#03c75a; --meta:#1877f2; --google:#4285f4;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
@@ -134,226 +134,226 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 <body>
 
 <header class="app-header">
-  <div class="logo"><div class="logo-mark">🌿</div>온살 마케팅</div>
-  <nav id="globalNav"></nav>
+ <div class="logo"><div class="logo-mark"></div>온살 마케팅</div>
+ <nav id="globalNav"></nav>
 </header>
 
 <div class="sub-tabs">
-  <div class="sub-tab active" id="tab-sa" onclick="setSubTab('sa')">🔍 SA 검색광고</div>
-  <div class="sub-tab" id="tab-da" onclick="setSubTab('da')">📱 DA / SNS 광고</div>
+ <div class="sub-tab active" id="tab-sa" onclick="setSubTab('sa')"> SA 검색광고</div>
+ <div class="sub-tab" id="tab-da" onclick="setSubTab('da')"> DA / SNS 광고</div>
 </div>
 
 <div class="main">
 
-  <!-- Month selector -->
-  <div class="toolbar">
-    <div class="toolbar-title" id="tab-title">SA 검색광고</div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <div class="month-selector" id="monthSelector"></div>
-      <button class="btn-sm btn-accent" onclick="openAddModal()" id="addBtn">+ 추가</button>
-    </div>
-  </div>
+ <!-- Month selector -->
+ <div class="toolbar">
+ <div class="toolbar-title" id="tab-title">SA 검색광고</div>
+ <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+ <div class="month-selector" id="monthSelector"></div>
+ <button class="btn-sm btn-accent" onclick="openAddModal()" id="addBtn">+ 추가</button>
+ </div>
+ </div>
 
-  <!-- SA VIEW -->
-  <div id="view-sa">
-    <div class="stats-grid" id="sa-stats"></div>
-    <!-- 네이버 SA -->
-    <div class="platform-section" id="naver-sa-section">
-      <div class="platform-head">
-        <div class="platform-head-left">
-          <div class="platform-logo logo-naver">N</div>
-          <div>
-            <div class="platform-name">네이버 SA</div>
-            <div class="platform-month-budget" id="naver-sa-budget">월예산 –</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <span class="platform-budget" id="naver-sa-spend">집행 –</span>
-        </div>
-      </div>
-      <div class="ads-table-wrap">
-        <table class="ads-table">
-          <thead><tr>
-            <th>캠페인 / 그룹</th><th>유형</th>
-            <th>월예산(만원)</th><th>일예산(만원)</th>
-            <th>노출</th><th>클릭</th><th>CTR</th><th>CPC</th>
-            <th>전환</th><th>CPA</th><th>비용</th><th></th>
-          </tr></thead>
-          <tbody id="naver-sa-body"></tbody>
-          <tfoot><tr class="total-row" id="naver-sa-total"></tr></tfoot>
-        </table>
-      </div>
-      <div class="add-row-btn" onclick="openAddModal('naver','sa')">＋ 네이버 SA 그룹 추가</div>
-    </div>
+ <!-- SA VIEW -->
+ <div id="view-sa">
+ <div class="stats-grid" id="sa-stats"></div>
+ <!-- 네이버 SA -->
+ <div class="platform-section" id="naver-sa-section">
+ <div class="platform-head">
+ <div class="platform-head-left">
+ <div class="platform-logo logo-naver">N</div>
+ <div>
+ <div class="platform-name">네이버 SA</div>
+ <div class="platform-month-budget" id="naver-sa-budget">월예산 –</div>
+ </div>
+ </div>
+ <div style="display:flex;align-items:center;gap:12px">
+ <span class="platform-budget" id="naver-sa-spend">집행 –</span>
+ </div>
+ </div>
+ <div class="ads-table-wrap">
+ <table class="ads-table">
+ <thead><tr>
+ <th>캠페인 / 그룹</th><th>유형</th>
+ <th>월예산(만원)</th><th>일예산(만원)</th>
+ <th>노출</th><th>클릭</th><th>CTR</th><th>CPC</th>
+ <th>전환</th><th>CPA</th><th>비용</th><th></th>
+ </tr></thead>
+ <tbody id="naver-sa-body"></tbody>
+ <tfoot><tr class="total-row" id="naver-sa-total"></tr></tfoot>
+ </table>
+ </div>
+ <div class="add-row-btn" onclick="openAddModal('naver','sa')">＋ 네이버 SA 그룹 추가</div>
+ </div>
 
-    <!-- 구글 SA -->
-    <div class="platform-section" id="google-sa-section">
-      <div class="platform-head">
-        <div class="platform-head-left">
-          <div class="platform-logo logo-google">G</div>
-          <div>
-            <div class="platform-name">구글 SA</div>
-            <div class="platform-month-budget" id="google-sa-budget">월예산 –</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <span class="platform-budget" id="google-sa-spend">집행 –</span>
-        </div>
-      </div>
-      <div class="ads-table-wrap">
-        <table class="ads-table">
-          <thead><tr>
-            <th>캠페인 / 그룹</th><th>유형</th>
-            <th>월예산(만원)</th><th>일예산(만원)</th>
-            <th>노출</th><th>클릭</th><th>CTR</th><th>CPC</th>
-            <th>전환</th><th>CPA</th><th>비용</th><th></th>
-          </tr></thead>
-          <tbody id="google-sa-body"></tbody>
-          <tfoot><tr class="total-row" id="google-sa-total"></tr></tfoot>
-        </table>
-      </div>
-      <div class="add-row-btn" onclick="openAddModal('google','sa')">＋ 구글 SA 그룹 추가</div>
-    </div>
-  </div>
+ <!-- 구글 SA -->
+ <div class="platform-section" id="google-sa-section">
+ <div class="platform-head">
+ <div class="platform-head-left">
+ <div class="platform-logo logo-google">G</div>
+ <div>
+ <div class="platform-name">구글 SA</div>
+ <div class="platform-month-budget" id="google-sa-budget">월예산 –</div>
+ </div>
+ </div>
+ <div style="display:flex;align-items:center;gap:12px">
+ <span class="platform-budget" id="google-sa-spend">집행 –</span>
+ </div>
+ </div>
+ <div class="ads-table-wrap">
+ <table class="ads-table">
+ <thead><tr>
+ <th>캠페인 / 그룹</th><th>유형</th>
+ <th>월예산(만원)</th><th>일예산(만원)</th>
+ <th>노출</th><th>클릭</th><th>CTR</th><th>CPC</th>
+ <th>전환</th><th>CPA</th><th>비용</th><th></th>
+ </tr></thead>
+ <tbody id="google-sa-body"></tbody>
+ <tfoot><tr class="total-row" id="google-sa-total"></tr></tfoot>
+ </table>
+ </div>
+ <div class="add-row-btn" onclick="openAddModal('google','sa')">＋ 구글 SA 그룹 추가</div>
+ </div>
+ </div>
 
-  <!-- DA VIEW -->
-  <div id="view-da" style="display:none">
-    <!-- Meta API Banner -->
-    <div class="api-banner">
-      <div class="api-banner-text">
-        <h4>📊 메타 광고 API 연결</h4>
-        <p>Access Token과 광고계정 ID를 입력하면 실적이 자동으로 불러와져요</p>
-      </div>
-      <button class="btn-sm" onclick="toggleApiSettings()">API 설정</button>
-    </div>
-    <div class="api-settings" id="apiSettings">
-      <div class="api-row">
-        <div><label class="form-label" style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Access Token</label>
-          <input class="api-input" id="meta-token" type="password" placeholder="EAAxxxx..."></div>
-        <div><label class="form-label" style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">광고계정 ID</label>
-          <input class="api-input" id="meta-account" placeholder="act_123456789"></div>
-        <button class="btn-sm btn-accent" onclick="connectMetaApi()">연결</button>
-      </div>
-      <div class="api-result" id="api-result"></div>
-    </div>
+ <!-- DA VIEW -->
+ <div id="view-da" style="display:none">
+ <!-- Meta API Banner -->
+ <div class="api-banner">
+ <div class="api-banner-text">
+ <h4> 메타 광고 API 연결</h4>
+ <p>Access Token과 광고계정 ID를 입력하면 실적이 자동으로 불러와져요</p>
+ </div>
+ <button class="btn-sm" onclick="toggleApiSettings()">API 설정</button>
+ </div>
+ <div class="api-settings" id="apiSettings">
+ <div class="api-row">
+ <div><label class="form-label" style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Access Token</label>
+ <input class="api-input" id="meta-token" type="password" placeholder="EAAxxxx..."></div>
+ <div><label class="form-label" style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">광고계정 ID</label>
+ <input class="api-input" id="meta-account" placeholder="act_123456789"></div>
+ <button class="btn-sm btn-accent" onclick="connectMetaApi()">연결</button>
+ </div>
+ <div class="api-result" id="api-result"></div>
+ </div>
 
-    <div class="stats-grid" id="da-stats"></div>
+ <div class="stats-grid" id="da-stats"></div>
 
-    <!-- 메타 DA -->
-    <div class="platform-section">
-      <div class="platform-head">
-        <div class="platform-head-left">
-          <div class="platform-logo logo-meta">f</div>
-          <div>
-            <div class="platform-name">메타 (인스타/페이스북)</div>
-            <div class="platform-month-budget" id="meta-budget">월예산 –</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="platform-budget" id="meta-spend">집행 –</span>
-          <button class="btn-sm" onclick="pullMetaData()" id="metaPullBtn" style="display:none">↺ 실적 가져오기</button>
-        </div>
-      </div>
-      <div class="ads-table-wrap">
-        <table class="ads-table">
-          <thead><tr>
-            <th>캠페인명</th><th>목적</th>
-            <th>일예산(만원)</th>
-            <th>노출</th><th>클릭</th><th>CTR</th><th>CPC(원)</th>
-            <th>비용(만원)</th><th>전환</th><th>CPA(원)</th><th>ROAS</th><th></th>
-          </tr></thead>
-          <tbody id="meta-body"></tbody>
-          <tfoot><tr class="total-row" id="meta-total"></tr></tfoot>
-        </table>
-      </div>
-      <div class="add-row-btn" onclick="openAddModal('meta','da')">＋ 메타 캠페인 추가</div>
-    </div>
+ <!-- 메타 DA -->
+ <div class="platform-section">
+ <div class="platform-head">
+ <div class="platform-head-left">
+ <div class="platform-logo logo-meta">f</div>
+ <div>
+ <div class="platform-name">메타 (인스타/페이스북)</div>
+ <div class="platform-month-budget" id="meta-budget">월예산 –</div>
+ </div>
+ </div>
+ <div style="display:flex;align-items:center;gap:10px">
+ <span class="platform-budget" id="meta-spend">집행 –</span>
+ <button class="btn-sm" onclick="pullMetaData()" id="metaPullBtn" style="display:none">↺ 실적 가져오기</button>
+ </div>
+ </div>
+ <div class="ads-table-wrap">
+ <table class="ads-table">
+ <thead><tr>
+ <th>캠페인명</th><th>목적</th>
+ <th>일예산(만원)</th>
+ <th>노출</th><th>클릭</th><th>CTR</th><th>CPC(원)</th>
+ <th>비용(만원)</th><th>전환</th><th>CPA(원)</th><th>ROAS</th><th></th>
+ </tr></thead>
+ <tbody id="meta-body"></tbody>
+ <tfoot><tr class="total-row" id="meta-total"></tr></tfoot>
+ </table>
+ </div>
+ <div class="add-row-btn" onclick="openAddModal('meta','da')">＋ 메타 캠페인 추가</div>
+ </div>
 
-    <!-- 네이버 DA -->
-    <div class="platform-section">
-      <div class="platform-head">
-        <div class="platform-head-left">
-          <div class="platform-logo logo-naver">N</div>
-          <div>
-            <div class="platform-name">네이버 DA</div>
-            <div class="platform-month-budget" id="naver-da-budget">월예산 –</div>
-          </div>
-        </div>
-        <span class="platform-budget" id="naver-da-spend">집행 –</span>
-      </div>
-      <div class="ads-table-wrap">
-        <table class="ads-table">
-          <thead><tr>
-            <th>캠페인명</th><th>목적</th>
-            <th>일예산(만원)</th>
-            <th>노출</th><th>클릭</th><th>CTR</th><th>CPC(원)</th>
-            <th>비용(만원)</th><th>전환</th><th>CPA(원)</th><th>ROAS</th><th></th>
-          </tr></thead>
-          <tbody id="naver-da-body"></tbody>
-          <tfoot><tr class="total-row" id="naver-da-total"></tr></tfoot>
-        </table>
-      </div>
-      <div class="add-row-btn" onclick="openAddModal('naver','da')">＋ 네이버 DA 캠페인 추가</div>
-    </div>
-  </div>
+ <!-- 네이버 DA -->
+ <div class="platform-section">
+ <div class="platform-head">
+ <div class="platform-head-left">
+ <div class="platform-logo logo-naver">N</div>
+ <div>
+ <div class="platform-name">네이버 DA</div>
+ <div class="platform-month-budget" id="naver-da-budget">월예산 –</div>
+ </div>
+ </div>
+ <span class="platform-budget" id="naver-da-spend">집행 –</span>
+ </div>
+ <div class="ads-table-wrap">
+ <table class="ads-table">
+ <thead><tr>
+ <th>캠페인명</th><th>목적</th>
+ <th>일예산(만원)</th>
+ <th>노출</th><th>클릭</th><th>CTR</th><th>CPC(원)</th>
+ <th>비용(만원)</th><th>전환</th><th>CPA(원)</th><th>ROAS</th><th></th>
+ </tr></thead>
+ <tbody id="naver-da-body"></tbody>
+ <tfoot><tr class="total-row" id="naver-da-total"></tr></tfoot>
+ </table>
+ </div>
+ <div class="add-row-btn" onclick="openAddModal('naver','da')">＋ 네이버 DA 캠페인 추가</div>
+ </div>
+ </div>
 
 </div>
 
 <!-- ADD MODAL -->
 <div class="overlay" id="addOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="add-modal-title">광고 추가</div>
-      <button class="modal-close" onclick="closeAddModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <!-- SA fields -->
-      <div id="sa-fields">
-        <div class="form-row"><label class="form-label">캠페인명</label><input class="form-input" id="f-campaign" placeholder="예: 온살_브랜드_캠페인"></div>
-        <div class="form-row"><label class="form-label">키워드 그룹명</label><input class="form-input" id="f-group" placeholder="예: 브랜드키워드_정확"></div>
-        <div class="form-row-2">
-          <div><label class="form-label">유형</label>
-            <select class="form-select" id="f-type-sa">
-              <option value="brand">브랜드</option>
-              <option value="category">카테고리</option>
-              <option value="competitor">경쟁사</option>
-              <option value="general">일반</option>
-            </select>
-          </div>
-          <div><label class="form-label">매칭방식</label>
-            <select class="form-select" id="f-match">
-              <option value="exact">완전일치</option>
-              <option value="phrase">구문일치</option>
-              <option value="broad">확장일치</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row-2">
-          <div><label class="form-label">월예산(만원)</label><input class="form-input" id="f-month-budget" type="number" placeholder="500"></div>
-          <div><label class="form-label">일예산(만원)</label><input class="form-input" id="f-day-budget" type="number" placeholder="17"></div>
-        </div>
-      </div>
-      <!-- DA fields -->
-      <div id="da-fields" style="display:none">
-        <div class="form-row"><label class="form-label">캠페인명</label><input class="form-input" id="f-campaign-da" placeholder="예: 온살_브랜드인지도_2025"></div>
-        <div class="form-row-2">
-          <div><label class="form-label">목적</label>
-            <select class="form-select" id="f-obj">
-              <option value="awareness">인지도</option>
-              <option value="traffic">트래픽</option>
-              <option value="conversion">전환</option>
-              <option value="retargeting">리타겟팅</option>
-            </select>
-          </div>
-          <div><label class="form-label">일예산(만원)</label><input class="form-input" id="f-day-budget-da" type="number" placeholder="33"></div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-modal-cancel" onclick="closeAddModal()">취소</button>
-        <button class="btn-modal-ok" onclick="saveAd()">추가</button>
-      </div>
-    </div>
-  </div>
+ <div class="modal">
+ <div class="modal-header">
+ <div class="modal-title" id="add-modal-title">광고 추가</div>
+ <button class="modal-close" onclick="closeAddModal()"></button>
+ </div>
+ <div class="modal-body">
+ <!-- SA fields -->
+ <div id="sa-fields">
+ <div class="form-row"><label class="form-label">캠페인명</label><input class="form-input" id="f-campaign" placeholder="예: 온살_브랜드_캠페인"></div>
+ <div class="form-row"><label class="form-label">키워드 그룹명</label><input class="form-input" id="f-group" placeholder="예: 브랜드키워드_정확"></div>
+ <div class="form-row-2">
+ <div><label class="form-label">유형</label>
+ <select class="form-select" id="f-type-sa">
+ <option value="brand">브랜드</option>
+ <option value="category">카테고리</option>
+ <option value="competitor">경쟁사</option>
+ <option value="general">일반</option>
+ </select>
+ </div>
+ <div><label class="form-label">매칭방식</label>
+ <select class="form-select" id="f-match">
+ <option value="exact">완전일치</option>
+ <option value="phrase">구문일치</option>
+ <option value="broad">확장일치</option>
+ </select>
+ </div>
+ </div>
+ <div class="form-row-2">
+ <div><label class="form-label">월예산(만원)</label><input class="form-input" id="f-month-budget" type="number" placeholder="500"></div>
+ <div><label class="form-label">일예산(만원)</label><input class="form-input" id="f-day-budget" type="number" placeholder="17"></div>
+ </div>
+ </div>
+ <!-- DA fields -->
+ <div id="da-fields" style="display:none">
+ <div class="form-row"><label class="form-label">캠페인명</label><input class="form-input" id="f-campaign-da" placeholder="예: 온살_브랜드인지도_2025"></div>
+ <div class="form-row-2">
+ <div><label class="form-label">목적</label>
+ <select class="form-select" id="f-obj">
+ <option value="awareness">인지도</option>
+ <option value="traffic">트래픽</option>
+ <option value="conversion">전환</option>
+ <option value="retargeting">리타겟팅</option>
+ </select>
+ </div>
+ <div><label class="form-label">일예산(만원)</label><input class="form-input" id="f-day-budget-da" type="number" placeholder="33"></div>
+ </div>
+ </div>
+ <div class="modal-footer">
+ <button class="btn-modal-cancel" onclick="closeAddModal()">취소</button>
+ <button class="btn-modal-ok" onclick="saveAd()">추가</button>
+ </div>
+ </div>
+ </div>
 </div>
 
 <script src="/nav.js"></script>
@@ -364,9 +364,9 @@ const META_KEY = 'onsal_meta_creds';
 
 // 데이터 구조: adData[month][platform][type] = []
 let adData = JSON.parse(localStorage.getItem(ADS_KEY) || 'null') || (() => {
-  const d = {};
-  MONTHS.forEach(m => { d[m] = { naver:{sa:[],da:[]}, google:{sa:[]}, meta:{da:[]} }; });
-  return d;
+ const d = {};
+ MONTHS.forEach(m => { d[m] = { naver:{sa:[],da:[]}, google:{sa:[]}, meta:{da:[]} }; });
+ return d;
 })();
 let metaCreds = JSON.parse(localStorage.getItem(META_KEY) || 'null') || {token:'', account:''};
 
@@ -379,284 +379,284 @@ const fmt = n => Math.round(n||0).toLocaleString('ko-KR');
 const fmtPct = n => (n||0).toFixed(2) + '%';
 const fmtRoas = n => (n||0).toFixed(2) + 'x';
 
-const TAG_SA  = {brand:'tag-brand',category:'tag-category',competitor:'tag-competitor',general:'tag-general'};
+const TAG_SA = {brand:'tag-brand',category:'tag-category',competitor:'tag-competitor',general:'tag-general'};
 const LABEL_SA = {brand:'브랜드',category:'카테고리',competitor:'경쟁사',general:'일반'};
-const TAG_DA  = {awareness:'tag-awareness',traffic:'tag-traffic',conversion:'tag-conversion',retargeting:'tag-retargeting'};
+const TAG_DA = {awareness:'tag-awareness',traffic:'tag-traffic',conversion:'tag-conversion',retargeting:'tag-retargeting'};
 const LABEL_DA = {awareness:'인지도',traffic:'트래픽',conversion:'전환',retargeting:'리타겟팅'};
 const MATCH_LABEL = {exact:'완전',phrase:'구문',broad:'확장'};
 
 // ── TABS ──
 function setSubTab(t) {
-  activeSubTab = t;
-  document.getElementById('tab-sa').classList.toggle('active', t==='sa');
-  document.getElementById('tab-da').classList.toggle('active', t==='da');
-  document.getElementById('view-sa').style.display = t==='sa' ? '' : 'none';
-  document.getElementById('view-da').style.display = t==='da' ? '' : 'none';
-  document.getElementById('tab-title').textContent = t==='sa' ? 'SA 검색광고' : 'DA / SNS 광고';
-  render();
+ activeSubTab = t;
+ document.getElementById('tab-sa').classList.toggle('active', t==='sa');
+ document.getElementById('tab-da').classList.toggle('active', t==='da');
+ document.getElementById('view-sa').style.display = t==='sa' ? '' : 'none';
+ document.getElementById('view-da').style.display = t==='da' ? '' : 'none';
+ document.getElementById('tab-title').textContent = t==='sa' ? 'SA 검색광고' : 'DA / SNS 광고';
+ render();
 }
 
 // ── MONTH TABS ──
 function renderMonthTabs() {
-  document.getElementById('monthSelector').innerHTML = MONTHS.map(m =>
-    `<button class="month-btn ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}</button>`
-  ).join('');
+ document.getElementById('monthSelector').innerHTML = MONTHS.map(m =>
+ `<button class="month-btn ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}</button>`
+ ).join('');
 }
 function setMonth(m) { activeMonth = m; renderMonthTabs(); render(); }
 
 // ── RENDER ──
 function render() {
-  if (activeSubTab === 'sa') renderSa();
-  else renderDa();
+ if (activeSubTab === 'sa') renderSa();
+ else renderDa();
 }
 
 function renderSa() {
-  const d = adData[activeMonth];
-  const navItems = d?.naver?.sa || [];
-  const gooItems = d?.google?.sa || [];
+ const d = adData[activeMonth];
+ const navItems = d?.naver?.sa || [];
+ const gooItems = d?.google?.sa || [];
 
-  const saTotal = (items) => {
-    const t = {monthBudget:0, dayBudget:0, impr:0, clicks:0, conv:0, cost:0};
-    items.forEach(i => { t.monthBudget+=+i.monthBudget||0; t.dayBudget+=+i.dayBudget||0; t.impr+=+i.impr||0; t.clicks+=+i.clicks||0; t.conv+=+i.conv||0; t.cost+=+i.cost||0; });
-    t.ctr = t.impr>0 ? (t.clicks/t.impr*100) : 0;
-    t.cpc = t.clicks>0 ? (t.cost*10000/t.clicks) : 0;
-    t.cpa = t.conv>0 ? (t.cost*10000/t.conv) : 0;
-    return t;
-  };
-  const nt = saTotal(navItems), gt = saTotal(gooItems);
-  const allTotal = {impr:nt.impr+gt.impr, clicks:nt.clicks+gt.clicks, conv:nt.conv+gt.conv, cost:nt.cost+gt.cost, monthBudget:nt.monthBudget+gt.monthBudget};
-  allTotal.ctr = allTotal.impr>0 ? (allTotal.clicks/allTotal.impr*100):0;
-  allTotal.cpc = allTotal.clicks>0 ? (allTotal.cost*10000/allTotal.clicks):0;
+ const saTotal = (items) => {
+ const t = {monthBudget:0, dayBudget:0, impr:0, clicks:0, conv:0, cost:0};
+ items.forEach(i => { t.monthBudget+=+i.monthBudget||0; t.dayBudget+=+i.dayBudget||0; t.impr+=+i.impr||0; t.clicks+=+i.clicks||0; t.conv+=+i.conv||0; t.cost+=+i.cost||0; });
+ t.ctr = t.impr>0 ? (t.clicks/t.impr*100) : 0;
+ t.cpc = t.clicks>0 ? (t.cost*10000/t.clicks) : 0;
+ t.cpa = t.conv>0 ? (t.cost*10000/t.conv) : 0;
+ return t;
+ };
+ const nt = saTotal(navItems), gt = saTotal(gooItems);
+ const allTotal = {impr:nt.impr+gt.impr, clicks:nt.clicks+gt.clicks, conv:nt.conv+gt.conv, cost:nt.cost+gt.cost, monthBudget:nt.monthBudget+gt.monthBudget};
+ allTotal.ctr = allTotal.impr>0 ? (allTotal.clicks/allTotal.impr*100):0;
+ allTotal.cpc = allTotal.clicks>0 ? (allTotal.cost*10000/allTotal.clicks):0;
 
-  document.getElementById('sa-stats').innerHTML = [
-    ['총 월예산', fmt(allTotal.monthBudget)+'만원', ''],
-    ['총 노출', fmt(allTotal.impr), ''],
-    ['총 클릭', fmt(allTotal.clicks), ''],
-    ['평균 CTR', fmtPct(allTotal.ctr), allTotal.ctr>=3?'good':''],
-    ['평균 CPC', fmt(allTotal.cpc)+'원', ''],
-  ].map(([l,v,cls]) => `<div class="scard"><div class="slabel">${l}</div><div class="sval ${cls}">${v}</div></div>`).join('');
+ document.getElementById('sa-stats').innerHTML = [
+ ['총 월예산', fmt(allTotal.monthBudget)+'만원', ''],
+ ['총 노출', fmt(allTotal.impr), ''],
+ ['총 클릭', fmt(allTotal.clicks), ''],
+ ['평균 CTR', fmtPct(allTotal.ctr), allTotal.ctr>=3?'good':''],
+ ['평균 CPC', fmt(allTotal.cpc)+'원', ''],
+ ].map(([l,v,cls]) => `<div class="scard"><div class="slabel">${l}</div><div class="sval ${cls}">${v}</div></div>`).join('');
 
-  renderSaPlatform('naver', navItems, nt);
-  renderSaPlatform('google', gooItems, gt);
+ renderSaPlatform('naver', navItems, nt);
+ renderSaPlatform('google', gooItems, gt);
 }
 
 function renderSaPlatform(plat, items, t) {
-  document.getElementById(`${plat}-sa-budget`).textContent = `월예산 ${fmt(t.monthBudget)}만원`;
-  document.getElementById(`${plat}-sa-spend`).textContent  = `집행 ${fmt(t.cost)}만원`;
+ document.getElementById(`${plat}-sa-budget`).textContent = `월예산 ${fmt(t.monthBudget)}만원`;
+ document.getElementById(`${plat}-sa-spend`).textContent = `집행 ${fmt(t.cost)}만원`;
 
-  const body = document.getElementById(`${plat}-sa-body`);
-  if (!items.length) {
-    body.innerHTML = `<tr class="empty-row"><td colspan="12">아직 그룹이 없어요. 하단 버튼으로 추가하세요</td></tr>`;
-  } else {
-    body.innerHTML = items.map(i => {
-      const ctr = (+i.impr)>0 ? (+i.clicks/+i.impr*100) : 0;
-      const cpc = (+i.clicks)>0 ? ((+i.cost)*10000/+i.clicks) : 0;
-      const cpa = (+i.conv)>0 ? ((+i.cost)*10000/+i.conv) : 0;
-      return `<tr>
-        <td><span class="group-name">${i.campaign||'–'}</span><br><span style="font-size:11px;color:var(--text3)">${i.group||''}</span></td>
-        <td><span class="group-tag ${TAG_SA[i.type||'general']}">${LABEL_SA[i.type||'general']}</span> <span style="font-size:10px;color:var(--text3)">${MATCH_LABEL[i.match||'exact']}</span></td>
-        <td><input class="budget-input-cell" type="number" value="${i.monthBudget||0}" onchange="updateField('${plat}','sa','${i.id}','monthBudget',this.value)"></td>
-        <td><input class="budget-input-cell" type="number" value="${i.dayBudget||0}" onchange="updateField('${plat}','sa','${i.id}','dayBudget',this.value)"></td>
-        <td><input class="metric-input" type="number" value="${i.impr||0}" onchange="updateField('${plat}','sa','${i.id}','impr',this.value)"></td>
-        <td><input class="metric-input" type="number" value="${i.clicks||0}" onchange="updateField('${plat}','sa','${i.id}','clicks',this.value)"></td>
-        <td class="${ctr>=3?'efficiency-good':ctr<1?'efficiency-warn':''}">${fmtPct(ctr)}</td>
-        <td>${fmt(cpc)}원</td>
-        <td><input class="metric-input" type="number" value="${i.conv||0}" onchange="updateField('${plat}','sa','${i.id}','conv',this.value)"></td>
-        <td>${cpa>0?fmt(cpa)+'원':'–'}</td>
-        <td><input class="metric-input" type="number" value="${i.cost||0}" onchange="updateField('${plat}','sa','${i.id}','cost',this.value)" style="width:70px"> 만</td>
-        <td><button class="del-btn" onclick="deleteAd('${plat}','sa','${i.id}')">✕</button></td>
-      </tr>`;
-    }).join('');
-  }
+ const body = document.getElementById(`${plat}-sa-body`);
+ if (!items.length) {
+ body.innerHTML = `<tr class="empty-row"><td colspan="12">아직 그룹이 없어요. 하단 버튼으로 추가하세요</td></tr>`;
+ } else {
+ body.innerHTML = items.map(i => {
+ const ctr = (+i.impr)>0 ? (+i.clicks/+i.impr*100) : 0;
+ const cpc = (+i.clicks)>0 ? ((+i.cost)*10000/+i.clicks) : 0;
+ const cpa = (+i.conv)>0 ? ((+i.cost)*10000/+i.conv) : 0;
+ return `<tr>
+ <td><span class="group-name">${i.campaign||'–'}</span><br><span style="font-size:11px;color:var(--text3)">${i.group||''}</span></td>
+ <td><span class="group-tag ${TAG_SA[i.type||'general']}">${LABEL_SA[i.type||'general']}</span> <span style="font-size:10px;color:var(--text3)">${MATCH_LABEL[i.match||'exact']}</span></td>
+ <td><input class="budget-input-cell" type="number" value="${i.monthBudget||0}" onchange="updateField('${plat}','sa','${i.id}','monthBudget',this.value)"></td>
+ <td><input class="budget-input-cell" type="number" value="${i.dayBudget||0}" onchange="updateField('${plat}','sa','${i.id}','dayBudget',this.value)"></td>
+ <td><input class="metric-input" type="number" value="${i.impr||0}" onchange="updateField('${plat}','sa','${i.id}','impr',this.value)"></td>
+ <td><input class="metric-input" type="number" value="${i.clicks||0}" onchange="updateField('${plat}','sa','${i.id}','clicks',this.value)"></td>
+ <td class="${ctr>=3?'efficiency-good':ctr<1?'efficiency-warn':''}">${fmtPct(ctr)}</td>
+ <td>${fmt(cpc)}원</td>
+ <td><input class="metric-input" type="number" value="${i.conv||0}" onchange="updateField('${plat}','sa','${i.id}','conv',this.value)"></td>
+ <td>${cpa>0?fmt(cpa)+'원':'–'}</td>
+ <td><input class="metric-input" type="number" value="${i.cost||0}" onchange="updateField('${plat}','sa','${i.id}','cost',this.value)" style="width:70px"> 만</td>
+ <td><button class="del-btn" onclick="deleteAd('${plat}','sa','${i.id}')"></button></td>
+ </tr>`;
+ }).join('');
+ }
 
-  document.getElementById(`${plat}-sa-total`).innerHTML = t.monthBudget || t.cost ? `
-    <td colspan="2" style="font-size:12px;color:var(--text3)">합계</td>
-    <td>${fmt(t.monthBudget)}</td><td>${fmt(t.dayBudget)}</td>
-    <td>${fmt(t.impr)}</td><td>${fmt(t.clicks)}</td>
-    <td>${fmtPct(t.ctr)}</td><td>${fmt(t.cpc)}원</td>
-    <td>${fmt(t.conv)}</td><td>${t.cpa?fmt(t.cpa)+'원':'–'}</td>
-    <td>${fmt(t.cost)}만</td><td></td>` : '';
+ document.getElementById(`${plat}-sa-total`).innerHTML = t.monthBudget || t.cost ? `
+ <td colspan="2" style="font-size:12px;color:var(--text3)">합계</td>
+ <td>${fmt(t.monthBudget)}</td><td>${fmt(t.dayBudget)}</td>
+ <td>${fmt(t.impr)}</td><td>${fmt(t.clicks)}</td>
+ <td>${fmtPct(t.ctr)}</td><td>${fmt(t.cpc)}원</td>
+ <td>${fmt(t.conv)}</td><td>${t.cpa?fmt(t.cpa)+'원':'–'}</td>
+ <td>${fmt(t.cost)}만</td><td></td>` : '';
 }
 
 function renderDa() {
-  const d = adData[activeMonth];
-  const metaItems = d?.meta?.da || [];
-  const naverItems = d?.naver?.da || [];
+ const d = adData[activeMonth];
+ const metaItems = d?.meta?.da || [];
+ const naverItems = d?.naver?.da || [];
 
-  const daTotal = (items) => {
-    const t = {dayBudget:0, impr:0, clicks:0, spend:0, conv:0};
-    items.forEach(i => { t.dayBudget+=+i.dayBudget||0; t.impr+=+i.impr||0; t.clicks+=+i.clicks||0; t.spend+=+i.spend||0; t.conv+=+i.conv||0; });
-    t.ctr = t.impr>0 ? (t.clicks/t.impr*100):0;
-    t.cpc = t.clicks>0 ? (t.spend*10000/t.clicks):0;
-    t.cpa = t.conv>0 ? (t.spend*10000/t.conv):0;
-    t.roas = t.spend>0 ? (t.conv/t.spend):0;
-    return t;
-  };
-  const mt = daTotal(metaItems), nt = daTotal(naverItems);
-  const allTotal = {impr:mt.impr+nt.impr, clicks:mt.clicks+nt.clicks, spend:mt.spend+nt.spend, conv:mt.conv+nt.conv};
-  allTotal.ctr = allTotal.impr>0?(allTotal.clicks/allTotal.impr*100):0;
-  allTotal.roas = allTotal.spend>0?(allTotal.conv/allTotal.spend):0;
+ const daTotal = (items) => {
+ const t = {dayBudget:0, impr:0, clicks:0, spend:0, conv:0};
+ items.forEach(i => { t.dayBudget+=+i.dayBudget||0; t.impr+=+i.impr||0; t.clicks+=+i.clicks||0; t.spend+=+i.spend||0; t.conv+=+i.conv||0; });
+ t.ctr = t.impr>0 ? (t.clicks/t.impr*100):0;
+ t.cpc = t.clicks>0 ? (t.spend*10000/t.clicks):0;
+ t.cpa = t.conv>0 ? (t.spend*10000/t.conv):0;
+ t.roas = t.spend>0 ? (t.conv/t.spend):0;
+ return t;
+ };
+ const mt = daTotal(metaItems), nt = daTotal(naverItems);
+ const allTotal = {impr:mt.impr+nt.impr, clicks:mt.clicks+nt.clicks, spend:mt.spend+nt.spend, conv:mt.conv+nt.conv};
+ allTotal.ctr = allTotal.impr>0?(allTotal.clicks/allTotal.impr*100):0;
+ allTotal.roas = allTotal.spend>0?(allTotal.conv/allTotal.spend):0;
 
-  document.getElementById('da-stats').innerHTML = [
-    ['총 집행금액', fmt(allTotal.spend)+'만원', ''],
-    ['총 노출', fmt(allTotal.impr), ''],
-    ['총 클릭', fmt(allTotal.clicks), ''],
-    ['평균 CTR', fmtPct(allTotal.ctr), allTotal.ctr>=1?'good':''],
-    ['ROAS', fmtRoas(allTotal.roas), allTotal.roas>=3?'good':allTotal.roas>0?'warn':''],
-  ].map(([l,v,cls]) => `<div class="scard"><div class="slabel">${l}</div><div class="sval ${cls}">${v}</div></div>`).join('');
+ document.getElementById('da-stats').innerHTML = [
+ ['총 집행금액', fmt(allTotal.spend)+'만원', ''],
+ ['총 노출', fmt(allTotal.impr), ''],
+ ['총 클릭', fmt(allTotal.clicks), ''],
+ ['평균 CTR', fmtPct(allTotal.ctr), allTotal.ctr>=1?'good':''],
+ ['ROAS', fmtRoas(allTotal.roas), allTotal.roas>=3?'good':allTotal.roas>0?'warn':''],
+ ].map(([l,v,cls]) => `<div class="scard"><div class="slabel">${l}</div><div class="sval ${cls}">${v}</div></div>`).join('');
 
-  document.getElementById('meta-budget').textContent = `일예산 ${fmt(mt.dayBudget)}만원`;
-  document.getElementById('meta-spend').textContent  = `집행 ${fmt(mt.spend)}만원`;
-  document.getElementById('naver-da-budget').textContent = `일예산 ${fmt(nt.dayBudget)}만원`;
-  document.getElementById('naver-da-spend').textContent  = `집행 ${fmt(nt.spend)}만원`;
+ document.getElementById('meta-budget').textContent = `일예산 ${fmt(mt.dayBudget)}만원`;
+ document.getElementById('meta-spend').textContent = `집행 ${fmt(mt.spend)}만원`;
+ document.getElementById('naver-da-budget').textContent = `일예산 ${fmt(nt.dayBudget)}만원`;
+ document.getElementById('naver-da-spend').textContent = `집행 ${fmt(nt.spend)}만원`;
 
-  renderDaPlatform('meta', metaItems, mt);
-  renderDaPlatform('naver', naverItems, nt);
+ renderDaPlatform('meta', metaItems, mt);
+ renderDaPlatform('naver', naverItems, nt);
 }
 
 function renderDaPlatform(plat, items, t) {
-  const bodyId = plat === 'meta' ? 'meta-body' : 'naver-da-body';
-  const totalId = plat === 'meta' ? 'meta-total' : 'naver-da-total';
-  const body = document.getElementById(bodyId);
-  if (!items.length) {
-    body.innerHTML = `<tr class="empty-row"><td colspan="12">아직 캠페인이 없어요</td></tr>`;
-  } else {
-    body.innerHTML = items.map(i => {
-      const ctr = (+i.impr)>0?(+i.clicks/+i.impr*100):0;
-      const cpc = (+i.clicks)>0?((+i.spend)*10000/+i.clicks):0;
-      const cpa = (+i.conv)>0?((+i.spend)*10000/+i.conv):0;
-      const roas= (+i.spend)>0?((+i.conv)/(+i.spend)):0;
-      return `<tr>
-        <td class="group-name">${i.campaign||'–'}</td>
-        <td><span class="group-tag ${TAG_DA[i.objective||'awareness']}">${LABEL_DA[i.objective||'awareness']}</span></td>
-        <td><input class="budget-input-cell" type="number" value="${i.dayBudget||0}" onchange="updateField('${plat}','da','${i.id}','dayBudget',this.value)"></td>
-        <td><input class="metric-input" type="number" value="${i.impr||0}" onchange="updateField('${plat}','da','${i.id}','impr',this.value)"></td>
-        <td><input class="metric-input" type="number" value="${i.clicks||0}" onchange="updateField('${plat}','da','${i.id}','clicks',this.value)"></td>
-        <td class="${ctr>=1?'efficiency-good':''}">${fmtPct(ctr)}</td>
-        <td>${fmt(cpc)}</td>
-        <td><input class="metric-input" type="number" value="${i.spend||0}" onchange="updateField('${plat}','da','${i.id}','spend',this.value)" style="width:70px"> 만</td>
-        <td><input class="metric-input" type="number" value="${i.conv||0}" onchange="updateField('${plat}','da','${i.id}','conv',this.value)"></td>
-        <td>${cpa>0?fmt(cpa):'–'}</td>
-        <td class="${roas>=3?'efficiency-good':roas>0&&roas<2?'efficiency-warn':''}">${roas>0?fmtRoas(roas):'–'}</td>
-        <td><button class="del-btn" onclick="deleteAd('${plat}','da','${i.id}')">✕</button></td>
-      </tr>`;
-    }).join('');
-  }
-  document.getElementById(totalId).innerHTML = t.spend||t.dayBudget ? `
-    <td colspan="2" style="font-size:12px;color:var(--text3)">합계</td>
-    <td>${fmt(t.dayBudget)}</td>
-    <td>${fmt(t.impr)}</td><td>${fmt(t.clicks)}</td>
-    <td>${fmtPct(t.ctr)}</td><td>${fmt(t.cpc)}원</td>
-    <td>${fmt(t.spend)}만</td><td>${fmt(t.conv)}</td>
-    <td>${t.cpa?fmt(t.cpa):'–'}</td>
-    <td class="${t.roas>=3?'efficiency-good':''}">${t.roas>0?fmtRoas(t.roas):'–'}</td>
-    <td></td>` : '';
+ const bodyId = plat === 'meta' ? 'meta-body' : 'naver-da-body';
+ const totalId = plat === 'meta' ? 'meta-total' : 'naver-da-total';
+ const body = document.getElementById(bodyId);
+ if (!items.length) {
+ body.innerHTML = `<tr class="empty-row"><td colspan="12">아직 캠페인이 없어요</td></tr>`;
+ } else {
+ body.innerHTML = items.map(i => {
+ const ctr = (+i.impr)>0?(+i.clicks/+i.impr*100):0;
+ const cpc = (+i.clicks)>0?((+i.spend)*10000/+i.clicks):0;
+ const cpa = (+i.conv)>0?((+i.spend)*10000/+i.conv):0;
+ const roas= (+i.spend)>0?((+i.conv)/(+i.spend)):0;
+ return `<tr>
+ <td class="group-name">${i.campaign||'–'}</td>
+ <td><span class="group-tag ${TAG_DA[i.objective||'awareness']}">${LABEL_DA[i.objective||'awareness']}</span></td>
+ <td><input class="budget-input-cell" type="number" value="${i.dayBudget||0}" onchange="updateField('${plat}','da','${i.id}','dayBudget',this.value)"></td>
+ <td><input class="metric-input" type="number" value="${i.impr||0}" onchange="updateField('${plat}','da','${i.id}','impr',this.value)"></td>
+ <td><input class="metric-input" type="number" value="${i.clicks||0}" onchange="updateField('${plat}','da','${i.id}','clicks',this.value)"></td>
+ <td class="${ctr>=1?'efficiency-good':''}">${fmtPct(ctr)}</td>
+ <td>${fmt(cpc)}</td>
+ <td><input class="metric-input" type="number" value="${i.spend||0}" onchange="updateField('${plat}','da','${i.id}','spend',this.value)" style="width:70px"> 만</td>
+ <td><input class="metric-input" type="number" value="${i.conv||0}" onchange="updateField('${plat}','da','${i.id}','conv',this.value)"></td>
+ <td>${cpa>0?fmt(cpa):'–'}</td>
+ <td class="${roas>=3?'efficiency-good':roas>0&&roas<2?'efficiency-warn':''}">${roas>0?fmtRoas(roas):'–'}</td>
+ <td><button class="del-btn" onclick="deleteAd('${plat}','da','${i.id}')"></button></td>
+ </tr>`;
+ }).join('');
+ }
+ document.getElementById(totalId).innerHTML = t.spend||t.dayBudget ? `
+ <td colspan="2" style="font-size:12px;color:var(--text3)">합계</td>
+ <td>${fmt(t.dayBudget)}</td>
+ <td>${fmt(t.impr)}</td><td>${fmt(t.clicks)}</td>
+ <td>${fmtPct(t.ctr)}</td><td>${fmt(t.cpc)}원</td>
+ <td>${fmt(t.spend)}만</td><td>${fmt(t.conv)}</td>
+ <td>${t.cpa?fmt(t.cpa):'–'}</td>
+ <td class="${t.roas>=3?'efficiency-good':''}">${t.roas>0?fmtRoas(t.roas):'–'}</td>
+ <td></td>` : '';
 }
 
 // ── CRUD ──
 function updateField(plat, type, id, field, val) {
-  const arr = adData[activeMonth]?.[plat]?.[type];
-  if (!arr) return;
-  const item = arr.find(i => i.id === id);
-  if (item) { item[field] = val; saveAds(); render(); }
+ const arr = adData[activeMonth]?.[plat]?.[type];
+ if (!arr) return;
+ const item = arr.find(i => i.id === id);
+ if (item) { item[field] = val; saveAds(); render(); }
 }
 
 function deleteAd(plat, type, id) {
-  if (!confirm('삭제할까요?')) return;
-  adData[activeMonth][plat][type] = adData[activeMonth][plat][type].filter(i => i.id !== id);
-  saveAds(); render();
+ if (!confirm('삭제할까요?')) return;
+ adData[activeMonth][plat][type] = adData[activeMonth][plat][type].filter(i => i.id !== id);
+ saveAds(); render();
 }
 
 // ── ADD MODAL ──
 function openAddModal(plat, type) {
-  addCtx = { platform: plat || (activeSubTab==='sa'?'naver':'meta'), type: type || activeSubTab };
-  document.getElementById('add-modal-title').textContent = `${addCtx.platform==='naver'?'네이버':addCtx.platform==='google'?'구글':'메타'} ${addCtx.type.toUpperCase()} 추가`;
-  document.getElementById('sa-fields').style.display = addCtx.type === 'sa' ? '' : 'none';
-  document.getElementById('da-fields').style.display = addCtx.type === 'da' ? '' : 'none';
-  ['f-campaign','f-group','f-month-budget','f-day-budget','f-campaign-da','f-day-budget-da'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.value = '';
-  });
-  document.getElementById('addOverlay').classList.add('show');
+ addCtx = { platform: plat || (activeSubTab==='sa'?'naver':'meta'), type: type || activeSubTab };
+ document.getElementById('add-modal-title').textContent = `${addCtx.platform==='naver'?'네이버':addCtx.platform==='google'?'구글':'메타'} ${addCtx.type.toUpperCase()} 추가`;
+ document.getElementById('sa-fields').style.display = addCtx.type === 'sa' ? '' : 'none';
+ document.getElementById('da-fields').style.display = addCtx.type === 'da' ? '' : 'none';
+ ['f-campaign','f-group','f-month-budget','f-day-budget','f-campaign-da','f-day-budget-da'].forEach(id => {
+ const el = document.getElementById(id); if(el) el.value = '';
+ });
+ document.getElementById('addOverlay').classList.add('show');
 }
 function closeAddModal() { document.getElementById('addOverlay').classList.remove('show'); }
 
 function saveAd() {
-  const {platform, type} = addCtx;
-  if (!adData[activeMonth][platform]) adData[activeMonth][platform] = {};
-  if (!adData[activeMonth][platform][type]) adData[activeMonth][platform][type] = [];
+ const {platform, type} = addCtx;
+ if (!adData[activeMonth][platform]) adData[activeMonth][platform] = {};
+ if (!adData[activeMonth][platform][type]) adData[activeMonth][platform][type] = [];
 
-  if (type === 'sa') {
-    const campaign = document.getElementById('f-campaign').value.trim();
-    if (!campaign) return alert('캠페인명을 입력해주세요');
-    adData[activeMonth][platform][type].push({
-      id: Date.now().toString(),
-      campaign, group: document.getElementById('f-group').value.trim(),
-      type: document.getElementById('f-type-sa').value,
-      match: document.getElementById('f-match').value,
-      monthBudget: document.getElementById('f-month-budget').value || 0,
-      dayBudget: document.getElementById('f-day-budget').value || 0,
-      impr:0, clicks:0, conv:0, cost:0,
-    });
-  } else {
-    const campaign = document.getElementById('f-campaign-da').value.trim();
-    if (!campaign) return alert('캠페인명을 입력해주세요');
-    adData[activeMonth][platform][type].push({
-      id: Date.now().toString(),
-      campaign, objective: document.getElementById('f-obj').value,
-      dayBudget: document.getElementById('f-day-budget-da').value || 0,
-      impr:0, clicks:0, spend:0, conv:0,
-    });
-  }
-  saveAds(); closeAddModal(); render();
+ if (type === 'sa') {
+ const campaign = document.getElementById('f-campaign').value.trim();
+ if (!campaign) return alert('캠페인명을 입력해주세요');
+ adData[activeMonth][platform][type].push({
+ id: Date.now().toString(),
+ campaign, group: document.getElementById('f-group').value.trim(),
+ type: document.getElementById('f-type-sa').value,
+ match: document.getElementById('f-match').value,
+ monthBudget: document.getElementById('f-month-budget').value || 0,
+ dayBudget: document.getElementById('f-day-budget').value || 0,
+ impr:0, clicks:0, conv:0, cost:0,
+ });
+ } else {
+ const campaign = document.getElementById('f-campaign-da').value.trim();
+ if (!campaign) return alert('캠페인명을 입력해주세요');
+ adData[activeMonth][platform][type].push({
+ id: Date.now().toString(),
+ campaign, objective: document.getElementById('f-obj').value,
+ dayBudget: document.getElementById('f-day-budget-da').value || 0,
+ impr:0, clicks:0, spend:0, conv:0,
+ });
+ }
+ saveAds(); closeAddModal(); render();
 }
 
 // ── META API ──
 function toggleApiSettings() {
-  const el = document.getElementById('apiSettings');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-  if (el.style.display === 'block') {
-    document.getElementById('meta-token').value = metaCreds.token || '';
-    document.getElementById('meta-account').value = metaCreds.account || '';
-  }
+ const el = document.getElementById('apiSettings');
+ el.style.display = el.style.display === 'none' ? 'block' : 'none';
+ if (el.style.display === 'block') {
+ document.getElementById('meta-token').value = metaCreds.token || '';
+ document.getElementById('meta-account').value = metaCreds.account || '';
+ }
 }
 
 async function connectMetaApi() {
-  const token = document.getElementById('meta-token').value.trim();
-  const account = document.getElementById('meta-account').value.trim();
-  if (!token || !account) return alert('토큰과 계정 ID를 입력해주세요');
-  const result = document.getElementById('api-result');
-  result.textContent = '연결 중...'; result.className = 'api-result';
-  try {
-    const res = await fetch(`/api/meta-ads?account=${encodeURIComponent(account)}&token=${encodeURIComponent(token)}&month=${encodeURIComponent(activeMonth)}`);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    metaCreds = {token, account};
-    localStorage.setItem(META_KEY, JSON.stringify(metaCreds));
-    result.textContent = `✓ 연결 성공 · 캠페인 ${data.campaigns?.length || 0}개 조회됨`;
-    result.className = 'api-result ok';
-    document.getElementById('metaPullBtn').style.display = 'inline-flex';
-    if (data.campaigns?.length) {
-      adData[activeMonth].meta.da = data.campaigns;
-      saveAds(); render();
-    }
-  } catch (e) {
-    result.textContent = '연결 실패: ' + e.message;
-    result.className = 'api-result err';
-  }
+ const token = document.getElementById('meta-token').value.trim();
+ const account = document.getElementById('meta-account').value.trim();
+ if (!token || !account) return alert('토큰과 계정 ID를 입력해주세요');
+ const result = document.getElementById('api-result');
+ result.textContent = '연결 중...'; result.className = 'api-result';
+ try {
+ const res = await fetch(`/api/meta-ads?account=${encodeURIComponent(account)}&token=${encodeURIComponent(token)}&month=${encodeURIComponent(activeMonth)}`);
+ const data = await res.json();
+ if (data.error) throw new Error(data.error);
+ metaCreds = {token, account};
+ localStorage.setItem(META_KEY, JSON.stringify(metaCreds));
+ result.textContent = ` 연결 성공 · 캠페인 ${data.campaigns?.length || 0}개 조회됨`;
+ result.className = 'api-result ok';
+ document.getElementById('metaPullBtn').style.display = 'inline-flex';
+ if (data.campaigns?.length) {
+ adData[activeMonth].meta.da = data.campaigns;
+ saveAds(); render();
+ }
+ } catch (e) {
+ result.textContent = '연결 실패: ' + e.message;
+ result.className = 'api-result err';
+ }
 }
 
 async function pullMetaData() {
-  if (!metaCreds.token) { alert('API 먼저 연결해주세요'); return; }
-  const btn = document.getElementById('metaPullBtn');
-  btn.textContent = '불러오는 중...'; btn.disabled = true;
-  try {
-    const res = await fetch(`/api/meta-ads?account=${encodeURIComponent(metaCreds.account)}&token=${encodeURIComponent(metaCreds.token)}&month=${encodeURIComponent(activeMonth)}`);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    if (data.campaigns?.length) { adData[activeMonth].meta.da = data.campaigns; saveAds(); render(); }
-    btn.textContent = '↺ 실적 가져오기';
-  } catch(e) { alert('실패: ' + e.message); }
-  btn.disabled = false;
+ if (!metaCreds.token) { alert('API 먼저 연결해주세요'); return; }
+ const btn = document.getElementById('metaPullBtn');
+ btn.textContent = '불러오는 중...'; btn.disabled = true;
+ try {
+ const res = await fetch(`/api/meta-ads?account=${encodeURIComponent(metaCreds.account)}&token=${encodeURIComponent(metaCreds.token)}&month=${encodeURIComponent(activeMonth)}`);
+ const data = await res.json();
+ if (data.error) throw new Error(data.error);
+ if (data.campaigns?.length) { adData[activeMonth].meta.da = data.campaigns; saveAds(); render(); }
+ btn.textContent = '↺ 실적 가져오기';
+ } catch(e) { alert('실패: ' + e.message); }
+ btn.disabled = false;
 }
 
 document.getElementById('addOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeAddModal(); });
