@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>온살 바이럴 관리</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+:root{--bg:#f4f5f7;--white:#fff;--border:#e2e4e9;--border2:#d0d3db;--text:#111318;--text2:#4a4f5e;--text3:#9098ae;--accent:#5b4ef8;--accent-bg:#ede9ff;--green:#12a05c;--green-bg:#e6f7ef;--red:#e03131;--red-bg:#fff0f0;--viral:#be185d;--viral-bg:#fdf2f8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.app-header{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;box-shadow:0 1px 4px rgba(0,0,0,.05);position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--text);padding-right:16px;border-right:1px solid var(--border);white-space:nowrap;}
+.logo-mark{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.gnav-link{padding:0 14px;height:56px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border-bottom:3px solid transparent;transition:all .15s;}
+.gnav-link:hover{color:var(--text2);}.gnav-link.active{color:var(--accent);border-bottom-color:var(--accent);}
+.main{padding:24px;max-width:1200px;margin:0 auto;}
+.page-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;margin-bottom:6px;}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+.month-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.m-tab{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--white);transition:all .15s;}
+.m-tab.active{background:var(--viral);border-color:var(--viral);color:white;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--white);border-radius:11px;padding:14px 18px;border:1.5px solid var(--border);}
+.stat-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.stat-val{font-size:20px;font-weight:800;color:var(--text);}
+.section{background:var(--white);border-radius:13px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.section-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#fafbfc;}
+.section-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.platform-dot{width:8px;height:8px;border-radius:50%;}
+.btn-add{padding:6px 14px;background:var(--viral);color:white;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:#fafbfc;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:#fdf2f8;}
+.ct-input{background:transparent;border:none;border-bottom:1px solid transparent;width:100%;font-size:12px;color:var(--text);outline:none;font-family:inherit;padding:2px;transition:border-color .12s;}
+.ct-input:focus{border-bottom-color:var(--accent);background:var(--accent-bg);border-radius:4px;padding:2px 5px;}
+.ct-select{background:transparent;border:none;font-size:12px;color:var(--text);outline:none;font-family:inherit;cursor:pointer;}
+.status-chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px;}
+.s-plan{background:#eff6ff;color:#2563eb;}.s-run{background:#fff3e8;color:#d9600a;}.s-done{background:#e6f7ef;color:#12a05c;}.s-pause{background:#f8fafc;color:#9098ae;}
+.del-btn{background:none;border:none;color:var(--border2);cursor:pointer;padding:4px;font-size:13px;}
+.del-btn:hover{color:var(--red);}
+.add-row-btn{display:flex;align-items:center;gap:6px;padding:11px 18px;font-size:12px;font-weight:600;color:var(--viral);cursor:pointer;border-top:1px solid var(--border);background:var(--white);}
+.add-row-btn:hover{background:var(--viral-bg);}
+.empty-row td{text-align:center;color:var(--text3);padding:28px;font-size:13px;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(5px);z-index:200;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:26px;width:400px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.14);}
+.m-title{font-size:17px;font-weight:800;margin-bottom:18px;}
+.m-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px;}
+.m-input,.m-select-full{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;margin-bottom:12px;}
+.m-input:focus,.m-select-full:focus{border-color:var(--accent);}
+.m-btns{display:flex;gap:8px;margin-top:4px;}
+.m-cancel{flex:1;padding:11px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.m-ok{flex:2;padding:11px;background:var(--viral);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="logo"><div class="logo-mark">🌿</div>온살</div>
+  <nav id="globalNav"></nav>
+</header>
+<div class="main">
+  <div class="page-title">🔥 바이럴 관리</div>
+  <div class="page-sub">X(트위터) · 쓰레드 바이럴 캠페인을 월별로 관리해요</div>
+  <div class="month-tabs" id="monthTabs"></div>
+  <div class="stats-row" id="statsRow"></div>
+
+  <!-- X 트위터 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title"><div class="platform-dot" style="background:#000"></div>X (트위터)</div>
+      <button class="btn-add" onclick="addRow('x')">+ 캠페인 추가</button>
+    </div>
+    <table><thead><tr><th>캠페인 주제</th><th>대행사</th><th>게시 수</th><th>비용(만원)</th><th>기간</th><th>확산 지표</th><th>상태</th><th>메모</th><th></th></tr></thead>
+    <tbody id="body-x"></tbody></table>
+    <div class="add-row-btn" onclick="addRow('x')">＋ X 바이럴 추가</div>
+  </div>
+
+  <!-- 쓰레드 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title"><div class="platform-dot" style="background:#000"></div>쓰레드 (Threads)</div>
+      <button class="btn-add" onclick="addRow('threads')">+ 캠페인 추가</button>
+    </div>
+    <table><thead><tr><th>캠페인 주제</th><th>대행사</th><th>게시 수</th><th>비용(만원)</th><th>기간</th><th>확산 지표</th><th>상태</th><th>메모</th><th></th></tr></thead>
+    <tbody id="body-threads"></tbody></table>
+    <div class="add-row-btn" onclick="addRow('threads')">＋ 쓰레드 바이럴 추가</div>
+  </div>
+
+  <!-- 기타 커뮤니티 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title"><div class="platform-dot" style="background:#be185d"></div>기타 커뮤니티</div>
+      <button class="btn-add" onclick="addRow('etc')">+ 추가</button>
+    </div>
+    <table><thead><tr><th>채널/커뮤니티</th><th>캠페인 주제</th><th>비용(만원)</th><th>기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+    <tbody id="body-etc"></tbody></table>
+    <div class="add-row-btn" onclick="addRow('etc')">＋ 기타 바이럴 추가</div>
+  </div>
+</div>
+
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="m-title" id="modal-title">바이럴 캠페인 추가</div>
+    <label class="m-label">캠페인 주제</label>
+    <input class="m-input" id="m-topic" placeholder="예: 온살 세럼 솔직 리뷰">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div><label class="m-label">대행사</label><input class="m-input" id="m-agency" placeholder="업체명" style="margin-bottom:0"></div>
+      <div><label class="m-label">비용(만원)</label><input class="m-input" id="m-cost" type="number" placeholder="100" style="margin-bottom:0"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div><label class="m-label">게시 수</label><input class="m-input" id="m-count" type="number" placeholder="10" style="margin-bottom:0"></div>
+      <div><label class="m-label">기간</label><input class="m-input" id="m-period" placeholder="7/1 ~ 7/7" style="margin-bottom:0"></div>
+    </div>
+    <label class="m-label">상태</label>
+    <select class="m-select-full" id="m-status">
+      <option value="plan">기획중</option>
+      <option value="run">진행중</option>
+      <option value="done">완료</option>
+      <option value="pause">보류</option>
+    </select>
+    <label class="m-label">메모</label>
+    <input class="m-input" id="m-note" placeholder="특이사항, 링크 등">
+    <div class="m-btns">
+      <button class="m-cancel" onclick="closeModal()">취소</button>
+      <button class="m-ok" onclick="saveModal()">추가</button>
+    </div>
+  </div>
+</div>
+
+<script src="/nav.js"></script>
+<script>
+const MONTHS=['7월','8월','9월','10월','11월','12월'];
+const KEY='onsal_viral_v1';
+const STATUS={plan:{cls:'s-plan',lbl:'기획중'},run:{cls:'s-run',lbl:'진행중'},done:{cls:'s-done',lbl:'완료'},pause:{cls:'s-pause',lbl:'보류'}};
+let data=JSON.parse(localStorage.getItem(KEY)||'{}');
+MONTHS.forEach(m=>{if(!data[m])data[m]={x:[],threads:[],etc:[]};});
+let activeMonth='7월', modalCtx=null;
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const fmt=n=>parseInt(n||0).toLocaleString('ko-KR');
+
+function renderMonthTabs(){
+  document.getElementById('monthTabs').innerHTML=MONTHS.map(m=>`<div class="m-tab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}</div>`).join('');
+}
+function setMonth(m){activeMonth=m;renderMonthTabs();renderAll();}
+
+function renderAll(){
+  renderPlatform('x',['캠페인 주제','대행사','게시 수','비용','기간','확산 지표','상태','메모']);
+  renderPlatform('threads',['캠페인 주제','대행사','게시 수','비용','기간','확산 지표','상태','메모']);
+  renderPlatform('etc',['채널','주제','비용','기간','상태','메모']);
+  renderStats();
+}
+
+function renderPlatform(platform){
+  const campaigns=data[activeMonth]?.[platform]||[];
+  const el=document.getElementById('body-'+platform);
+  if(!el)return;
+  if(!campaigns.length){el.innerHTML=`<tr class="empty-row"><td colspan="9">아직 캠페인이 없어요</td></tr>`;return;}
+  el.innerHTML=campaigns.map((c,i)=>{
+    const st=STATUS[c.status||'plan'];
+    return`<tr>
+      <td style="font-weight:700"><input class="ct-input" value="${c.topic||''}" placeholder="주제..." onchange="updateField('${platform}',${i},'topic',this.value)"></td>
+      <td><input class="ct-input" value="${c.agency||''}" placeholder="대행사..." style="width:80px" onchange="updateField('${platform}',${i},'agency',this.value)"></td>
+      <td><input class="ct-input" type="number" value="${c.count||''}" style="width:50px" onchange="updateField('${platform}',${i},'count',this.value)">건</td>
+      <td style="font-weight:700"><input class="ct-input" type="number" value="${c.cost||''}" style="width:60px" onchange="updateField('${platform}',${i},'cost',this.value)">만</td>
+      <td><input class="ct-input" value="${c.period||''}" placeholder="기간..." style="width:90px" onchange="updateField('${platform}',${i},'period',this.value)"></td>
+      <td><input class="ct-input" value="${c.metric||''}" placeholder="RT/조회..." style="width:80px" onchange="updateField('${platform}',${i},'metric',this.value)"></td>
+      <td><select class="ct-select" onchange="updateField('${platform}',${i},'status',this.value)">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${(c.status||'plan')===k?'selected':''}>${v.lbl}</option>`).join('')}</select></td>
+      <td><input class="ct-input" value="${c.note||''}" placeholder="메모..." style="width:100px" onchange="updateField('${platform}',${i},'note',this.value)"></td>
+      <td><button class="del-btn" onclick="deleteRow('${platform}',${i})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStats(){
+  const d=data[activeMonth]||{};
+  const all=[...(d.x||[]),...(d.threads||[]),...(d.etc||[])];
+  const total=all.reduce((s,c)=>s+(+c.cost||0),0);
+  const done=all.filter(c=>c.status==='done').length;
+  document.getElementById('statsRow').innerHTML=[
+    ['총 캠페인',all.length+'개',''],
+    ['진행중',all.filter(c=>c.status==='run').length+'개',''],
+    ['완료',done+'/'+all.length+'건',done>0?'#12a05c':''],
+    ['총 비용',total>0?fmt(total)+'만원':'–',''],
+  ].map(([l,v,c])=>`<div class="stat"><div class="stat-label">${l}</div><div class="stat-val" style="${c?'color:'+c:''}">${v}</div></div>`).join('');
+}
+
+function updateField(plat,idx,field,val){
+  if(data[activeMonth]?.[plat]?.[idx]===undefined)return;
+  data[activeMonth][plat][idx][field]=val;
+  save();renderAll();
+}
+function deleteRow(plat,idx){if(!confirm('삭제?'))return;data[activeMonth][plat].splice(idx,1);save();renderAll();}
+function addRow(plat){
+  modalCtx=plat;
+  ['m-topic','m-agency','m-period','m-note'].forEach(id=>document.getElementById(id).value='');
+  ['m-cost','m-count'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('modal-title').textContent={x:'X 바이럴 추가',threads:'쓰레드 바이럴 추가',etc:'커뮤니티 바이럴 추가'}[plat]||'바이럴 추가';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+function saveModal(){
+  const topic=document.getElementById('m-topic').value.trim();
+  if(!topic)return alert('캠페인 주제를 입력해주세요');
+  data[activeMonth][modalCtx].push({
+    topic,agency:document.getElementById('m-agency').value.trim(),
+    count:+document.getElementById('m-count').value||0,cost:+document.getElementById('m-cost').value||0,
+    period:document.getElementById('m-period').value.trim(),
+    status:document.getElementById('m-status').value,note:document.getElementById('m-note').value.trim(),
+  });
+  save();closeModal();renderAll();
+}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+renderMonthTabs();renderAll();
+</script>
+</body>
+</html>

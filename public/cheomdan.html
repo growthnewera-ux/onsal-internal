@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>온살 체험단 관리</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+:root{--bg:#f4f5f7;--white:#fff;--border:#e2e4e9;--border2:#d0d3db;--text:#111318;--text2:#4a4f5e;--text3:#9098ae;--accent:#5b4ef8;--accent-bg:#ede9ff;--green:#12a05c;--green-bg:#e6f7ef;--red:#e03131;--red-bg:#fff0f0;--orange:#d9600a;--exp:#15803d;--exp-bg:#f0fdf4;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.app-header{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:0;box-shadow:0 1px 4px rgba(0,0,0,.05);position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--text);padding-right:16px;border-right:1px solid var(--border);white-space:nowrap;}
+.logo-mark{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.gnav-link{padding:0 14px;height:56px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border-bottom:3px solid transparent;transition:all .15s;}
+.gnav-link:hover{color:var(--text2);}
+.gnav-link.active{color:var(--accent);border-bottom-color:var(--accent);}
+.main{padding:24px;max-width:1300px;margin:0 auto;}
+.page-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;margin-bottom:6px;}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+.month-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.m-tab{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--white);transition:all .15s;}
+.m-tab.active{background:var(--exp);border-color:var(--exp);color:white;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--white);border-radius:11px;padding:14px 18px;border:1.5px solid var(--border);}
+.stat-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.stat-val{font-size:20px;font-weight:800;color:var(--text);}
+.section{background:var(--white);border-radius:13px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.section-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#fafbfc;}
+.section-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.platform-dot{width:8px;height:8px;border-radius:50%;}
+.btn-add{padding:6px 14px;background:var(--exp);color:white;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+table{width:100%;border-collapse:collapse;}
+th{padding:9px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:#fafbfc;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafbff;}
+.ct-input{background:transparent;border:none;border-bottom:1px solid transparent;width:100%;font-size:12px;color:var(--text);outline:none;font-family:inherit;padding:2px;transition:border-color .12s;}
+.ct-input:focus{border-bottom-color:var(--accent);background:var(--accent-bg);border-radius:4px;padding:2px 5px;}
+.ct-select{background:transparent;border:none;font-size:12px;color:var(--text);outline:none;font-family:inherit;cursor:pointer;}
+.status-chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px;}
+.s-wait{background:#eff6ff;color:#2563eb;} .s-send{background:#fff3e8;color:#d9600a;} .s-post{background:#e6f7ef;color:#12a05c;} .s-done{background:#f5f3ff;color:#7c3aed;}
+.del-btn{background:none;border:none;color:var(--border2);cursor:pointer;padding:4px;font-size:13px;}
+.del-btn:hover{color:var(--red);}
+.add-row-btn{display:flex;align-items:center;gap:6px;padding:11px 18px;font-size:12px;font-weight:600;color:var(--exp);cursor:pointer;border-top:1px solid var(--border);background:var(--white);}
+.add-row-btn:hover{background:var(--exp-bg);}
+.empty-row td{text-align:center;color:var(--text3);padding:28px;font-size:13px;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(5px);z-index:200;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:26px;width:400px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.14);}
+.m-title{font-size:17px;font-weight:800;margin-bottom:18px;}
+.m-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px;}
+.m-input,.m-select-full{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;margin-bottom:12px;}
+.m-input:focus,.m-select-full:focus{border-color:var(--accent);}
+.m-btns{display:flex;gap:8px;margin-top:4px;}
+.m-cancel{flex:1;padding:11px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.m-ok{flex:2;padding:11px;background:var(--exp);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="logo"><div class="logo-mark">🌿</div>온살</div>
+  <nav id="globalNav"></nav>
+</header>
+<div class="main">
+  <div class="page-title">📝 체험단 관리</div>
+  <div class="page-sub">레뷰 · 글로우픽 · 화해 · 서포터즈 체험단 캠페인을 월별로 관리해요</div>
+
+  <div class="month-tabs" id="monthTabs"></div>
+  <div class="stats-row" id="statsRow"></div>
+
+  <!-- 레뷰 -->
+  <div class="section" id="sec-revu">
+    <div class="section-head">
+      <div class="section-title"><div class="platform-dot" style="background:#5b4ef8"></div>레뷰 (Revu)</div>
+      <button class="btn-add" onclick="addCampaign('revu')">+ 캠페인 추가</button>
+    </div>
+    <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>인당(만원)</th><th>총 비용</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+    <tbody id="body-revu"></tbody></table>
+    <div class="add-row-btn" onclick="addCampaign('revu')">＋ 레뷰 캠페인 추가</div>
+  </div>
+
+  <!-- 글로우픽 -->
+  <div class="section" id="sec-glowpick">
+    <div class="section-head">
+      <div class="section-title"><div class="platform-dot" style="background:#e91e8c"></div>글로우픽 (Glowpick)</div>
+      <button class="btn-add" onclick="addCampaign('glowpick')">+ 추가</button>
+    </div>
+    <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>비용(만원)</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+    <tbody id="body-glowpick"></tbody></table>
+    <div class="add-row-btn" onclick="addCampaign('glowpick')">＋ 글로우픽 캠페인 추가</div>
+  </div>
+
+  <!-- 화해 -->
+  <div class="section" id="sec-hwahae">
+    <div class="section-head">
+      <div class="section-title"><div class="platform-dot" style="background:#ff6b35"></div>화해 (Hwahae)</div>
+      <button class="btn-add" onclick="addCampaign('hwahae')">+ 추가</button>
+    </div>
+    <table><thead><tr><th>캠페인명</th><th>유형</th><th>인원</th><th>비용(만원)</th><th>신청 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+    <tbody id="body-hwahae"></tbody></table>
+    <div class="add-row-btn" onclick="addCampaign('hwahae')">＋ 화해 캠페인 추가</div>
+  </div>
+
+  <!-- 서포터즈 -->
+  <div class="section" id="sec-supporters">
+    <div class="section-head">
+      <div class="section-title"><div class="platform-dot" style="background:#34c759"></div>서포터즈</div>
+      <button class="btn-add" onclick="addCampaign('supporters')">+ 추가</button>
+    </div>
+    <table><thead><tr><th>채널</th><th>인원</th><th>활동비(만원/인)</th><th>총 비용</th><th>활동 기간</th><th>상태</th><th>메모</th><th></th></tr></thead>
+    <tbody id="body-supporters"></tbody></table>
+    <div class="add-row-btn" onclick="addCampaign('supporters')">＋ 서포터즈 추가</div>
+  </div>
+</div>
+
+<!-- 추가 모달 -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="m-title" id="modal-title">캠페인 추가</div>
+    <label class="m-label">캠페인명 / 유형</label>
+    <input class="m-input" id="m-campaign" placeholder="예: 레뷰 프리미어, 꼼평단 등">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div><label class="m-label">인원(명)</label><input class="m-input" id="m-count" type="number" placeholder="30" style="margin-bottom:0"></div>
+      <div><label class="m-label">비용/인당(만원)</label><input class="m-input" id="m-cost" type="number" placeholder="5" style="margin-bottom:0"></div>
+    </div>
+    <label class="m-label">신청/활동 기간</label>
+    <input class="m-input" id="m-period" placeholder="예: 7/13 ~ 7/27">
+    <label class="m-label">상태</label>
+    <select class="m-select-full" id="m-status">
+      <option value="wait">신청 대기</option>
+      <option value="send">제품 발송</option>
+      <option value="post">게시 완료</option>
+      <option value="done">확인 완료</option>
+    </select>
+    <label class="m-label">메모</label>
+    <input class="m-input" id="m-note" placeholder="특이사항...">
+    <div class="m-btns">
+      <button class="m-cancel" onclick="closeModal()">취소</button>
+      <button class="m-ok" onclick="saveModal()">추가</button>
+    </div>
+  </div>
+</div>
+
+<script src="/nav.js"></script>
+<script>
+const MONTHS = ['7월','8월','9월','10월','11월','12월'];
+const KEY = 'onsal_cheomdan_v1';
+const STATUS = {wait:{cls:'s-wait',lbl:'신청 대기'},send:{cls:'s-send',lbl:'제품 발송'},post:{cls:'s-post',lbl:'게시 완료'},done:{cls:'s-done',lbl:'확인 완료'}};
+let data = JSON.parse(localStorage.getItem(KEY)||'{}');
+MONTHS.forEach(m=>{ if(!data[m]) data[m]={revu:[],glowpick:[],hwahae:[],supporters:[]}; });
+let activeMonth = '7월';
+let modalCtx = null;
+const save = () => localStorage.setItem(KEY, JSON.stringify(data));
+const fmt = n => parseInt(n||0).toLocaleString('ko-KR');
+
+function renderMonthTabs(){
+  document.getElementById('monthTabs').innerHTML = MONTHS.map(m =>
+    `<div class="m-tab ${m===activeMonth?'active':''}" onclick="setMonth('${m}')">${m}</div>`
+  ).join('');
+}
+function setMonth(m){ activeMonth=m; renderMonthTabs(); renderAll(); }
+
+function renderAll(){
+  ['revu','glowpick','hwahae','supporters'].forEach(renderPlatform);
+  renderStats();
+}
+
+function renderPlatform(platform){
+  const campaigns = data[activeMonth]?.[platform]||[];
+  const el = document.getElementById('body-'+platform);
+  if(!el) return;
+  if(campaigns.length===0){ el.innerHTML=`<tr class="empty-row"><td colspan="9">아직 캠페인이 없어요</td></tr>`; return; }
+  el.innerHTML = campaigns.map((c,i) => {
+    const total = (c.count||0)*(c.cost||0);
+    const st = STATUS[c.status||'wait'];
+    return `<tr>
+      <td style="font-weight:700">${c.campaign||'–'}</td>
+      ${platform!=='supporters'?`<td style="font-size:12px;color:var(--text3)">${c.type||'–'}</td>`:''}
+      <td><input class="ct-input" type="number" value="${c.count||''}" placeholder="0" style="width:50px" onchange="updateField('${platform}',${i},'count',this.value)">명</td>
+      <td><input class="ct-input" type="number" value="${c.cost||''}" placeholder="0" style="width:50px" onchange="updateField('${platform}',${i},'cost',this.value)">만</td>
+      <td style="font-weight:700;font-variant-numeric:tabular-nums">${total>0?fmt(total)+'만원':'–'}</td>
+      <td><input class="ct-input" value="${c.period||''}" placeholder="기간..." style="width:110px" onchange="updateField('${platform}',${i},'period',this.value)"></td>
+      <td>
+        <select class="ct-select" onchange="updateField('${platform}',${i},'status',this.value)">
+          ${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${(c.status||'wait')===k?'selected':''}>${v.lbl}</option>`).join('')}
+        </select>
+      </td>
+      <td><input class="ct-input" value="${c.note||''}" placeholder="메모..." style="width:100px" onchange="updateField('${platform}',${i},'note',this.value)"></td>
+      <td><button class="del-btn" onclick="deleteCampaign('${platform}',${i})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStats(){
+  const d = data[activeMonth]||{};
+  const all = [...(d.revu||[]),...(d.glowpick||[]),...(d.hwahae||[]),...(d.supporters||[])];
+  const totalCost = all.reduce((s,c)=>s+(c.count||0)*(c.cost||0),0);
+  const posted = all.filter(c=>c.status==='post'||c.status==='done').length;
+  const people = all.reduce((s,c)=>s+(+c.count||0),0);
+  document.getElementById('statsRow').innerHTML = [
+    ['총 캠페인',all.length+'개',''],
+    ['총 인원',fmt(people)+'명',''],
+    ['게시 완료',posted+'/'+all.length+'건',posted>0?'#12a05c':''],
+    ['총 예산',totalCost>0?fmt(totalCost)+'만원':'–',''],
+  ].map(([l,v,c])=>`<div class="stat"><div class="stat-label">${l}</div><div class="stat-val" style="${c?'color:'+c:''}">${v}</div></div>`).join('');
+}
+
+function updateField(platform, idx, field, val){
+  if(!data[activeMonth]?.[platform]?.[idx]) return;
+  data[activeMonth][platform][idx][field] = field==='count'||field==='cost'?+val:val;
+  save(); renderAll();
+}
+function deleteCampaign(platform, idx){
+  if(!confirm('삭제할까요?')) return;
+  data[activeMonth][platform].splice(idx,1);
+  save(); renderAll();
+}
+function addCampaign(platform){
+  modalCtx = platform;
+  document.getElementById('modal-title').textContent = {revu:'레뷰 캠페인 추가',glowpick:'글로우픽 추가',hwahae:'화해 추가',supporters:'서포터즈 추가'}[platform];
+  ['m-campaign','m-period','m-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-count').value='';
+  document.getElementById('m-cost').value='';
+  document.getElementById('m-status').value='wait';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+function saveModal(){
+  const name = document.getElementById('m-campaign').value.trim();
+  if(!name) return alert('캠페인명을 입력해주세요');
+  data[activeMonth][modalCtx].push({
+    campaign: name,
+    count: +document.getElementById('m-count').value||0,
+    cost:  +document.getElementById('m-cost').value||0,
+    period: document.getElementById('m-period').value.trim(),
+    status: document.getElementById('m-status').value,
+    note:   document.getElementById('m-note').value.trim(),
+  });
+  save(); closeModal(); renderAll();
+}
+document.getElementById('modalOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+renderMonthTabs(); renderAll();
+</script>
+</body>
+</html>

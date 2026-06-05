@@ -410,6 +410,19 @@ const fmtWon=m=>(m*10000).toLocaleString('ko-KR')+'원';
 const fmtShort=m=>{const e=Math.floor(m/10000),r=m%10000;if(e>0&&r>0)return`${e}억 ${r.toLocaleString()}만`;if(e>0)return`${e}억`;return`${m.toLocaleString()}만`;};
 const allTotal=()=>Object.values(plan).flat().reduce((s,i)=>s+i.priceVat,0);
 
+// 계약 앰버서더 월별 비용 자동 읽기
+function getAmbFees(month) {
+  try {
+    const ambs = JSON.parse(localStorage.getItem('onsal_ambassadors_v1') || '[]');
+    return ambs.filter(a => {
+      const start = MONTHS.indexOf(a.contractStart || '7월');
+      const end   = MONTHS.indexOf(a.contractEnd   || '12월');
+      const cur   = MONTHS.indexOf(month);
+      return cur >= 0 && cur >= start && cur <= end;
+    }).map(a => ({ name: a.name, handle: a.handle || '', fee: +(a.fee || 0) }));
+  } catch { return []; }
+}
+
 // ── HEADER ──
 function updateHeader(){
   const budget=+document.getElementById('budgetInput').value||10000;
@@ -446,9 +459,16 @@ function renderSummary(){
 // ── CAT CARDS ──
 function renderCatGrid(){
   const items=plan[activeMonth];
+  // 앰버서더 자동 합산
+  const ambFees = getAmbFees(activeMonth);
+  const ambAutoTotal = ambFees.reduce((s,a)=>s+a.fee,0);
+
   document.getElementById('catGrid').innerHTML=CATS.map(cat=>{
     const catItems=items.filter(i=>i.cat===cat.id);
-    const allCatVat=Object.values(plan).flat().filter(i=>i.cat===cat.id).reduce((s,i)=>s+i.priceVat,0);
+    const manualVat=Object.values(plan).flat().filter(i=>i.cat===cat.id).reduce((s,i)=>s+i.priceVat,0);
+    // 앰버서더 카드는 계약 앰버서더 자동 합산 포함
+    const autoAmt = cat.id==='amb' ? ambAutoTotal : 0;
+    const allCatVat = manualVat + autoAmt;
     const bgt=catBudgets[cat.id]||0;
     const cpct=bgt>0?Math.min(100,Math.round(allCatVat/bgt*100)):0;
     const fill=bgt>0?Math.min(100,allCatVat/bgt*100):0;
@@ -461,6 +481,7 @@ function renderCatGrid(){
           <div class="cat-dot" style="background:${cat.col}"></div>
           <span class="cat-name">${cat.label}</span>
           ${catItems.length>0?`<span class="cat-cnt">${catItems.length}</span>`:''}
+          ${cat.id==='amb'&&ambFees.length>0?`<span style="font-size:10px;color:var(--amb);background:var(--amb-bg);padding:1px 6px;border-radius:6px;font-weight:600">계약 ${ambFees.length}명</span>`:''}
         </div>
         <button class="cat-add-btn" style="background:${cat.col}18;color:${cat.col};border:1.5px solid ${cat.col}40"
           onclick="event.stopPropagation();togglePicker('${cat.id}')">+ 추가</button>
@@ -468,7 +489,10 @@ function renderCatGrid(){
       <div class="ccm">
         <div class="cc-bar-track"><div class="cc-bar-fill" style="width:${fill}%;background:${cat.col}"></div></div>
         <div class="cc-amounts">
-          <span class="cc-spent">${allCatVat>0?fmtKor(allCatVat):'집행 없음'}</span>
+          <div>
+            <span class="cc-spent">${allCatVat>0?fmtKor(allCatVat):'집행 없음'}</span>
+            ${cat.id==='amb'&&autoAmt>0?`<div style="font-size:10px;color:var(--text3);margin-top:1px">자동 ${fmtKor(autoAmt)} 포함</div>`:''}
+          </div>
           <div style="display:flex;align-items:center;gap:5px">
             <span class="cc-pct ${pc}">${bgt>0?cpct+'%':'예산없음'}</span>
             <div class="cc-bgt-wrap" onclick="event.stopPropagation()">
@@ -478,18 +502,10 @@ function renderCatGrid(){
           </div>
         </div>
       </div>
-      <div class="cc-preview">
-        ${catItems.length===0
-          ? `<div class="ccp-empty">클릭해서 추가</div>`
-          : catItems.slice(0,3).map(i=>`
-            <div class="cip-item">
-              <span class="ccp-name">${i.name}</span>
-              <span class="ccp-price">${fmtShort(i.priceVat)}</span>
-              <button class="ccp-del" onclick="event.stopPropagation();delItem('${activeMonth}',${i.id})">✕</button>
-            </div>`).join('')
-          + (catItems.length>3?`<div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0">+${catItems.length-3}건 더</div>`:'')
-        }
-      </div>
+      ${catItems.length>0 ? `
+      <div style="border-top:1px solid var(--border);padding:7px 14px">
+        <div style="font-size:11px;color:var(--text3)">${catItems.length}건 선택됨 · 클릭해서 편집</div>
+      </div>` : ''}
     </div>`;
   }).join('');
 }
@@ -646,10 +662,13 @@ function addSelectedToPlan(){
 // ── PLAN TABLE ──
 function renderPlanTable(){
   const items=plan[activeMonth];
-  const totalVat=items.reduce((s,i)=>s+i.priceVat,0);
-  const totalRaw=items.reduce((s,i)=>s+i.price,0);
+  const ambFees=getAmbFees(activeMonth);
+  const ambAutoTotal=ambFees.reduce((s,a)=>s+a.fee,0);
+  const manualVat=items.reduce((s,i)=>s+i.priceVat,0);
+  const manualRaw=items.reduce((s,i)=>s+i.price,0);
+  const totalVat=manualVat+ambAutoTotal;
   const el=document.getElementById('planTable');
-  if(items.length===0){
+  if(items.length===0 && ambFees.length===0){
     el.innerHTML=`<div class="plan-head"><span class="plan-head-title">이번달 플랜 · ${activeMonth}</span><span style="font-size:12px;color:var(--text3)">카테고리 카드를 클릭해 추가하세요</span></div><div class="empty-plan">아직 추가된 항목이 없어요</div>`;
     return;
   }
@@ -666,6 +685,20 @@ function renderPlanTable(){
       </tr>`;
     });
   });
+  // 계약 앰버서더 자동 합산 rows
+  if(ambFees.length>0){
+    const ambCat=CATS.find(c=>c.id==='amb');
+    rows+=`<tr style="background:#fff7ed"><td colspan="6" style="padding:8px 16px;font-size:11px;font-weight:700;color:var(--amb)">📌 계약 앰버서더 자동 집계 (${activeMonth})</td></tr>`;
+    ambFees.forEach(a=>{
+      rows+=`<tr style="background:#fffbf7">
+        <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${ambCat.col};margin-right:6px;vertical-align:middle"></span><span class="type-pill ${ambCat.pill}">앰버서더</span></td>
+        <td class="td-name">${a.name} <span style="font-size:11px;color:var(--text3)">${a.handle}</span></td>
+        <td style="font-size:12px;color:var(--text3)">월 계약비</td>
+        <td class="td-right"><div class="td-pm">${fmtKor(a.fee)}</div><div class="td-ps">VAT별도</div></td>
+        <td colspan="2" style="font-size:11px;color:var(--text3)">앰버서더 탭에서 관리</td>
+      </tr>`;
+    });
+  }
   el.innerHTML=`
     <div class="plan-head">
       <span class="plan-head-title">이번달 플랜 · ${activeMonth} · ${items.length}건</span>
