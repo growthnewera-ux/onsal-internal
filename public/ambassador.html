@@ -190,7 +190,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 .ct-inline:hover{border-bottom-color:var(--border2);}
 .ct-inline:focus{border-bottom-color:var(--accent);background:var(--accent-bg);border-radius:4px;padding:2px 6px;}
 .ct-inline::placeholder{color:var(--text3);}
-.ct-status-sel{background:transparent;border:none;font-size:11px;font-weight:700;cursor:pointer;outline:none;font-family:inherit;padding:3px 7px;border-radius:7px;}
+.ct-status-sel{background:transparent;border:none;font-size:11px;font-weight:700;cursor:pointer;outline:none;font-family:inherit;padding:3px 7px;border-radius:7px;-webkit-appearance:none;-moz-appearance:none;appearance:none;}
 .ct-text-del{font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;}
 .ct-text-del:hover{color:var(--red);}
 /* 앰버서더 확장 row */
@@ -708,7 +708,29 @@ function renderCands() {
           </div>
         </div>
       </td>
-      <td style="width:100px"><input class="ct-inline" value="${c.category||''}" placeholder="카테고리" style="width:90px" onchange="updateCand('${c.id}','category',this.value)"></td>
+      <td style="width:100px">
+        <select class="ct-status-sel" style="background:transparent;border:none;font-size:12px;color:var(--text);cursor:pointer;outline:none;font-family:inherit;width:95px;-webkit-appearance:none;-moz-appearance:none;appearance:none" onchange="updateCand('${c.id}','category',this.value)">
+          <option value="" ${!c.category?'selected':''}>선택...</option>
+          <option value="뷰티" ${c.category==='뷰티'?'selected':''}>뷰티</option>
+          <option value="스킨케어" ${c.category==='스킨케어'?'selected':''}>스킨케어</option>
+          <option value="패션" ${c.category==='패션'?'selected':''}>패션</option>
+          <option value="뷰티/패션" ${c.category==='뷰티/패션'?'selected':''}>뷰티/패션</option>
+          <option value="라이프스타일" ${c.category==='라이프스타일'?'selected':''}>라이프스타일</option>
+          <option value="일상/브이로그" ${c.category==='일상/브이로그'?'selected':''}>일상/브이로그</option>
+          <option value="부부/커플" ${c.category==='부부/커플'?'selected':''}>부부/커플</option>
+          <option value="육아/맘" ${c.category==='육아/맘'?'selected':''}>육아/맘</option>
+          <option value="피트니스/헬스" ${c.category==='피트니스/헬스'?'selected':''}>피트니스/헬스</option>
+          <option value="음식/요리" ${c.category==='음식/요리'?'selected':''}>음식/요리</option>
+          <option value="여행" ${c.category==='여행'?'selected':''}>여행</option>
+          <option value="연예인" ${c.category==='연예인'?'selected':''}>연예인</option>
+          <option value="아이돌" ${c.category==='아이돌'?'selected':''}>아이돌</option>
+          <option value="스포츠 선수" ${c.category==='스포츠 선수'?'selected':''}>스포츠 선수</option>
+          <option value="직장인/커리어" ${c.category==='직장인/커리어'?'selected':''}>직장인/커리어</option>
+          <option value="반려동물" ${c.category==='반려동물'?'selected':''}>반려동물</option>
+          <option value="게임" ${c.category==='게임'?'selected':''}>게임</option>
+          <option value="기타" ${c.category==='기타'?'selected':''}>기타</option>
+        </select>
+      </td>
       <td style="width:80px">${plats}</td>
       <td style="width:130px">${followersEl||'<span style="color:var(--text3);font-size:12px">–</span>'}</td>
       <td style="width:80px;text-align:right"><input class="ct-inline" type="number" value="${c.fee||''}" placeholder="0" style="width:55px;text-align:right" onchange="updateCand('${c.id}','fee',this.value)"><span style="font-size:11px;color:var(--text3)"> 만</span></td>
