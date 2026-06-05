@@ -1067,6 +1067,18 @@ function saveAmbContract(ambId, field, value) {
  a[field] = value;
  save();
 }
+// URL 필드 저장 후 테이블 재렌더 (플랫폼 뱃지 링크 즉시 반영)
+function saveAmbContractAndRefresh(ambId, field, value) {
+ saveAmbContract(ambId, field, value);
+ // 펼쳐진 행 ID 기억 후 재렌더
+ const wasExpanded = expandedAmbId;
+ renderAmbs();
+ if (wasExpanded) {
+   const row = document.getElementById('amb-expand-' + wasExpanded);
+   if (row) row.style.display = '';
+   expandedAmbId = wasExpanded;
+ }
+}
 
 let expandedAmbId = null;
 
@@ -1215,12 +1227,22 @@ function renderAmbs() {
    '<div style="display:flex;gap:6px"><input class="ae-input" id="zip-'+a.id+'" value="' + (a.contractZip||'') + '" placeholder="우편번호" readonly style="width:80px;background:#f0f0f0">' +
    '<button class="ae-btn" onclick="openDaumPostcode(\''+a.id+'\')">주소 검색</button></div></div>' +
  '<div class="ae-field" style="grid-column:span 2"><span class="ae-label">주소</span><input class="ae-input" id="addr-'+a.id+'" value="' + (a.contractAddress||'') + '" placeholder="도로명 주소" onchange="saveAmbContract(\'' + a.id + '\',\'contractAddress\',this.value)"></div>' +
- // 플랫폼 URL 편집 (빈 URL 수정 가능)
- (a.platforms||[]).map(p => {
-   const pMap = {yt:{label:'유튜브 채널 URL',field:'ytUrl',ph:'https://youtube.com/@...'},ig:{label:'인스타그램 URL',field:'igUrl',ph:'https://instagram.com/...'},tt:{label:'틱톡 URL',field:'ttUrl',ph:'https://tiktok.com/@...'}};
-   const pm = pMap[p]; if(!pm) return '';
-   return '<div class="ae-field"><span class="ae-label">'+pm.label+'</span><div style="display:flex;gap:6px;align-items:center"><input class="ae-input" value="'+(a[pm.field]||'')+'" placeholder="'+pm.ph+'" onchange="saveAmbContract(\''+a.id+'\',\''+pm.field+'\',this.value)">'+(a[pm.field]?'<a href="'+a[pm.field]+'" target="_blank" class="ae-link" style="white-space:nowrap">↗</a>':'')+'</div></div>';
- }).join('') +
+ // 플랫폼 URL 편집 — 인스타 먼저, 유튜브 다음 (고정 순서)
+ (function() {
+   const pMap = {
+     ig:{label:'인스타그램 URL', field:'igUrl', ph:'https://instagram.com/...'},
+     yt:{label:'유튜브 채널 URL', field:'ytUrl', ph:'https://youtube.com/@...'},
+     tt:{label:'틱톡 URL',        field:'ttUrl', ph:'https://tiktok.com/@...'},
+   };
+   return ['ig','yt','tt'].filter(p => (a.platforms||[]).includes(p)).map(p => {
+     const pm = pMap[p];
+     return '<div class="ae-field"><span class="ae-label">'+pm.label+'</span>' +
+       '<div style="display:flex;gap:6px;align-items:center">' +
+       '<input class="ae-input" value="'+(a[pm.field]||'')+'" placeholder="'+pm.ph+'" onchange="saveAmbContractAndRefresh(\''+a.id+'\',\''+pm.field+'\',this.value)">' +
+       (a[pm.field]?'<a href="'+a[pm.field]+'" target="_blank" class="ae-link" style="white-space:nowrap">↗</a>':'') +
+       '</div></div>';
+   }).join('');
+ })() +
  // 품의서 → 계약서 순서
  '<div class="ae-field"><span class="ae-label">품의서 링크</span>' +
  '<div style="display:flex;gap:6px;align-items:center"><input class="ae-input" value="' + (a.approvalLink||'') + '" placeholder="URL" onchange="saveAmbContract(\'' + a.id + '\',\'approvalLink\',this.value)">' +
