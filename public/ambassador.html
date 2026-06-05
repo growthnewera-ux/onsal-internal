@@ -1003,22 +1003,47 @@ function toggleAmbExpand(id) {
 function renderAmbs() {
  document.getElementById('amb-count').textContent = '총 ' + ambassadors.length + '명';
  const fmt2 = n => parseInt(n||0).toLocaleString('ko-KR');
- // 오늘 날짜 기준 활성 계약만 합산
- const todayMs = new Date(); todayMs.setHours(0,0,0,0);
- const totalFee = ambassadors.filter(a => {
-   if (!a.contractStart && !a.contractEnd) return true; // 날짜 미입력 = 항상 포함
-   const start = a.contractStart ? new Date(a.contractStart) : new Date('2000-01-01');
-   const end   = a.contractEnd   ? new Date(a.contractEnd)   : new Date('2099-12-31');
-   return todayMs >= start && todayMs <= end;
- }).reduce((s,a) => s + (+(a.fee||0)), 0);
+ const now = new Date(); now.setHours(0,0,0,0);
+
+ // 다음달 계산
+ const nextMonth = new Date(now.getFullYear(), now.getMonth()+1, 1);
+ const twoMonths = new Date(now.getFullYear(), now.getMonth()+2, 1);
+
+ // 이번달 활성 계약 비용
+ const thisMonthFee = ambassadors.filter(a => {
+   const s = a.contractStart ? new Date(a.contractStart) : null;
+   const e = a.contractEnd   ? new Date(a.contractEnd)   : null;
+   if (!s && !e) return true;
+   return (!s || now >= s) && (!e || now <= e);
+ }).reduce((s,a) => s+(+(a.fee||0)), 0);
+
+ // 다음달 예정 비용
+ const nextMonthFee = ambassadors.filter(a => {
+   const s = a.contractStart ? new Date(a.contractStart) : null;
+   const e = a.contractEnd   ? new Date(a.contractEnd)   : null;
+   if (!s && !e) return true;
+   return (!s || nextMonth >= s) && (!e || nextMonth <= e);
+ }).reduce((s,a) => s+(+(a.fee||0)), 0);
+
+ // 총 계약금 (fee × 계약 개월 수)
+ const totalContract = ambassadors.reduce((s, a) => {
+   if (!a.fee) return s;
+   if (!a.contractStart || !a.contractEnd) return s + (+(a.fee||0));
+   const ms = new Date(a.contractEnd) - new Date(a.contractStart);
+   const months = Math.max(1, Math.round(ms / (1000*60*60*24*30.44)));
+   return s + (+(a.fee||0)) * months;
+ }, 0);
+
+ const currentMonthStr = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long'});
+ const nextMonthStr    = nextMonth.toLocaleDateString('ko-KR', {year:'numeric',month:'long'});
 
  document.getElementById('amb-stats').innerHTML = [
- ['계약 앰버서더', ambassadors.length + '명', ''],
- ['총 월 광고비', totalFee > 0 ? fmt2(totalFee)+'만원' : '–', '#2563eb'],
- ['계약서 완료', ambassadors.filter(a=>a.contractFile).length+'명', '#12a05c'],
- ['품의서 완료', ambassadors.filter(a=>a.approvalLink).length+'명', '#7c3aed'],
+   ['계약 앰버서더', ambassadors.length + '명', ''],
+   ['총 계약금 (전체)', totalContract > 0 ? fmt2(totalContract)+'만원' : '–', '#7c3aed'],
+   [currentMonthStr + ' 지출', thisMonthFee > 0 ? fmt2(thisMonthFee)+'만원' : '–', '#2563eb'],
+   [nextMonthStr + ' 예정', nextMonthFee > 0 ? fmt2(nextMonthFee)+'만원' : '–', '#12a05c'],
  ].map(([l,v,c]) =>
- '<div class="stat-card"><div class="stat-label">' + l + '</div><div class="stat-val" style="' + (c?'color:'+c:'') + '">' + v + '</div></div>'
+   '<div class="stat-card"><div class="stat-label">' + l + '</div><div class="stat-val" style="' + (c?'color:'+c:'') + '">' + v + '</div></div>'
  ).join('');
 
  if (ambassadors.length === 0) {
@@ -1107,6 +1132,36 @@ function renderAmbs() {
  (a.approvalLink ? '<a href="' + a.approvalLink + '" target="_blank" class="ae-link" style="font-size:11px;margin-top:2px">↗ 열기</a>' : '') +
  '</div>' +
  (a.note ? '<div class="ae-field" style="grid-column:span 3"><span class="ae-label">메모</span><div style="font-size:12px;color:var(--text3);background:var(--bg);padding:7px 10px;border-radius:7px"> ' + a.note + '</div></div>' : '') +
+ // 월별 지급 스케줄
+ (function() {
+   if (!a.contractStart || !a.contractEnd || !a.fee) return '';
+   const fee = +(a.fee||0);
+   const start = new Date(a.contractStart);
+   const end   = new Date(a.contractEnd);
+   const rows = [];
+   let cur = new Date(start.getFullYear(), start.getMonth(), 1);
+   let total = 0;
+   while (cur <= end) {
+     total += fee;
+     const isPast = cur < now;
+     const isNow  = cur.getFullYear()===now.getFullYear() && cur.getMonth()===now.getMonth();
+     const label  = cur.toLocaleDateString('ko-KR',{year:'numeric',month:'long'});
+     const style  = isNow ? 'font-weight:700;color:var(--accent)' : isPast ? 'color:var(--text3)' : 'color:var(--text)';
+     rows.push('<tr><td style="padding:5px 10px;font-size:12px;' + style + '">' + label + (isNow?' (이번달)':'') + '</td>' +
+       '<td style="padding:5px 10px;font-size:12px;text-align:right;' + style + '">' + fee.toLocaleString('ko-KR') + '만원</td>' +
+       '<td style="padding:5px 10px;font-size:11px;color:var(--text3);text-align:right">' + (isPast?'지급됨':isNow?'이번달':'예정') + '</td></tr>');
+     cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+   }
+   const months = rows.length;
+   return '<div class="ae-field" style="grid-column:1/-1">' +
+     '<span class="ae-label">월별 지급 스케줄 (' + months + '개월 · 총 ' + (fee*months).toLocaleString('ko-KR') + '만원)</span>' +
+     '<div style="background:var(--white);border:1px solid var(--border);border-radius:7px;overflow:hidden;max-height:200px;overflow-y:auto">' +
+     '<table style="width:100%;border-collapse:collapse">' +
+     '<thead><tr style="background:#fafbfc"><th style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-align:left">월</th><th style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-align:right">광고비</th><th style="padding:6px 10px;font-size:10px;font-weight:700;color:var(--text3);text-align:right">상태</th></tr></thead>' +
+     '<tbody>' + rows.join('') + '</tbody>' +
+     '<tfoot><tr style="border-top:2px solid var(--border);background:#f7f8fc"><td style="padding:7px 10px;font-size:12px;font-weight:700">합계</td><td style="padding:7px 10px;font-size:13px;font-weight:800;text-align:right;color:var(--accent)">' + (fee*months).toLocaleString('ko-KR') + '만원</td><td></td></tr></tfoot>' +
+     '</table></div></div>';
+ })() +
  '</div></td></tr>';
  });
 
