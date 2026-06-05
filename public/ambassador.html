@@ -216,19 +216,22 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
           </datalist>
         </div>
       </div>
-      <div class="form-row"><label class="form-label">플랫폼</label>
-        <div class="platform-checkboxes">
+      <!-- 플랫폼 선택 -->
+      <div class="form-row">
+        <label class="form-label">플랫폼</label>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <label class="plat-check" id="plat-all" onclick="toggleCAll(event)" style="border-color:#888;color:#555">🌐 전체선택</label>
           <label class="plat-check" id="plat-yt"><input type="checkbox" onchange="togglePlat('yt')"> 🎥 유튜브</label>
           <label class="plat-check" id="plat-ig"><input type="checkbox" onchange="togglePlat('ig')"> 📸 인스타그램</label>
+          <label class="plat-check" id="plat-tt"><input type="checkbox" onchange="togglePlat('tt')"> 🎵 틱톡</label>
         </div>
       </div>
-      <div class="form-row-2">
-        <div><label class="form-label">유튜브 구독자</label><input class="form-input" id="c-yt-subs" placeholder="예: 15만"></div>
-        <div><label class="form-label">인스타 팔로워</label><input class="form-input" id="c-ig-followers" placeholder="예: 8만"></div>
-      </div>
-      <div class="form-row-2">
-        <div><label class="form-label">채널 URL</label><input class="form-input" id="c-url" placeholder="https://youtube.com/@..."></div>
-        <div><label class="form-label">예상 단가 (만원)</label><input class="form-input" id="c-fee" type="number" placeholder="300"></div>
+      <!-- 플랫폼별 동적 필드 -->
+      <div id="c-plat-fields"></div>
+      <!-- 단가 -->
+      <div class="form-row">
+        <label class="form-label">예상 단가 (만원)</label>
+        <input class="form-input" id="c-fee" type="number" placeholder="300" style="width:140px">
       </div>
       <div class="form-row"><label class="form-label">상태</label>
         <select class="form-select" id="c-status">
@@ -390,7 +393,7 @@ let activeCandFilter = '전체';
 let activeCandCatFilter = '전체';
 let activeSubTab = 'candidates';
 let aPlats = {yt:false, ig:false, tt:false};
-let cPlats = {yt:false, ig:false};
+let cPlats = {yt:false, ig:false, tt:false};
 
 const save = () => {
   localStorage.setItem(CAND_KEY, JSON.stringify(candidates));
@@ -477,9 +480,24 @@ function renderCands() {
 
   document.getElementById('cand-grid').innerHTML = filtered.map(c => {
     const st = CAND_STATUS[c.status] || CAND_STATUS.reviewing;
-    const plats = (c.platforms||[]).map(p => p==='yt'
-      ? `<span class="platform-badge platform-youtube">🎥 유튜브</span>`
-      : `<span class="platform-badge platform-instagram">📸 인스타</span>`).join('');
+    // 플랫폼별 배지 + 링크
+    const platMap = {
+      yt: { label:'🎥 유튜브',  bg:'#fee2e2', col:'#dc2626', subs: c.ytSubs, url: c.ytUrl },
+      ig: { label:'📸 인스타',  bg:'#fdf4ff', col:'#9333ea', subs: c.igFollowers, url: c.igUrl },
+      tt: { label:'🎵 틱톡',    bg:'#f0f0f0', col:'#333',    subs: c.ttFollowers, url: c.ttUrl },
+    };
+    const plats = (c.platforms||[]).map(p => {
+      const m = platMap[p]; if(!m) return '';
+      return `<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:${m.bg};color:${m.col}">${m.label}${m.subs?' · '+m.subs:''}</span>`;
+    }).join('');
+    // 메타 rows — 플랫폼별로만 표시
+    const metaRows = (c.platforms||[]).map(p => {
+      const m = platMap[p]; if(!m) return '';
+      const statLabel = p==='yt'?'구독자':(p==='ig'?'팔로워':'팔로워');
+      return `
+        <div class="cand-meta-item"><div class="cand-meta-label">${m.label} ${statLabel}</div><div class="cand-meta-value">${m.subs||'–'}</div></div>
+        ${m.url?`<div class="cand-meta-item"><div class="cand-meta-label">${m.label} URL</div><div class="cand-meta-value"><a href="${m.url}" target="_blank" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none">↗ 채널</a></div></div>`:''}`;
+    }).join('');
     return `
     <div class="cand-card">
       <div class="cand-card-top">
@@ -494,8 +512,7 @@ function renderCands() {
         ${c.category ? `<span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;background:#f0fdf4;color:#15803d">${c.category}</span>` : ''}
       </div>
       <div class="cand-meta">
-        <div class="cand-meta-item"><div class="cand-meta-label">유튜브 구독</div><div class="cand-meta-value">${c.ytSubs||'–'}</div></div>
-        <div class="cand-meta-item"><div class="cand-meta-label">인스타 팔로워</div><div class="cand-meta-value">${c.igFollowers||'–'}</div></div>
+        ${metaRows}
         <div class="cand-meta-item"><div class="cand-meta-label">예상 단가</div><div class="cand-meta-value">${c.fee ? fmt(c.fee)+'만원' : '–'}</div></div>
         <div class="cand-meta-item"><div class="cand-meta-label">추가일</div><div class="cand-meta-value" style="font-size:11px">${c.addedAt ? new Date(c.addedAt).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'}) : '–'}</div></div>
       </div>
@@ -503,7 +520,6 @@ function renderCands() {
       <div class="cand-actions">
         <button class="btn-secondary" onclick="editCand('${c.id}')">편집</button>
         ${c.status !== 'contracted' ? `<button class="btn-secondary" style="color:var(--green);border-color:var(--green)" onclick="moveToContracted('${c.id}')">→ 계약 전환</button>` : ''}
-        ${c.url ? `<a href="${c.url}" target="_blank" style="display:inline-flex;align-items:center;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none">↗ 채널</a>` : ''}
         <button class="btn-danger" onclick="deleteCand('${c.id}')">삭제</button>
       </div>
     </div>`;
@@ -519,15 +535,14 @@ function openCandModal(id) {
   document.getElementById('cand-modal-title').textContent = id ? '후보 편집' : '후보 추가';
   document.getElementById('c-name').value = c?.name || '';
   document.getElementById('c-handle').value = c?.handle || '';
-  document.getElementById('c-category').value = c?.category || '뷰티';
-  document.getElementById('c-yt-subs').value = c?.ytSubs || '';
-  document.getElementById('c-ig-followers').value = c?.igFollowers || '';
-  document.getElementById('c-url').value = c?.url || '';
+  document.getElementById('c-category').value = c?.category || '';
   document.getElementById('c-fee').value = c?.fee || '';
   document.getElementById('c-status').value = c?.status || 'reviewing';
   document.getElementById('c-note').value = c?.note || '';
-  cPlats = {yt: c?.platforms?.includes('yt'), ig: c?.platforms?.includes('ig')};
-  updatePlatUI('c');
+  // 플랫폼 복원 (ig가 있으면 ig, 없으면 아무것도 없으면 기본 ig)
+  const plats = c?.platforms || (c?.url?.includes('instagram') ? ['ig'] : []);
+  cPlats = { yt: plats.includes('yt'), ig: plats.includes('ig'), tt: plats.includes('tt') };
+  renderCPlatUI(); // 필드 렌더 후 값 복원은 renderCPlatFields 내부에서 처리
   document.getElementById('candOverlay').classList.add('show');
 }
 function closeCandModal() { document.getElementById('candOverlay').classList.remove('show'); }
@@ -535,7 +550,56 @@ function editCand(id) { openCandModal(id); }
 
 function togglePlat(p) {
   cPlats[p] = !cPlats[p];
-  updatePlatUI('c');
+  renderCPlatUI();
+}
+function toggleCAll(e) {
+  e.preventDefault();
+  const allOn = cPlats.yt && cPlats.ig && cPlats.tt;
+  cPlats = {yt:!allOn, ig:!allOn, tt:!allOn};
+  renderCPlatUI();
+}
+function renderCPlatUI() {
+  document.getElementById('plat-yt')?.classList.toggle('selected-yt', !!cPlats.yt);
+  document.getElementById('plat-ig')?.classList.toggle('selected-ig', !!cPlats.ig);
+  document.getElementById('plat-tt')?.classList.toggle('selected-tt', !!cPlats.tt);
+  const allOn = cPlats.yt && cPlats.ig && cPlats.tt;
+  const btn = document.getElementById('plat-all');
+  if(btn){ btn.style.background=allOn?'var(--text)':''; btn.style.borderColor=allOn?'var(--text)':'#888'; btn.style.color=allOn?'white':'#555'; }
+  // sync checkboxes
+  ['yt','ig','tt'].forEach(p=>{ const cb=document.querySelector(`#plat-${p} input`); if(cb) cb.checked=!!cPlats[p]; });
+  renderCPlatFields();
+}
+function renderCPlatFields() {
+  const wrap = document.getElementById('c-plat-fields');
+  if(!wrap) return;
+  let html = '';
+  if(cPlats.yt) html += `
+    <div class="form-row-2" style="margin-bottom:12px">
+      <div><label class="form-label">🎥 유튜브 구독자</label><input class="form-input" id="c-yt-subs" placeholder="예: 26.4만"></div>
+      <div><label class="form-label">유튜브 채널 URL</label><input class="form-input" id="c-yt-url" placeholder="https://youtube.com/@..."></div>
+    </div>`;
+  if(cPlats.ig) html += `
+    <div class="form-row-2" style="margin-bottom:12px">
+      <div><label class="form-label">📸 인스타 팔로워</label><input class="form-input" id="c-ig-followers" placeholder="예: 8만"></div>
+      <div><label class="form-label">인스타그램 URL</label><input class="form-input" id="c-ig-url" placeholder="https://instagram.com/..."></div>
+    </div>`;
+  if(cPlats.tt) html += `
+    <div class="form-row-2" style="margin-bottom:12px">
+      <div><label class="form-label">🎵 틱톡 팔로워</label><input class="form-input" id="c-tt-followers" placeholder="예: 5만"></div>
+      <div><label class="form-label">틱톡 URL</label><input class="form-input" id="c-tt-url" placeholder="https://tiktok.com/@..."></div>
+    </div>`;
+  if(!cPlats.yt && !cPlats.ig && !cPlats.tt)
+    html = '<div style="font-size:12px;color:var(--text3);padding:8px 0 12px">플랫폼을 선택하면 입력 필드가 나타나요</div>';
+  wrap.innerHTML = html;
+  // 기존 저장값 복원 (편집 모드)
+  if(editingCandId) {
+    const c = candidates.find(x=>x.id===editingCandId);
+    if(c) {
+      if(cPlats.yt){ const e=document.getElementById('c-yt-subs'); if(e) e.value=c.ytSubs||''; const u=document.getElementById('c-yt-url'); if(u) u.value=c.ytUrl||''; }
+      if(cPlats.ig){ const e=document.getElementById('c-ig-followers'); if(e) e.value=c.igFollowers||''; const u=document.getElementById('c-ig-url'); if(u) u.value=c.igUrl||''; }
+      if(cPlats.tt){ const e=document.getElementById('c-tt-followers'); if(e) e.value=c.ttFollowers||''; const u=document.getElementById('c-tt-url'); if(u) u.value=c.ttUrl||''; }
+    }
+  }
 }
 function updatePlatUI(prefix) {
   const pl = prefix === 'c' ? cPlats : aPlats;
@@ -547,14 +611,20 @@ function saveCand() {
   const name = document.getElementById('c-name').value.trim();
   if (!name) return alert('이름을 입력해주세요');
   const plats = Object.keys(cPlats).filter(k => cPlats[k]);
+  if (!plats.length) return alert('플랫폼을 하나 이상 선택해주세요');
   const data = {
     id: editingCandId || Date.now().toString(),
     name, handle: document.getElementById('c-handle').value.trim(),
-    category: document.getElementById('c-category').value,
+    category: document.getElementById('c-category').value.trim(),
     platforms: plats,
-    ytSubs: document.getElementById('c-yt-subs').value.trim(),
-    igFollowers: document.getElementById('c-ig-followers').value.trim(),
-    url: document.getElementById('c-url').value.trim(),
+    ytSubs:      document.getElementById('c-yt-subs')?.value.trim()      || '',
+    ytUrl:       document.getElementById('c-yt-url')?.value.trim()        || '',
+    igFollowers: document.getElementById('c-ig-followers')?.value.trim() || '',
+    igUrl:       document.getElementById('c-ig-url')?.value.trim()        || '',
+    ttFollowers: document.getElementById('c-tt-followers')?.value.trim() || '',
+    ttUrl:       document.getElementById('c-tt-url')?.value.trim()        || '',
+    // 하위호환: 대표 url
+    url: document.getElementById('c-yt-url')?.value.trim() || document.getElementById('c-ig-url')?.value.trim() || '',
     fee: document.getElementById('c-fee').value || 0,
     status: document.getElementById('c-status').value,
     note: document.getElementById('c-note').value.trim(),
