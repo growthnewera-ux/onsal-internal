@@ -389,8 +389,8 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <div class="form-row-2">
  <div class="form-row" style="margin-bottom:0"><label class="form-label">채널/계정명</label><input class="form-input" id="c-handle" placeholder="@handle"></div>
  <div class="form-row" style="margin-bottom:0"><label class="form-label">카테고리</label>
- <input class="form-input" id="c-category" list="cat-list" placeholder="카테고리 선택 또는 직접 입력">
- <datalist id="cat-list">
+ <select class="form-select" id="c-category">
+ <option value="">선택하세요</option>
  <option>뷰티</option>
  <option>스킨케어</option>
  <option>패션</option>
@@ -409,7 +409,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <option>반려동물</option>
  <option>게임</option>
  <option>기타</option>
- </datalist>
+ </select>
  </div>
  </div>
  <!-- 플랫폼 선택 -->
@@ -1835,8 +1835,8 @@ function renderCalendar() {
 function calPrev() { if(calMonth===0){calYear--;calMonth=11;}else calMonth--; renderCalendar(); }
 function calNext() { if(calMonth===11){calYear++;calMonth=0;}else calMonth++; renderCalendar(); }
 
-// overlays close on backdrop click
-['candOverlay','ambOverlay','missionOverlay'].forEach(id => {
+// overlays close on backdrop click (후보 편집 모달은 제외 — 실수로 닫히지 않도록)
+['ambOverlay','missionOverlay'].forEach(id => {
  document.getElementById(id).addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('show'); });
 });
 
