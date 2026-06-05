@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>온살 제품 관리</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+:root{--bg:#f4f5f7;--white:#fff;--border:#e2e4e9;--border2:#d0d3db;--text:#111318;--text2:#4a4f5e;--text3:#9098ae;--accent:#5b4ef8;--accent-bg:#ede9ff;--green:#12a05c;--green-bg:#e6f7ef;--red:#e03131;--red-bg:#fff0f0;--orange:#d9600a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.app-header{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;box-shadow:0 1px 4px rgba(0,0,0,.05);position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--text);padding-right:16px;border-right:1px solid var(--border);white-space:nowrap;}
+.logo-mark{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.gnav-link{padding:0 14px;height:56px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border-bottom:3px solid transparent;transition:all .15s;}
+.gnav-link:hover{color:var(--text2);}.gnav-link.active{color:var(--accent);border-bottom-color:var(--accent);}
+.main{padding:24px;max-width:1200px;margin:0 auto;}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.toolbar-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;}
+.btn-primary{padding:9px 18px;background:var(--accent);color:white;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-primary:hover{background:#4a3de0;}
+/* table */
+.section{background:var(--white);border-radius:13px;border:1.5px solid var(--border);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 18px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:#fafbfc;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:13px 18px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:#fafbff;}
+.td-name{font-size:14px;font-weight:800;color:var(--text);}
+.td-cat{font-size:11px;color:var(--text3);background:var(--bg);padding:2px 8px;border-radius:6px;border:1px solid var(--border);font-weight:600;}
+.td-price{font-size:14px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;}
+.td-margin{font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;}
+.margin-good{background:var(--green-bg);color:var(--green);}
+.margin-mid{background:#fff3e8;color:var(--orange);}
+.margin-low{background:var(--red-bg);color:var(--red);}
+.btn-sm{padding:5px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--white);color:var(--text2);transition:all .15s;margin-right:4px;}
+.btn-sm:hover{border-color:var(--border2);color:var(--text);}
+.btn-del{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+.btn-del:hover{background:var(--red);color:white;}
+.empty-msg{padding:60px;text-align:center;color:var(--text3);font-size:14px;}
+/* modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(5px);z-index:200;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:28px;width:440px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.14);}
+.m-title{font-size:18px;font-weight:800;margin-bottom:20px;}
+.m-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px;}
+.m-input,.m-select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;margin-bottom:13px;}
+.m-input:focus,.m-select:focus{border-color:var(--accent);}
+.m-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:13px;}
+.m-grid2>div>input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;}
+.m-grid2>div>input:focus{border-color:var(--accent);}
+.calc-box{background:var(--accent-bg);border-radius:8px;padding:12px 16px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:center;}
+.calc-label{font-size:11px;color:var(--accent);font-weight:700;}
+.calc-val{font-size:16px;font-weight:800;color:var(--text);}
+.m-btns{display:flex;gap:8px;}
+.m-cancel{flex:1;padding:11px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.m-ok{flex:2;padding:11px;background:var(--accent);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.m-ok:hover{background:#4a3de0;}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="logo"><div class="logo-mark">🌿</div>온살</div>
+  <nav id="globalNav"></nav>
+</header>
+<div class="main">
+  <div class="toolbar">
+    <div>
+      <div class="toolbar-title">📦 제품 관리</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:4px">PPL · 앰버서더 · 체험단에 사용할 제품과 원가를 관리해요</div>
+    </div>
+    <button class="btn-primary" onclick="openModal()">+ 제품 추가</button>
+  </div>
+  <div class="section">
+    <table id="productTable">
+      <thead><tr>
+        <th style="width:200px">제품명</th>
+        <th>카테고리</th>
+        <th>용량/규격</th>
+        <th style="text-align:right">원가</th>
+        <th style="text-align:right">소비자가</th>
+        <th style="text-align:right">마진율</th>
+        <th>메모</th>
+        <th style="width:100px"></th>
+      </tr></thead>
+      <tbody id="productBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="m-title" id="modal-title">제품 추가</div>
+    <label class="m-label">제품명</label>
+    <input class="m-input" id="p-name" placeholder="예: 온살 세럼 30ml">
+    <div class="m-grid2">
+      <div><label class="m-label">카테고리</label>
+        <input id="p-category" list="p-cat-list" placeholder="예: 스킨케어" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;width:100%">
+        <datalist id="p-cat-list"><option>스킨케어</option><option>앰플</option><option>크림</option><option>토너</option><option>에센스</option><option>클렌저</option><option>선케어</option><option>기타</option></datalist>
+      </div>
+      <div><label class="m-label">용량/규격</label>
+        <input id="p-size" placeholder="예: 30ml, 50g" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;width:100%">
+      </div>
+    </div>
+    <div class="m-grid2">
+      <div><label class="m-label">원가 (원)</label><input id="p-cost" type="number" placeholder="8500" oninput="calcMargin()"></div>
+      <div><label class="m-label">소비자가 (원)</label><input id="p-retail" type="number" placeholder="35000" oninput="calcMargin()"></div>
+    </div>
+    <div class="calc-box">
+      <span class="calc-label">마진율</span>
+      <span class="calc-val" id="margin-preview">–</span>
+    </div>
+    <label class="m-label">메모</label>
+    <input class="m-input" id="p-note" placeholder="특이사항, 발주처 등">
+    <div class="m-btns">
+      <button class="m-cancel" onclick="closeModal()">취소</button>
+      <button class="m-ok" onclick="saveProduct()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script src="/nav.js"></script>
+<script>
+const KEY = 'onsal_products_v1';
+let products = JSON.parse(localStorage.getItem(KEY) || '[]');
+let editingId = null;
+const save = () => localStorage.setItem(KEY, JSON.stringify(products));
+const fmt = n => n ? Number(n).toLocaleString('ko-KR') : '–';
+
+function renderTable() {
+  const body = document.getElementById('productBody');
+  if (!products.length) {
+    body.innerHTML = `<tr><td colspan="8"><div class="empty-msg">등록된 제품이 없어요<br><small style="color:var(--text3)">+ 제품 추가 버튼으로 광고 제품을 등록하세요</small></div></td></tr>`;
+    return;
+  }
+  body.innerHTML = products.map(p => {
+    const margin = p.retailPrice && p.costPrice
+      ? Math.round((1 - p.costPrice / p.retailPrice) * 100) : null;
+    const marginCls = margin === null ? '' : margin >= 60 ? 'margin-good' : margin >= 40 ? 'margin-mid' : 'margin-low';
+    return `<tr>
+      <td class="td-name">${p.name}${p.size ? `<span style="font-size:11px;color:var(--text3);font-weight:400"> · ${p.size}</span>` : ''}</td>
+      <td><span class="td-cat">${p.category || '미분류'}</span></td>
+      <td style="color:var(--text3)">${p.size || '–'}</td>
+      <td style="text-align:right;font-variant-numeric:tabular-nums;font-weight:600">${p.costPrice ? fmt(p.costPrice) + '원' : '–'}</td>
+      <td style="text-align:right;font-variant-numeric:tabular-nums;font-weight:600">${p.retailPrice ? fmt(p.retailPrice) + '원' : '–'}</td>
+      <td style="text-align:right">${margin !== null ? `<span class="td-margin ${marginCls}">${margin}%</span>` : '–'}</td>
+      <td style="font-size:12px;color:var(--text3)">${p.note || '–'}</td>
+      <td>
+        <button class="btn-sm" onclick="openModal('${p.id}')">편집</button>
+        <button class="btn-sm btn-del" onclick="deleteProduct('${p.id}')">삭제</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function calcMargin() {
+  const cost = +document.getElementById('p-cost').value;
+  const retail = +document.getElementById('p-retail').value;
+  const el = document.getElementById('margin-preview');
+  if (cost && retail) {
+    const m = Math.round((1 - cost / retail) * 100);
+    el.textContent = m + '%';
+    el.style.color = m >= 60 ? 'var(--green)' : m >= 40 ? 'var(--orange)' : 'var(--red)';
+  } else {
+    el.textContent = '–';
+    el.style.color = 'var(--text)';
+  }
+}
+
+function openModal(id) {
+  editingId = id || null;
+  const p = id ? products.find(x => x.id === id) : null;
+  document.getElementById('modal-title').textContent = id ? '제품 편집' : '제품 추가';
+  document.getElementById('p-name').value = p?.name || '';
+  document.getElementById('p-category').value = p?.category || '';
+  document.getElementById('p-size').value = p?.size || '';
+  document.getElementById('p-cost').value = p?.costPrice || '';
+  document.getElementById('p-retail').value = p?.retailPrice || '';
+  document.getElementById('p-note').value = p?.note || '';
+  calcMargin();
+  document.getElementById('overlay').classList.add('show');
+}
+function closeModal() { document.getElementById('overlay').classList.remove('show'); }
+
+function saveProduct() {
+  const name = document.getElementById('p-name').value.trim();
+  if (!name) return alert('제품명을 입력해주세요');
+  const data = {
+    id: editingId || Date.now().toString(),
+    name,
+    category: document.getElementById('p-category').value.trim(),
+    size:      document.getElementById('p-size').value.trim(),
+    costPrice:   +document.getElementById('p-cost').value || 0,
+    retailPrice: +document.getElementById('p-retail').value || 0,
+    note:      document.getElementById('p-note').value.trim(),
+  };
+  if (editingId) products = products.map(p => p.id === editingId ? data : p);
+  else products.push(data);
+  save(); closeModal(); renderTable();
+}
+
+function deleteProduct(id) {
+  if (!confirm('삭제할까요?')) return;
+  products = products.filter(p => p.id !== id);
+  save(); renderTable();
+}
+
+document.getElementById('overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+renderTable();
+</script>
+</body>
+</html>

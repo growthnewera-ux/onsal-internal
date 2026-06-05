@@ -184,6 +184,49 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 .mo-st-published {background:#e6f7ef;color:#12a05c;}
 .mo-st-verified  {background:#f5f3ff;color:#7c3aed;}
 .mo-link-btn{font-size:10px;font-weight:700;color:var(--accent);text-decoration:none;padding:2px 6px;background:var(--accent-bg);border-radius:4px;white-space:nowrap;}
+
+/* ── 후보풀 테이블 ── */
+.cand-table-wrap{background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden;}
+.cand-table{width:100%;border-collapse:collapse;}
+.cand-table th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:#fafbfc;border-bottom:1px solid var(--border);white-space:nowrap;}
+.cand-table td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.cand-table tr:last-child td{border-bottom:none;}
+.cand-table tr:hover td{background:#fafbff;}
+.ct-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--accent);flex-shrink:0;}
+.ct-name{font-size:13px;font-weight:700;color:var(--text);}
+.ct-handle{font-size:11px;color:var(--text3);}
+
+/* ── 계약앰버서더 계약정보 ── */
+.contract-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.contract-card{background:var(--white);border-radius:13px;border:1.5px solid var(--border);overflow:hidden;}
+.cc-profile{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border);background:#fafbfc;}
+.cc-fields{padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.cf-row{display:flex;align-items:flex-start;gap:8px;}
+.cf-label{font-size:11px;font-weight:700;color:var(--text3);width:72px;flex-shrink:0;padding-top:3px;}
+.cf-input{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12px;color:var(--text);outline:none;font-family:inherit;transition:border-color .15s;}
+.cf-input:focus{border-color:var(--accent);}
+.cf-link{font-size:12px;color:var(--accent);font-weight:700;text-decoration:none;}
+.cf-link:hover{text-decoration:underline;}
+.cc-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:6px;justify-content:flex-end;}
+
+/* ── 캘린더 ── */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.cal-title{font-size:16px;font-weight:800;color:var(--text);}
+.cal-nav-btn{background:var(--white);border:1.5px solid var(--border);border-radius:7px;padding:5px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.cal-grid{background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden;}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);background:#fafbfc;border-bottom:1px solid var(--border);}
+.cal-day-name{padding:9px;text-align:center;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;}
+.cal-cells{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-cell{min-height:80px;padding:6px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);vertical-align:top;}
+.cal-cell:nth-child(7n){border-right:none;}
+.cal-cell.other-month{background:#fafbfc;}
+.cal-cell.today{background:var(--accent-bg);}
+.cal-date{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.cal-cell.other-month .cal-date{color:var(--text3);}
+.cal-event{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default;}
+.cal-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.cal-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);}
+.cal-legend-dot{width:10px;height:10px;border-radius:3px;}
 .mo-empty{padding:40px;text-align:center;color:var(--text3);font-size:13px;}
 .stat-card{background:var(--white);border-radius:12px;padding:16px 18px;border:1.5px solid var(--border);}
 .stat-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
@@ -201,12 +244,12 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   <div class="sub-tab active" id="tab-candidates" onclick="setSubTab('candidates')">후보풀</div>
   <div class="sub-tab" id="tab-contracted" onclick="setSubTab('contracted')">앰버서더</div>
   <div class="sub-tab" id="tab-monthly" onclick="setSubTab('monthly')">📋 월별 운영</div>
-  <div class="sub-tab" id="tab-products" onclick="setSubTab('products')">📦 제품 관리</div>
+  <div class="sub-tab" id="tab-calendar" onclick="setSubTab('calendar')">📅 캘린더</div>
 </div>
 
 <div class="main">
 
-  <!-- ── 후보풀 ── -->
+  <!-- ── 후보풀 (테이블형) ── -->
   <div id="view-candidates">
     <div class="toolbar">
       <div class="toolbar-left">
@@ -215,15 +258,29 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
       </div>
       <button class="btn-primary" onclick="openCandModal()">+ 후보 추가</button>
     </div>
-    <div class="stats-bar" id="cand-stats"></div>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:4px">
+    <!-- 상태/카테고리 필터 -->
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
       <div class="filter-bar" id="cand-filters"></div>
       <div class="filter-bar" id="cand-cat-filters" style="padding-left:2px"></div>
     </div>
-    <div class="cand-grid" id="cand-grid"></div>
+    <!-- 테이블 -->
+    <div class="cand-table-wrap">
+      <table class="cand-table">
+        <thead><tr>
+          <th style="width:180px">이름</th>
+          <th>플랫폼</th>
+          <th>카테고리</th>
+          <th>팔로워</th>
+          <th style="text-align:right">제안 단가</th>
+          <th>상태</th>
+          <th style="width:160px"></th>
+        </tr></thead>
+        <tbody id="cand-tbody"></tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- ── 계약 앰버서더 ── -->
+  <!-- ── 계약 앰버서더 (계약정보) ── -->
   <div id="view-contracted" style="display:none">
     <div class="toolbar">
       <div class="toolbar-left">
@@ -233,37 +290,37 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
       <button class="btn-primary" onclick="openAmbModal()">+ 앰버서더 추가</button>
     </div>
     <div class="stats-bar" id="amb-stats"></div>
-    <div id="amb-list"></div>
-  </div>
-
-  <!-- ── 제품 관리 ── -->
-  <div id="view-products" style="display:none">
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <span class="toolbar-title">제품 관리</span>
-        <span class="toolbar-sub" id="product-count"></span>
-      </div>
-      <button class="btn-primary" onclick="openProductModal()">+ 제품 추가</button>
-    </div>
-    <div id="product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+    <div class="contract-grid" id="contract-grid"></div>
   </div>
 
   <!-- ── 월별 운영 ── -->
   <div id="view-monthly" style="display:none">
     <div class="toolbar">
-      <div class="toolbar-left">
-        <span class="toolbar-title">월별 앰버서더 운영</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn-secondary" onclick="exportMonthlyCSV()" title="이번 달 데이터 CSV 다운로드">📥 CSV 내보내기</button>
-      </div>
+      <div class="toolbar-left"><span class="toolbar-title">월별 앰버서더 운영</span></div>
+      <button class="btn-secondary" onclick="exportMonthlyCSV()">📥 CSV 내보내기</button>
     </div>
-    <!-- 월 탭 -->
     <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px" id="monthly-month-tabs"></div>
-    <!-- 요약 바 -->
     <div id="monthly-summary" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px"></div>
-    <!-- 스프레드시트 테이블 -->
     <div id="monthly-table-wrap" style="background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden"></div>
+  </div>
+
+  <!-- ── 캘린더 ── -->
+  <div id="view-calendar" style="display:none">
+    <div class="cal-header">
+      <button class="cal-nav-btn" onclick="calPrev()">←</button>
+      <span class="cal-title" id="cal-title"></span>
+      <button class="cal-nav-btn" onclick="calNext()">→</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-days-header">
+        <div class="cal-day-name">일</div><div class="cal-day-name">월</div>
+        <div class="cal-day-name">화</div><div class="cal-day-name">수</div>
+        <div class="cal-day-name">목</div><div class="cal-day-name">금</div>
+        <div class="cal-day-name">토</div>
+      </div>
+      <div class="cal-cells" id="calCells"></div>
+    </div>
+    <div class="cal-legend" id="calLegend"></div>
   </div>
 
 </div>
@@ -457,6 +514,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
         <div><label class="form-label">인스타 게시 URL</label><input class="form-input" id="m-ig-url" placeholder="https://instagram.com/p/..."></div>
       </div>
       <div class="form-row-2">
+        <div><label class="form-label">업로드 예정일</label><input class="form-input" id="m-upload-date" type="date" title="캘린더에 표시됩니다"></div>
         <div><label class="form-label">마감일</label><input class="form-input" id="m-deadline" type="date"></div>
         <div><label class="form-label">진행 상태</label>
           <select class="form-select" id="m-status">
@@ -534,14 +592,14 @@ let activeMonthlyMonth = MONTHS[0];
 
 function setSubTab(t) {
   activeSubTab = t;
-  ['candidates','contracted','monthly','products'].forEach(id => {
+  ['candidates','contracted','monthly','calendar'].forEach(id => {
     document.getElementById('tab-'+id)?.classList.toggle('active', t===id);
     const v = document.getElementById('view-'+id);
     if(v) v.style.display = t===id ? '' : 'none';
   });
   if (t==='contracted') renderAmbs();
   else if (t==='monthly') renderMonthlyView();
-  else if (t==='products') renderProducts();
+  else if (t==='calendar') renderCalendar();
   else renderCands();
 }
 
@@ -565,110 +623,75 @@ const CONTENT_LABELS = {
 
 // ── CANDIDATES ──
 function renderCands() {
-  const stats = { reviewing:0, contacting:0, contracted:0, rejected:0 };
-  candidates.forEach(c => stats[c.status]++);
-
-  document.getElementById('cand-count').textContent = `총 ${candidates.length}명`;
-  document.getElementById('cand-stats').innerHTML = [
-    ['전체 후보', candidates.length, ''],
-    ['검토중', stats.reviewing, '#2563eb'],
-    ['연락중', stats.contacting, '#b45309'],
-    ['계약완료', stats.contracted, '#12a05c'],
-  ].map(([l,v,c]) => `
-    <div class="stat-card">
-      <div class="stat-label">${l}</div>
-      <div class="stat-val" style="${c?`color:${c}`:''}">${v}명</div>
-    </div>`).join('');
-
   const filters = ['전체','검토중','연락중','계약완료','거절/보류'];
   document.getElementById('cand-filters').innerHTML =
     `<span style="font-size:10px;font-weight:700;color:var(--text3);align-self:center;margin-right:2px">상태</span>` +
-    filters.map(f =>
-      `<span class="f-chip ${f===activeCandFilter?'on':''}" onclick="setCandFilter('${f}')">${f}</span>`
-    ).join('');
+    filters.map(f => `<span class="f-chip ${f===activeCandFilter?'on':''}" onclick="setCandFilter('${f}')">${f}</span>`).join('');
 
-  // 카테고리 필터 — 실제 후보 데이터에서 추출
   const allCats = ['전체', ...new Set(candidates.map(c => c.category).filter(Boolean))];
   document.getElementById('cand-cat-filters').innerHTML =
     `<span style="font-size:10px;font-weight:700;color:var(--text3);align-self:center;margin-right:2px">카테고리</span>` +
-    allCats.map(c =>
-      `<span class="f-chip ${c===activeCandCatFilter?'on':''}" onclick="setCandCatFilter('${c}')">${c}</span>`
-    ).join('');
+    allCats.map(c => `<span class="f-chip ${c===activeCandCatFilter?'on':''}" onclick="setCandCatFilter('${c}')">${c}</span>`).join('');
 
   const filterMap = {'전체':null,'검토중':'reviewing','연락중':'contacting','계약완료':'contracted','거절/보류':'rejected'};
   const filtered = candidates.filter(c => {
-    // 기본 필터: '계약완료' 상태는 기본적으로 숨김 (명시 선택 시만 표시)
     if (activeCandFilter !== '계약완료' && c.status === 'contracted') return false;
     const matchStatus = activeCandFilter==='전체' || c.status === filterMap[activeCandFilter];
     const matchCat    = activeCandCatFilter==='전체' || c.category === activeCandCatFilter;
     return matchStatus && matchCat;
   });
 
+  document.getElementById('cand-count').textContent = `총 ${filtered.length}명`;
+  const tbody = document.getElementById('cand-tbody');
   if (filtered.length === 0) {
-    document.getElementById('cand-grid').innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-icon">👥</div>
-        <div class="empty-title">후보가 없어요</div>
-        <div class="empty-desc">우상단 버튼으로 후보를 추가해보세요</div>
-      </div>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text3);font-size:13px">후보가 없어요 · 우상단 버튼으로 추가하세요</td></tr>`;
     return;
   }
 
-  document.getElementById('cand-grid').innerHTML = filtered.map(c => {
+  const platMap = {
+    yt:{ label:'🎥 유튜브', bg:'#fee2e2', col:'#dc2626' },
+    ig:{ label:'📸 인스타',  bg:'#fdf4ff', col:'#9333ea' },
+    tt:{ label:'🎵 틱톡',    bg:'#f0f0f0', col:'#333'   },
+  };
+
+  tbody.innerHTML = filtered.map(c => {
     const st = CAND_STATUS[c.status] || CAND_STATUS.reviewing;
-    // 플랫폼별 배지 + 링크
-    const platMap = {
-      yt: { label:'🎥 유튜브',  bg:'#fee2e2', col:'#dc2626', subs: c.ytSubs, url: c.ytUrl },
-      ig: { label:'📸 인스타',  bg:'#fdf4ff', col:'#9333ea', subs: c.igFollowers, url: c.igUrl },
-      tt: { label:'🎵 틱톡',    bg:'#f0f0f0', col:'#333',    subs: c.ttFollowers, url: c.ttUrl },
-    };
+    const igHandle = (c.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]||'';
+    const pic = igHandle
+      ? `<img src="https://unavatar.io/instagram/${igHandle.replace(/\//g,'')}" onerror="this.outerHTML='<div class=\\'ct-avatar\\'>${c.name[0]}</div>'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0" loading="lazy">`
+      : `<div class="ct-avatar">${c.name[0]}</div>`;
     const plats = (c.platforms||[]).map(p => {
       const m = platMap[p]; if(!m) return '';
-      return `<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:${m.bg};color:${m.col}">${m.label}${m.subs?' · '+m.subs:''}</span>`;
-    }).join('');
-    // 메타 rows — 플랫폼별로만 표시
-    const metaRows = (c.platforms||[]).map(p => {
-      const m = platMap[p]; if(!m) return '';
-      const statLabel = p==='yt'?'구독자':(p==='ig'?'팔로워':'팔로워');
-      return `
-        <div class="cand-meta-item"><div class="cand-meta-label">${m.label} ${statLabel}</div><div class="cand-meta-value">${m.subs||'–'}</div></div>
-        ${m.url?`<div class="cand-meta-item"><div class="cand-meta-label">${m.label} URL</div><div class="cand-meta-value"><a href="${m.url}" target="_blank" style="color:var(--accent);font-size:11px;font-weight:700;text-decoration:none">↗ 채널</a></div></div>`:''}`;
-    }).join('');
-    return `
-    <div class="cand-card">
-      <div class="cand-card-top">
-        <div style="display:flex;align-items:center;gap:10px">
-          ${(()=>{
-            const igHandle = (c.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]||'';
-            return igHandle
-              ? `<img src="https://unavatar.io/instagram/${igHandle.replace(/\//g,'')}"
-                   onerror="this.outerHTML='<div style=\\'width:40px;height:40px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--accent);flex-shrink:0\\'>${c.name[0]}</div>'"
-                   style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0" loading="lazy">`
-              : `<div style="width:40px;height:40px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--accent);flex-shrink:0">${c.name[0]}</div>`;
-          })()}
+      return `<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:${m.bg};color:${m.col};white-space:nowrap">${m.label}</span>`;
+    }).join(' ');
+    // 대표 팔로워
+    const followers = c.igFollowers || c.ytSubs || c.ttFollowers || '–';
+    // 채널 링크
+    const channelUrl = c.igUrl || c.ytUrl || c.ttUrl || '';
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          ${pic}
           <div>
-            <div class="cand-name">${c.name}</div>
-            <div class="cand-handle">${c.handle||''}</div>
+            <div class="ct-name">${c.name}</div>
+            <div class="ct-handle">${c.handle||''}</div>
           </div>
         </div>
-        <span class="status-badge ${st.cls}">${st.label}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:10px">
-        ${plats}
-        ${c.category ? `<span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;background:#f0fdf4;color:#15803d">${c.category}</span>` : ''}
-      </div>
-      <div class="cand-meta">
-        ${metaRows}
-        <div class="cand-meta-item"><div class="cand-meta-label">예상 단가</div><div class="cand-meta-value">${c.fee ? fmt(c.fee)+'만원' : '–'}</div></div>
-        <div class="cand-meta-item"><div class="cand-meta-label">추가일</div><div class="cand-meta-value" style="font-size:11px">${c.addedAt ? new Date(c.addedAt).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'}) : '–'}</div></div>
-      </div>
-      ${c.note ? `<div class="cand-note">📌 ${c.note}</div>` : ''}
-      <div class="cand-actions">
-        <button class="btn-secondary" onclick="editCand('${c.id}')">편집</button>
-        ${c.status !== 'contracted' ? `<button class="btn-secondary" style="color:var(--green);border-color:var(--green)" onclick="moveToContracted('${c.id}')">→ 계약 전환</button>` : ''}
-        <button class="btn-danger" onclick="deleteCand('${c.id}')">삭제</button>
-      </div>
-    </div>`;
+      </td>
+      <td>${plats}</td>
+      <td>${c.category ? `<span style="font-size:11px;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:6px;font-weight:600">${c.category}</span>` : '–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${followers}</td>
+      <td style="text-align:right;font-size:13px;font-weight:700;color:var(--text)">${c.fee ? fmt(c.fee)+'만원' : '–'}</td>
+      <td><span class="status-badge ${st.cls}">${st.label}</span></td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn-secondary" style="padding:5px 10px;font-size:11px" onclick="editCand('${c.id}')">편집</button>
+          ${c.status !== 'contracted' ? `<button class="btn-secondary" style="padding:5px 10px;font-size:11px;color:var(--green);border-color:var(--green)" onclick="moveToContracted('${c.id}')">계약전환</button>` : ''}
+          ${channelUrl ? `<a href="${channelUrl}" target="_blank" style="padding:5px 10px;font-size:11px;border:1.5px solid var(--border);border-radius:7px;color:var(--accent);text-decoration:none;font-weight:600">채널↗</a>` : ''}
+          <button class="btn-danger" style="padding:5px 9px;font-size:11px" onclick="deleteCand('${c.id}')">삭제</button>
+        </div>
+      </td>
+    </tr>`;
   }).join('');
 }
 
@@ -912,18 +935,22 @@ function saveAmb() {
   save(); closeAmbModal(); renderAmbs();
 }
 
+function saveAmbContract(ambId, field, value) {
+  const a = ambassadors.find(x => x.id === ambId);
+  if (!a) return;
+  a[field] = value;
+  save();
+}
+
 function renderAmbs() {
   document.getElementById('amb-count').textContent = `총 ${ambassadors.length}명`;
-
-  const totalMissions = ambassadors.reduce((s,a) => s + Object.values(a.missions||{}).filter(m => m.product).length, 0);
-  const verified = ambassadors.reduce((s,a) => s + Object.values(a.missions||{}).filter(m => m.status==='verified').length, 0);
-  const published = ambassadors.reduce((s,a) => s + Object.values(a.missions||{}).filter(m => m.status==='published').length, 0);
+  const totalFee = ambassadors.reduce((s,a) => s + (+(a.fee||0)), 0);
 
   document.getElementById('amb-stats').innerHTML = [
     ['계약 앰버서더', ambassadors.length + '명', ''],
-    ['월별 미션 설정', totalMissions + '건', '#2563eb'],
-    ['게시완료', published + '건', '#12a05c'],
-    ['확인완료', verified + '건', '#7c3aed'],
+    ['총 월 광고비', totalFee > 0 ? fmt(totalFee)+'만원' : '–', '#2563eb'],
+    ['계약서 완료', ambassadors.filter(a=>a.contractFile).length+'명', '#12a05c'],
+    ['품의서 완료', ambassadors.filter(a=>a.approvalLink).length+'명', '#7c3aed'],
   ].map(([l,v,c]) => `
     <div class="stat-card">
       <div class="stat-label">${l}</div>
@@ -931,98 +958,77 @@ function renderAmbs() {
     </div>`).join('');
 
   if (ambassadors.length === 0) {
-    document.getElementById('amb-list').innerHTML = `
-      <div class="empty-state">
+    document.getElementById('contract-grid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
         <div class="empty-icon">🤝</div>
         <div class="empty-title">계약된 앰버서더가 없어요</div>
-        <div class="empty-desc">후보풀에서 "계약 전환" 버튼을 누르거나, 직접 추가해보세요</div>
+        <div class="empty-desc">후보풀에서 "계약 전환" 버튼을 누르거나, 직접 추가하세요</div>
       </div>`;
     return;
   }
 
-  document.getElementById('amb-list').innerHTML = ambassadors.map(a => {
-    const platMap = {
-      yt: { label:'🎥 유튜브',    bg:'#fee2e2', color:'#dc2626', url: a.ytUrl, subs: a.ytSubs },
-      ig: { label:'📸 인스타',    bg:'#fdf4ff', color:'#9333ea', url: a.igUrl, subs: a.igFollowers },
-      tt: { label:'🎵 틱톡',      bg:'#f0f0f0', color:'#333',   url: a.ttUrl, subs: a.ttFollowers },
-    };
-    const plats = (a.platforms||[]).map(p => {
-      const m = platMap[p]; if(!m) return '';
-      const link = m.url ? `<a href="${m.url}" target="_blank" style="color:${m.color};font-size:10px;text-decoration:none;margin-left:3px">↗</a>` : '';
-      return `<span class="amb-info-tag" style="background:${m.bg};color:${m.color}">${m.label}${m.subs?` · ${m.subs}`:''}${link}</span>`;
-    }).join('');
-
-    const PAY_STATUS = { unpaid:{label:'미지급',cls:'ms-planned'}, pending:{label:'지급예정',cls:'ms-inprogress'}, paid:{label:'지급완료',cls:'ms-verified'} };
-    const missionRows = MONTHS.map(m => {
-      const mis = a.missions?.[m] || {};
-      const st  = MISS_STATUS[mis.status || 'planned'];
-      const pay = PAY_STATUS[mis.payStatus || 'unpaid'];
-      const ytLink = mis.ytUrl ? `<a href="${mis.ytUrl}" target="_blank" class="mission-url-link">유튜브↗</a>` : '';
-      const igLink = mis.igUrl ? `<a href="${mis.igUrl}" target="_blank" class="mission-url-link">인스타↗</a>` : '';
-      const links  = [ytLink,igLink].filter(Boolean).join(' ');
-      return `<tr>
-        <td style="font-weight:700;color:var(--text)">${m}</td>
-        <td>${mis.product || '<span style="color:var(--text3)">–</span>'}</td>
-        <td>${mis.contentType ? CONTENT_LABELS[mis.contentType] : '–'}</td>
-        <td style="max-width:180px;font-size:12px;color:var(--text2)">${mis.guide ? mis.guide.slice(0,50)+(mis.guide.length>50?'…':'') : '–'}</td>
-        <td>${links || '<span style="color:var(--text3)">–</span>'}</td>
-        <td style="font-size:12px">${mis.payAmount ? mis.payAmount+'만원' : '–'}</td>
-        <td><span class="mission-status ${pay.cls}">${pay.label}</span></td>
-        <td>${mis.deadline || '–'}</td>
-        <td><span class="mission-status ${st.cls}">${st.label}</span></td>
-        <td><button class="mission-edit-btn" onclick="openMissionModal('${a.id}','${m}')">편집</button></td>
-      </tr>`;
-    }).join('');
+  document.getElementById('contract-grid').innerHTML = ambassadors.map(a => {
+    const igHandle = (a.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]||'';
+    const pic = igHandle
+      ? `<img src="https://unavatar.io/instagram/${igHandle.replace(/\//g,'')}" onerror="this.outerHTML='<div class=\\'amb-avatar\\'>${a.name[0]}</div>'" style="width:44px;height:44px;border-radius:50%;object-fit:cover" loading="lazy">`
+      : `<div class="amb-avatar">${a.name[0]}</div>`;
+    const platBadges = (a.platforms||[]).map(p =>
+      ({yt:'🎥',ig:'📸',tt:'🎵'}[p]||p)
+    ).join(' ');
+    const channelLinks = [
+      a.ytUrl ? `<a href="${a.ytUrl}" target="_blank" style="font-size:10px;color:#dc2626;font-weight:700;text-decoration:none;padding:2px 6px;background:#fee2e2;border-radius:4px">유튜브↗</a>` : '',
+      a.igUrl ? `<a href="${a.igUrl}" target="_blank" style="font-size:10px;color:#9333ea;font-weight:700;text-decoration:none;padding:2px 6px;background:#fdf4ff;border-radius:4px">인스타↗</a>` : '',
+      a.ttUrl ? `<a href="${a.ttUrl}" target="_blank" style="font-size:10px;color:#333;font-weight:700;text-decoration:none;padding:2px 6px;background:#f0f0f0;border-radius:4px">틱톡↗</a>` : '',
+    ].filter(Boolean).join(' ');
 
     return `
-    <div class="contracted-section">
-      <div class="amb-profile-card">
-        <div class="amb-profile-top">
-          <div class="amb-profile-left">
-            <div class="amb-avatar" style="overflow:hidden;padding:0">
-              ${a.igUrl
-                ? `<img src="https://unavatar.io/instagram/${(a.igUrl.match(/instagram\.com\/([^/?#]+)/)?.[1]||'').replace(/\//g,'')}"
-                    onerror="this.outerHTML='<span style=\\'font-size:18px;font-weight:800\\'>${a.name[0]}</span>'"
-                    style="width:44px;height:44px;border-radius:50%;object-fit:cover" loading="lazy">`
-                : `<span style="font-size:18px;font-weight:800">${a.name[0]}</span>`
-              }
-            </div>
-            <div>
-              <div class="amb-info-name">${a.name}</div>
-              <div class="amb-info-handle">${a.handle || ''} · ${a.category || ''}</div>
-              <div class="amb-info-meta">
-                ${plats}
-                ${a.ytSubs ? `<span class="amb-info-tag">구독 ${a.ytSubs}</span>` : ''}
-                ${a.igFollowers ? `<span class="amb-info-tag">팔로워 ${a.igFollowers}</span>` : ''}
-                ${a.fee ? `<span class="amb-info-tag">월 ${fmt(a.fee)}만원</span>` : ''}
-                <span class="amb-info-tag">${a.contractStart}~${a.contractEnd}</span>
-              </div>
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center">
-            ${a.url ? `<a href="${a.url}" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center">↗ 채널</a>` : ''}
-            <button class="btn-secondary" style="color:var(--orange,#d9600a);border-color:var(--orange,#d9600a)" onclick="moveBackToCandidate('${a.id}')">← 후보풀로</button>
-            <button class="btn-danger" onclick="deleteAmb('${a.id}')">삭제</button>
-          </div>
+    <div class="contract-card">
+      <div class="cc-profile">
+        ${pic}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:800;color:var(--text)">${a.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${a.handle||''} · ${a.category||''} ${platBadges}</div>
+          <div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">${channelLinks}</div>
         </div>
-        ${a.note ? `<div style="font-size:12px;color:var(--text3);background:var(--bg);padding:8px 12px;border-radius:7px">📌 ${a.note}</div>` : ''}
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+          <button class="btn-secondary" style="padding:4px 10px;font-size:11px;color:var(--orange);border-color:var(--orange)" onclick="moveBackToCandidate('${a.id}')">후보풀로</button>
+          <button class="btn-danger" style="padding:4px 9px;font-size:11px" onclick="deleteAmb('${a.id}')">삭제</button>
+        </div>
       </div>
-      <div class="mission-table-wrap">
-        <table class="mission-table">
-          <thead><tr>
-            <th style="width:52px">월</th>
-            <th>광고 제품</th>
-            <th>콘텐츠 유형</th>
-            <th>광고 가이드</th>
-            <th>게시 URL</th>
-            <th>지급 금액</th>
-            <th>지급 상태</th>
-            <th>마감</th>
-            <th>진행 상태</th>
-            <th style="width:50px"></th>
-          </tr></thead>
-          <tbody>${missionRows}</tbody>
-        </table>
+      <div class="cc-fields">
+        <div class="cf-row">
+          <span class="cf-label">월 광고비</span>
+          <input class="cf-input" type="number" value="${a.fee||''}" placeholder="만원" style="width:80px" onchange="saveAmbContract('${a.id}','fee',this.value)">
+          <span style="font-size:12px;color:var(--text3);align-self:center">만원</span>
+          <span style="font-size:11px;color:var(--text3);margin-left:8px;align-self:center">${a.contractStart||'7월'}~${a.contractEnd||'12월'}</span>
+        </div>
+        <div class="cf-row">
+          <span class="cf-label">이름</span>
+          <input class="cf-input" value="${a.contractName||''}" placeholder="담당자 이름" onchange="saveAmbContract('${a.id}','contractName',this.value)">
+        </div>
+        <div class="cf-row">
+          <span class="cf-label">연락처</span>
+          <input class="cf-input" value="${a.contractPhone||''}" placeholder="010-XXXX-XXXX" onchange="saveAmbContract('${a.id}','contractPhone',this.value)">
+        </div>
+        <div class="cf-row">
+          <span class="cf-label">우편번호</span>
+          <input class="cf-input" value="${a.contractZip||''}" placeholder="우편번호" style="width:90px" onchange="saveAmbContract('${a.id}','contractZip',this.value)">
+        </div>
+        <div class="cf-row">
+          <span class="cf-label">주소</span>
+          <input class="cf-input" value="${a.contractAddress||''}" placeholder="도로명 주소" onchange="saveAmbContract('${a.id}','contractAddress',this.value)">
+        </div>
+        <div class="cf-row">
+          <span class="cf-label">계약서</span>
+          <input class="cf-input" value="${a.contractFile||''}" placeholder="파일 경로 또는 URL" onchange="saveAmbContract('${a.id}','contractFile',this.value)">
+          ${a.contractFile ? `<a href="${a.contractFile}" target="_blank" class="cf-link" style="margin-left:5px;white-space:nowrap;align-self:center">보기↗</a>` : ''}
+        </div>
+        <div class="cf-row">
+          <span class="cf-label">품의서</span>
+          <input class="cf-input" value="${a.approvalLink||''}" placeholder="품의서 링크 URL" onchange="saveAmbContract('${a.id}','approvalLink',this.value)">
+          ${a.approvalLink ? `<a href="${a.approvalLink}" target="_blank" class="cf-link" style="margin-left:5px;white-space:nowrap;align-self:center">보기↗</a>` : ''}
+        </div>
+        ${a.note ? `<div style="font-size:12px;color:var(--text3);background:var(--bg);padding:7px 10px;border-radius:7px">📌 ${a.note}</div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1059,6 +1065,7 @@ function openMissionModal(ambId, month) {
   document.getElementById('m-guide').value = m.guide || '';
   document.getElementById('m-yt-url').value = m.ytUrl || '';
   document.getElementById('m-ig-url').value = m.igUrl || '';
+  document.getElementById('m-upload-date').value = m.uploadDate || '';
   document.getElementById('m-deadline').value = m.deadline || '';
   document.getElementById('m-status').value = m.status || 'planned';
   document.getElementById('m-pay-amount').value = m.payAmount || '';
@@ -1080,7 +1087,8 @@ function saveMission() {
     guide: document.getElementById('m-guide').value.trim(),
     ytUrl: document.getElementById('m-yt-url').value.trim(),
     igUrl: document.getElementById('m-ig-url').value.trim(),
-    deadline:  document.getElementById('m-deadline').value,
+    uploadDate: document.getElementById('m-upload-date').value,
+    deadline:   document.getElementById('m-deadline').value,
     status:    document.getElementById('m-status').value,
     payAmount: document.getElementById('m-pay-amount').value || '',
     payStatus: document.getElementById('m-pay-status').value,
@@ -1150,7 +1158,7 @@ function renderMonthlyTable() {
 
     // 진행 상태
     const stMap = {guideline:'mo-st-planned',waiting:'mo-st-inprogress',posted:'mo-st-published',paid_done:'mo-st-verified'};
-    const stLbl = {guideline:'가이드라인 전달',waiting:'대기중',posted:'게시완료',paid_done:'지급완료'};
+    const stLbl = {guideline:'가이드 전달',waiting:'검토 대기',posted:'게시완료',paid_done:'정산완료'};
     const stCls = stMap[mis.status||'planned'];
 
     // 게시 URL
@@ -1208,10 +1216,10 @@ function renderMonthlyTable() {
       </td>
       <td>
         <select class="mo-select" onchange="saveMO('${a.id}','${month}','status',this.value)">
-          <option value="guideline" ${(mis.status||'guideline')==='guideline'?'selected':''}>가이드라인 전달</option>
-          <option value="waiting"   ${mis.status==='waiting'              ?'selected':''}>대기중</option>
+          <option value="guideline" ${(mis.status||'guideline')==='guideline'?'selected':''}>가이드 전달</option>
+          <option value="waiting"   ${mis.status==='waiting'              ?'selected':''}>검토 대기</option>
           <option value="posted"    ${mis.status==='posted'               ?'selected':''}>게시완료</option>
-          <option value="paid_done" ${mis.status==='paid_done'            ?'selected':''}>지급완료</option>
+          <option value="paid_done" ${mis.status==='paid_done'            ?'selected':''}>정산완료</option>
         </select>
       </td>
     </tr>`;
@@ -1263,7 +1271,7 @@ function exportMonthlyCSV() {
   const headers = ['앰버서더','핸들','플랫폼','광고 제품','무상 제품','발송','게시글 URL','이름','연락처','우편번호','주소','광고비(만원)','지급 상태','진행 상태'];
   const platLbl = {yt:'유튜브',ig:'인스타',tt:'틱톡'};
   const payLbl  = {unpaid:'미지급',pending:'지급예정',paid:'지급완료'};
-  const stLbl   = {guideline:'가이드라인 전달',waiting:'대기중',posted:'게시완료',paid_done:'지급완료'};
+  const stLbl   = {guideline:'가이드 전달',waiting:'검토 대기',posted:'게시완료',paid_done:'정산완료'};
   const rows = ambassadors.map(a => {
     const m = a.missions?.[month] || {};
     const postUrl = m.postUrl||m.igUrl||m.ytUrl||'';
@@ -1360,8 +1368,72 @@ function deleteProduct(id) {
   save(); renderProducts();
 }
 
+// ── 캘린더 ──────────────────────────────────────────────
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+
+function renderCalendar() {
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('cal-title').textContent = `${calYear}년 ${monthNames[calMonth]}`;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+
+  // 각 앰버서더의 이번달 업로드 예정일 (deadline / uploadDate 활용)
+  const MONTH_KR = monthNames[calMonth]; // e.g. '7월'
+  const events = {}; // date → [{name, color}]
+  const colors = ['#5b4ef8','#2563eb','#15803d','#c2410c','#be185d','#b45309','#7c3aed'];
+  ambassadors.forEach((a, idx) => {
+    const col = colors[idx % colors.length];
+    const mis = a.missions?.[MONTH_KR];
+    if (!mis) return;
+    // deadline
+    if (mis.deadline) {
+      const d = new Date(mis.deadline);
+      if (d.getMonth() === calMonth && d.getFullYear() === calYear) {
+        const key = d.getDate();
+        if (!events[key]) events[key] = [];
+        events[key].push({ name: a.name, color: col, type: '마감' });
+      }
+    }
+    // uploadDate
+    if (mis.uploadDate) {
+      const d = new Date(mis.uploadDate);
+      if (d.getMonth() === calMonth && d.getFullYear() === calYear) {
+        const key = d.getDate();
+        if (!events[key]) events[key] = [];
+        events[key].push({ name: a.name, color: col, type: '업로드' });
+      }
+    }
+  });
+
+  // 셀 렌더
+  let cells = '';
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+  for (let i = 0; i < totalCells; i++) {
+    const day = i - firstDay + 1;
+    const isOther = day < 1 || day > daysInMonth;
+    const isToday = !isOther && day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+    const evs = (!isOther && events[day]) ? events[day] : [];
+    cells += `<div class="cal-cell ${isOther?'other-month':''} ${isToday?'today':''}">
+      <div class="cal-date">${isOther ? '' : day}</div>
+      ${evs.map(e => `<div class="cal-event" style="background:${e.color}18;color:${e.color};border-left:2px solid ${e.color}" title="${e.name} ${e.type}">${e.name.slice(0,5)} <span style="opacity:.7">${e.type}</span></div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('calCells').innerHTML = cells;
+
+  // 범례
+  const legendAmbs = ambassadors.map((a,i) => ({name:a.name, color:colors[i%colors.length]}));
+  document.getElementById('calLegend').innerHTML = legendAmbs.map(a =>
+    `<div class="cal-legend-item"><div class="cal-legend-dot" style="background:${a.color}"></div>${a.name}</div>`
+  ).join('');
+}
+function calPrev() { if(calMonth===0){calYear--;calMonth=11;}else calMonth--; renderCalendar(); }
+function calNext() { if(calMonth===11){calYear++;calMonth=0;}else calMonth++; renderCalendar(); }
+
 // overlays close on backdrop click
-['candOverlay','ambOverlay','missionOverlay','productOverlay'].forEach(id => {
+['candOverlay','ambOverlay','missionOverlay'].forEach(id => {
   document.getElementById(id).addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('show'); });
 });
 

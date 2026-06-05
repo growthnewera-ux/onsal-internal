@@ -1,11 +1,11 @@
-// 공통 네비게이션 렌더러
 (function() {
   const pages = [
-    { href: '/planner.html',    label: '예산 플래너',  icon: '📊' },
-    { href: '/ambassador.html', label: '앰버서더',     icon: '👥' },
-    { href: '/ads.html',        label: '광고 관리',    icon: '📢' },
-    { href: '/cheomdan.html',   label: '체험단',       icon: '📝' },
-    { href: '/viral.html',      label: '바이럴',       icon: '🔥' },
+    { href: '/planner.html',    label: '예산 플래너', icon: '📊' },
+    { href: '/ambassador.html', label: '앰버서더',    icon: '👥' },
+    { href: '/ads.html',        label: '광고 관리',   icon: '📢' },
+    { href: '/cheomdan.html',   label: '체험단',      icon: '📝' },
+    { href: '/viral.html',      label: '바이럴',      icon: '🔥' },
+    { href: '/products.html',   label: '제품 관리',   icon: '📦' },
   ];
   const current = location.pathname.split('/').pop();
   const nav = document.getElementById('globalNav');
