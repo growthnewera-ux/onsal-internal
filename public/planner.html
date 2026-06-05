@@ -376,8 +376,28 @@ const INFLUENCERS = [
 const FIXED_ITEMS = {
   amb:  [{ name:'앰버서더', desc:'팔로워 5~20만 / 뷰티 카테고리 외', mode:'per', countLabel:'인원(명)', defaultCount:100, unitLabel:'인당 단가(만원)', defaultUnit:30 }],
   exp:  [
-    { name:'레뷰 프리미어',   desc:'방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5 },
-    { name:'레뷰 베이직',     desc:'일반 블로그', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:1 },
+    // ── 레뷰 ──
+    { name:'레뷰 올인원 (첫계약)', desc:'유효기간 3개월 / 베이직 인당 2.5만 · 프리미어 인당 5만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:50 },
+    { name:'레뷰 올인원 200만',    desc:'베이직 인당 2만 / 프리미어 인당 5만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:200 },
+    { name:'레뷰 올인원 300만',    desc:'베이직 인당 1.5만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:300 },
+    { name:'레뷰 올인원 500만',    desc:'베이직 인당 1만', mode:'fixed', valLabel:'패키지 금액(만원)', defaultVal:500 },
+    { name:'레뷰 프리미어',        desc:'블로그 방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5 },
+    { name:'레뷰 베이직',          desc:'일반 블로그', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:1 },
+    // ── 글로우픽 ──
+    { name:'글로우픽 엠블럼_월간랭킹',   desc:'현물바터 30개 기준 충족 시 진행', mode:'fixed', valLabel:'금액(만원)', defaultVal:200 },
+    { name:'글로우픽 엠블럼_어워드',     desc:'글로우픽어워드 엠블럼', mode:'fixed', valLabel:'금액(만원)', defaultVal:500 },
+    { name:'글로우픽 엠블럼_신제품',     desc:'신제품 출시 연계', mode:'fixed', valLabel:'금액(만원)', defaultVal:100 },
+    { name:'글로우픽 엠블럼_평점/만족도',desc:'픽플 리뷰어 진행 필수', mode:'fixed', valLabel:'금액(만원)', defaultVal:100 },
+    { name:'글로우픽 엠블럼_리뷰라이선스',desc:'1년간 / 포토리뷰 1개당 5만원', mode:'fixed', valLabel:'금액(만원)', defaultVal:200 },
+    { name:'글로우픽 평가단',       desc:'1종 50명 / 2주 사용 후 앱 내 리뷰 작성', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
+    { name:'글로우픽 설문단',       desc:'설문 5개 / 100명 기본 발행 / 엠블럼 포함', mode:'fixed', valLabel:'금액(만원)', defaultVal:200 },
+    { name:'글로우픽 샘플링',       desc:'100~1,000명', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
+    { name:'글로우픽 인스타 리뷰어',desc:'릴스 20명 / 2차활용 무기한 가능', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
+    // ── 화해 ──
+    { name:'화해 꼼평단',    desc:'31~50명 / 자사몰 리뷰 연동 가능 / 꼼평단 엠블럼 제공', mode:'fixed', valLabel:'금액(만원)', defaultVal:300 },
+    { name:'화해 SNS 리뷰단',desc:'릴스 30~50명 / 6개월 활용 가능', mode:'fixed', valLabel:'금액(만원)', defaultVal:400 },
+    { name:'화해 카톡 플친', desc:'화해 인앱 랜딩 / 외부 랜딩', mode:'fixed', valLabel:'건당 금액(만원)', defaultVal:250 },
+    // ── 서포터즈 / 시딩 ──
     { name:'서포터즈 인스타', desc:'인스타 채널 서포터즈', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
     { name:'서포터즈 블로그', desc:'블로그 채널 서포터즈', mode:'per', countLabel:'인원(명)', defaultCount:20, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
     { name:'나노 시딩',       desc:'무상 제품 제공 — 제품원가만 입력', mode:'fixed', valLabel:'총 제품원가(만원)', defaultVal:0 },
