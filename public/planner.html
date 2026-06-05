@@ -276,6 +276,9 @@ tbody tr:hover td { background: #fafbff; }
     </div>
     <div class="cat-tabs" id="catTabs"></div>
     <div class="inf-sub-filter" id="infSubFilter"></div>
+    <div id="ytLoadWrap" style="padding:8px 16px 0;display:none">
+      <button id="ytLoadBtn" onclick="loadAllYtData()" style="width:100%;padding:8px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;font-family:inherit;transition:all 0.15s">↺ 구독자 · 조회수 불러오기</button>
+    </div>
     <div class="item-list" id="itemList"></div>
   </div>
 
@@ -424,6 +427,72 @@ let activeMonth = '6월';
 let activeInfSub = '전체';
 let modalData = null;
 
+// ── YOUTUBE DATA ─────────────────────────────────────────
+const YT_STORAGE_KEY = 'yt_cache_v1';
+let ytCache = {};     // handle → { subscribers, avgViews, videos, updatedAt }
+let ytLoading = {};   // handle → true
+
+function loadYtCache() {
+  try {
+    const raw = localStorage.getItem(YT_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // 12시간 이내 데이터만 유효
+      const cutoff = Date.now() - 12 * 60 * 60 * 1000;
+      Object.keys(parsed).forEach(h => {
+        if (new Date(parsed[h].updatedAt).getTime() > cutoff) ytCache[h] = parsed[h];
+      });
+    }
+  } catch {}
+}
+function saveYtCache() {
+  try { localStorage.setItem(YT_STORAGE_KEY, JSON.stringify(ytCache)); } catch {}
+}
+
+async function fetchYtData(handle) {
+  if (!handle || ytLoading[handle]) return;
+  ytLoading[handle] = true;
+  try {
+    const res = await fetch(`/api/youtube?handle=${encodeURIComponent(handle)}`);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    ytCache[handle] = data;
+    saveYtCache();
+    // 카드 업데이트 (DOM이 있으면)
+    const key = handle.replace('@', '');
+    const subEl = document.getElementById('yt-subs-' + key);
+    const avgEl = document.getElementById('yt-avg-' + key);
+    if (subEl) subEl.textContent = fmtNum(data.subscribers);
+    if (avgEl) avgEl.textContent = fmtNum(data.avgViews);
+  } catch (e) {
+    const key = handle.replace('@', '');
+    const avgEl = document.getElementById('yt-avg-' + key);
+    if (avgEl) avgEl.textContent = '오류';
+  } finally {
+    ytLoading[handle] = false;
+  }
+}
+
+function fmtNum(n) {
+  if (!n || n === 0) return '–';
+  if (n >= 100000000) return (n / 100000000).toFixed(1).replace(/\.0$/, '') + '억';
+  if (n >= 10000)     return (n / 10000).toFixed(1).replace(/\.0$/, '') + '만';
+  return n.toLocaleString('ko-KR');
+}
+
+async function loadAllYtData() {
+  const btn = document.getElementById('ytLoadBtn');
+  if (btn) { btn.textContent = '로딩 중...'; btn.disabled = true; }
+  const handles = INFLUENCERS.filter(i => i.url).map(i => i.url.match(/@[\w.-]+/)?.[0]).filter(Boolean);
+  const uncached = handles.filter(h => !ytCache[h]);
+  // 3개씩 병렬 처리
+  for (let i = 0; i < uncached.length; i += 3) {
+    await Promise.all(uncached.slice(i, i+3).map(h => fetchYtData(h)));
+  }
+  renderItems();
+  if (btn) { btn.textContent = '↺ 데이터 새로고침'; btn.disabled = false; }
+}
+
 // ── NUMBER FORMAT ────────────────────────────────────────
 // Input unit: 만원 (integer)
 // fmtKor: "4,300만원" / "1억원" / "1억 5,000만원"
@@ -480,6 +549,7 @@ function renderCatTabs() {
   const isInf = activeCat === 'inf';
   document.getElementById('infSearchWrap').style.display = isInf ? 'block' : 'none';
   document.getElementById('infSubFilter').style.display  = isInf ? 'flex'  : 'none';
+  document.getElementById('ytLoadWrap').style.display    = isInf ? 'block' : 'none';
 }
 function setCat(id) { activeCat = id; renderCatTabs(); renderItems(); }
 
@@ -503,14 +573,28 @@ function renderItems() {
       return matchQ && matchSub;
     });
 
-    el.innerHTML = list.map(inf => `
+    el.innerHTML = list.map(inf => {
+      const handle = inf.url ? inf.url.match(/@[\w.-]+/)?.[0] || '' : '';
+      const ytData = handle ? (ytCache[handle] || null) : null;
+      const subsTxt = ytData ? fmtNum(ytData.subscribers) : (inf.subs || '-');
+      const avgTxt  = ytData ? fmtNum(ytData.avgViews) : (ytLoading[handle] ? '...' : '–');
+      return `
       <div class="inf-card" onclick="openModal('${inf.name}')">
         <div class="inf-top">
           <span class="inf-name">${inf.name}</span>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
             <span class="inf-sub-badge">${inf.sub}</span>
-            ${inf.subs ? `<span style="font-size:10px;color:var(--text3);font-weight:500">구독 ${inf.subs}</span>` : ''}
             ${inf.url ? `<a href="${inf.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;color:var(--accent);font-weight:700;text-decoration:none;padding:2px 8px;background:var(--accent-bg);border-radius:6px;white-space:nowrap">↗ 채널</a>` : ''}
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+          <div style="background:var(--bg);border-radius:7px;padding:6px 10px">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:2px">구독자</div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums" id="yt-subs-${handle.replace('@','')}">${subsTxt}</div>
+          </div>
+          <div style="background:var(--bg);border-radius:7px;padding:6px 10px">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;margin-bottom:2px">평균 조회수 (롱폼 5개)</div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums" id="yt-avg-${handle.replace('@','')}">${avgTxt}</div>
           </div>
         </div>
         <div class="price-grid">
@@ -523,7 +607,8 @@ function renderItems() {
           `).join('')}
         </div>
         ${inf.note ? `<div style="font-size:10px;color:var(--text3);margin-top:7px;line-height:1.4;padding:5px 7px;background:var(--bg);border-radius:5px">📌 ${inf.note}</div>` : ''}
-      </div>`).join('') || '<div style="padding:28px;text-align:center;color:var(--text3);font-size:13px">검색 결과 없음</div>';
+      </div>`;
+    }).join('') || '<div style="padding:28px;text-align:center;color:var(--text3);font-size:13px">검색 결과 없음</div>';
 
   } else {
     const items = FIXED_ITEMS[activeCat] || [];
@@ -747,7 +832,10 @@ function refresh() { renderMonthTabs(); renderMonthBody(); updateHeader(); }
 document.getElementById('budgetInput').addEventListener('input', refresh);
 document.getElementById('overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
 
+loadYtCache();
 renderCatTabs(); renderInfSubFilter(); renderItems(); renderMonthTabs(); renderMonthBody(); updateHeader();
+// 캐시 있으면 자동으로 카드에 반영 (새로고침 불필요)
+document.getElementById('ytLoadWrap').style.display = 'block';
 </script>
 </body>
 </html>
