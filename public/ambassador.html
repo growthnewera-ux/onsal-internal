@@ -137,6 +137,19 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 /* stats bar */
 .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 
+/* ── 제품 카드 ── */
+.product-card{background:var(--white);border-radius:12px;border:1.5px solid var(--border);padding:16px;transition:box-shadow .15s;}
+.product-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07);}
+.pc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.pc-name{font-size:14px;font-weight:800;color:var(--text);}
+.pc-cat{font-size:10px;color:var(--text3);background:var(--bg);padding:2px 7px;border-radius:8px;border:1px solid var(--border);font-weight:600;}
+.pc-prices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.pc-price-item{background:var(--bg);border-radius:7px;padding:8px 10px;}
+.pc-price-label{font-size:10px;color:var(--text3);font-weight:600;margin-bottom:2px;}
+.pc-price-val{font-size:14px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;}
+.pc-margin{font-size:11px;color:var(--green);font-weight:700;margin-bottom:8px;}
+.pc-actions{display:flex;gap:6px;}
+
 /* ── 월별 운영 테이블 ── */
 .mo-month-btn{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--white);transition:all .15s;}
 .mo-month-btn:hover{border-color:var(--border2);color:var(--text);}
@@ -188,6 +201,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   <div class="sub-tab active" id="tab-candidates" onclick="setSubTab('candidates')">후보풀</div>
   <div class="sub-tab" id="tab-contracted" onclick="setSubTab('contracted')">앰버서더</div>
   <div class="sub-tab" id="tab-monthly" onclick="setSubTab('monthly')">📋 월별 운영</div>
+  <div class="sub-tab" id="tab-products" onclick="setSubTab('products')">📦 제품 관리</div>
 </div>
 
 <div class="main">
@@ -222,6 +236,18 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     <div id="amb-list"></div>
   </div>
 
+  <!-- ── 제품 관리 ── -->
+  <div id="view-products" style="display:none">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="toolbar-title">제품 관리</span>
+        <span class="toolbar-sub" id="product-count"></span>
+      </div>
+      <button class="btn-primary" onclick="openProductModal()">+ 제품 추가</button>
+    </div>
+    <div id="product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+  </div>
+
   <!-- ── 월별 운영 ── -->
   <div id="view-monthly" style="display:none">
     <div class="toolbar">
@@ -240,6 +266,33 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
     <div id="monthly-table-wrap" style="background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden"></div>
   </div>
 
+</div>
+
+<!-- ── 제품 추가/편집 모달 ── -->
+<div class="overlay" id="productOverlay">
+  <div class="modal" style="width:420px">
+    <div class="modal-header">
+      <div class="modal-title" id="product-modal-title">제품 추가</div>
+      <button class="modal-close" onclick="closeProductModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row"><label class="form-label">제품명</label><input class="form-input" id="p-name" placeholder="예: 온살 세럼 30ml"></div>
+      <div class="form-row"><label class="form-label">카테고리</label>
+        <input class="form-input" id="p-category" list="p-cat-list" placeholder="예: 스킨케어">
+        <datalist id="p-cat-list"><option>스킨케어</option><option>앰플</option><option>크림</option><option>토너</option><option>에센스</option><option>클렌저</option><option>선케어</option><option>기타</option></datalist>
+      </div>
+      <div class="form-row-2">
+        <div><label class="form-label">원가 (원)</label><input class="form-input" id="p-cost" type="number" placeholder="8500"></div>
+        <div><label class="form-label">소비자가 (원)</label><input class="form-input" id="p-retail" type="number" placeholder="35000"></div>
+      </div>
+      <div class="form-row"><label class="form-label">용량/규격</label><input class="form-input" id="p-size" placeholder="예: 30ml, 50g"></div>
+      <div class="form-row"><label class="form-label">메모</label><textarea class="form-textarea" id="p-note" placeholder="특이사항, 발주처 등" style="min-height:60px"></textarea></div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeProductModal()">취소</button>
+        <button class="btn-modal-ok" onclick="saveProduct()">저장</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ── 후보 추가/편집 모달 ── -->
@@ -442,10 +495,12 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 <script>
 const MONTHS = ['7월','8월','9월','10월','11월','12월'];
 const CAND_KEY = 'onsal_candidates_v1';
+const PROD_KEY = 'onsal_products_v1';
 const AMB_KEY  = 'onsal_ambassadors_v1';
 
 let candidates = JSON.parse(localStorage.getItem(CAND_KEY) || 'null');
 let ambassadors = JSON.parse(localStorage.getItem(AMB_KEY) || '[]');
+let products    = JSON.parse(localStorage.getItem(PROD_KEY) || '[]');
 
 // 최초 실행 시 인스타 후보 4명 기본 데이터 삽입
 if (!candidates) {
@@ -470,6 +525,7 @@ let cPlats = {yt:false, ig:false, tt:false};
 const save = () => {
   localStorage.setItem(CAND_KEY, JSON.stringify(candidates));
   localStorage.setItem(AMB_KEY,  JSON.stringify(ambassadors));
+  localStorage.setItem(PROD_KEY, JSON.stringify(products));
 };
 const fmt = n => parseInt(n||0).toLocaleString('ko-KR');
 
@@ -478,13 +534,14 @@ let activeMonthlyMonth = MONTHS[0];
 
 function setSubTab(t) {
   activeSubTab = t;
-  ['candidates','contracted','monthly'].forEach(id => {
+  ['candidates','contracted','monthly','products'].forEach(id => {
     document.getElementById('tab-'+id)?.classList.toggle('active', t===id);
     const v = document.getElementById('view-'+id);
     if(v) v.style.display = t===id ? '' : 'none';
   });
   if (t==='contracted') renderAmbs();
   else if (t==='monthly') renderMonthlyView();
+  else if (t==='products') renderProducts();
   else renderCands();
 }
 
@@ -1055,7 +1112,7 @@ function renderMonthlyTable() {
   // 요약 계산
   const total    = ambassadors.length;
   const shipped  = ambassadors.filter(a => a.missions?.[month]?.shipped).length;
-  const posted   = ambassadors.filter(a => { const m=a.missions?.[month]; return m?.igUrl||m?.ytUrl||m?.postUrl; }).length;
+  const posted   = ambassadors.filter(a => a.missions?.[month]?.status==='posted'||a.missions?.[month]?.status==='paid_done').length;
   const paid     = ambassadors.filter(a => a.missions?.[month]?.payStatus==='paid').length;
   const totalFee = ambassadors.reduce((s,a) => s + (+a.missions?.[month]?.payAmount||0), 0);
 
@@ -1092,12 +1149,30 @@ function renderMonthlyTable() {
     const payInfo = payMap[mis.payStatus||'unpaid'];
 
     // 진행 상태
-    const stMap = {planned:'mo-st-planned',inprogress:'mo-st-inprogress',published:'mo-st-published',verified:'mo-st-verified'};
-    const stLbl = {planned:'예정',inprogress:'진행중',published:'게시완료',verified:'확인완료'};
+    const stMap = {guideline:'mo-st-planned',waiting:'mo-st-inprogress',posted:'mo-st-published',paid_done:'mo-st-verified'};
+    const stLbl = {guideline:'가이드라인 전달',waiting:'대기중',posted:'게시완료',paid_done:'지급완료'};
     const stCls = stMap[mis.status||'planned'];
 
     // 게시 URL
     const postUrl = mis.postUrl || mis.igUrl || mis.ytUrl || '';
+
+    // 광고 제품 드롭다운 옵션
+    const prodOptions = products.map(p =>
+      `<option value="${p.name}" ${mis.product===p.name?'selected':''}>${p.name}${p.size?' ('+p.size+')':''}</option>`
+    ).join('');
+    const prodSelect = `<select class="mo-select" style="min-width:110px" onchange="saveMO('${a.id}','${month}','product',this.value)">
+      <option value="" ${!mis.product?'selected':''}>제품 선택...</option>
+      ${prodOptions}
+      <option value="__custom__">직접 입력...</option>
+    </select>
+    ${(!mis.product || !products.find(p=>p.name===mis.product))
+      ? `<input class="mo-input" value="${mis.product||''}" placeholder="직접 입력" style="margin-top:3px;min-width:110px" onchange="saveMO('${a.id}','${month}','product',this.value)">`
+      : ''}`;
+
+    // 원가 표시 (선택된 제품이 DB에 있을 경우)
+    const selProd = products.find(p => p.name === mis.product);
+    const costTag = selProd?.costPrice
+      ? `<div style="font-size:9px;color:var(--text3);margin-top:2px">원가 ${Number(selProd.costPrice).toLocaleString()}원</div>` : '';
 
     return `<tr data-amb="${a.id}" data-month="${month}">
       <td>
@@ -1109,35 +1184,34 @@ function renderMonthlyTable() {
           </div>
         </div>
       </td>
-      <td><input class="mo-input" value="${mis.product||''}" placeholder="제품명..." onchange="saveMO('${a.id}','${month}','product',this.value)"></td>
+      <td>${prodSelect}${costTag}</td>
       <td><input class="mo-input" value="${mis.freeProducts||''}" placeholder="무상 제품 (콤마 구분)" style="min-width:140px" onchange="saveMO('${a.id}','${month}','freeProducts',this.value)"></td>
       <td style="text-align:center">
         <input type="checkbox" class="mo-check" ${mis.shipped?'checked':''} onchange="saveMO('${a.id}','${month}','shipped',this.checked)">
       </td>
       <td>
-        ${postUrl ? `<a href="${postUrl}" target="_blank" class="mo-link-btn">보기↗</a>` : ''}
-        <input class="mo-input" value="${postUrl}" placeholder="https://..." style="min-width:120px;margin-top:2px" onchange="saveMO('${a.id}','${month}','postUrl',this.value)">
+        <div style="display:flex;align-items:center;gap:5px">
+          ${postUrl ? `<a href="${postUrl}" target="_blank" class="mo-link-btn" style="flex-shrink:0">보기↗</a>` : ''}
+          <input class="mo-input" value="${postUrl}" placeholder="https://instagram.com/p/..." style="min-width:200px" onchange="saveMO('${a.id}','${month}','postUrl',this.value)">
+        </div>
       </td>
-      <td><input class="mo-input" value="${mis.deliveryName||''}" placeholder="이름" style="min-width:60px" onchange="saveMO('${a.id}','${month}','deliveryName',this.value)"></td>
-      <td><input class="mo-input" value="${mis.deliveryPhone||''}" placeholder="연락처" style="min-width:90px" onchange="saveMO('${a.id}','${month}','deliveryPhone',this.value)"></td>
-      <td><input class="mo-input" value="${mis.deliveryZip||''}" placeholder="우편번호" style="min-width:60px" onchange="saveMO('${a.id}','${month}','deliveryZip',this.value)"></td>
-      <td><input class="mo-input" value="${mis.deliveryAddress||''}" placeholder="주소" style="min-width:140px" onchange="saveMO('${a.id}','${month}','deliveryAddress',this.value)"></td>
       <td>
-        <input class="mo-input" type="number" value="${mis.payAmount||''}" placeholder="만원" style="min-width:60px" onchange="saveMO('${a.id}','${month}','payAmount',this.value)">
+        <input class="mo-input" type="number" value="${mis.payAmount||''}" placeholder="0" style="min-width:55px" onchange="saveMO('${a.id}','${month}','payAmount',this.value)">
+        <span style="font-size:11px;color:var(--text3)">만원</span>
       </td>
       <td>
         <select class="mo-select" onchange="saveMO('${a.id}','${month}','payStatus',this.value)">
-          <option value="unpaid" ${(mis.payStatus||'unpaid')==='unpaid'?'selected':''}>미지급</option>
-          <option value="pending" ${mis.payStatus==='pending'?'selected':''}>지급예정</option>
-          <option value="paid" ${mis.payStatus==='paid'?'selected':''}>지급완료</option>
+          <option value="unpaid"  ${(mis.payStatus||'unpaid')==='unpaid'  ?'selected':''}>미지급</option>
+          <option value="pending" ${mis.payStatus==='pending'             ?'selected':''}>지급예정</option>
+          <option value="paid"    ${mis.payStatus==='paid'                ?'selected':''}>지급완료</option>
         </select>
       </td>
       <td>
         <select class="mo-select" onchange="saveMO('${a.id}','${month}','status',this.value)">
-          <option value="planned" ${(mis.status||'planned')==='planned'?'selected':''}>예정</option>
-          <option value="inprogress" ${mis.status==='inprogress'?'selected':''}>진행중</option>
-          <option value="published" ${mis.status==='published'?'selected':''}>게시완료</option>
-          <option value="verified" ${mis.status==='verified'?'selected':''}>확인완료</option>
+          <option value="guideline" ${(mis.status||'guideline')==='guideline'?'selected':''}>가이드라인 전달</option>
+          <option value="waiting"   ${mis.status==='waiting'              ?'selected':''}>대기중</option>
+          <option value="posted"    ${mis.status==='posted'               ?'selected':''}>게시완료</option>
+          <option value="paid_done" ${mis.status==='paid_done'            ?'selected':''}>지급완료</option>
         </select>
       </td>
     </tr>`;
@@ -1148,17 +1222,13 @@ function renderMonthlyTable() {
       <table class="mo-table">
         <thead><tr>
           <th style="min-width:140px">앰버서더</th>
-          <th style="min-width:120px">광고 제품</th>
+          <th style="min-width:130px">광고 제품</th>
           <th style="min-width:160px">무상 제품</th>
           <th style="min-width:50px;text-align:center">발송</th>
-          <th style="min-width:150px">게시글 URL</th>
-          <th style="min-width:70px">이름</th>
-          <th style="min-width:100px">연락처</th>
-          <th style="min-width:70px">우편번호</th>
-          <th style="min-width:160px">주소</th>
-          <th style="min-width:70px">광고비(만)</th>
+          <th style="min-width:260px">게시글 URL</th>
+          <th style="min-width:90px">광고비(만)</th>
           <th style="min-width:90px">지급 상태</th>
-          <th style="min-width:90px">진행 상태</th>
+          <th style="min-width:110px">진행 상태</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -1193,7 +1263,7 @@ function exportMonthlyCSV() {
   const headers = ['앰버서더','핸들','플랫폼','광고 제품','무상 제품','발송','게시글 URL','이름','연락처','우편번호','주소','광고비(만원)','지급 상태','진행 상태'];
   const platLbl = {yt:'유튜브',ig:'인스타',tt:'틱톡'};
   const payLbl  = {unpaid:'미지급',pending:'지급예정',paid:'지급완료'};
-  const stLbl   = {planned:'예정',inprogress:'진행중',published:'게시완료',verified:'확인완료'};
+  const stLbl   = {guideline:'가이드라인 전달',waiting:'대기중',posted:'게시완료',paid_done:'지급완료'};
   const rows = ambassadors.map(a => {
     const m = a.missions?.[month] || {};
     const postUrl = m.postUrl||m.igUrl||m.ytUrl||'';
@@ -1214,8 +1284,84 @@ function exportMonthlyCSV() {
   link.click();
 }
 
+// ── 제품 관리 ──────────────────────────────────────────────
+let editingProductId = null;
+
+function renderProducts() {
+  document.getElementById('product-count').textContent = `총 ${products.length}개`;
+  const el = document.getElementById('product-grid');
+  if (products.length === 0) {
+    el.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-title">등록된 제품이 없어요</div><div class="empty-desc">+ 제품 추가 버튼으로 광고 제품을 등록하세요</div></div>`;
+    return;
+  }
+  el.innerHTML = products.map(p => {
+    const margin = (p.retailPrice && p.costPrice)
+      ? Math.round((1 - p.costPrice/p.retailPrice)*100) : null;
+    return `
+    <div class="product-card">
+      <div class="pc-header">
+        <div class="pc-name">${p.name}${p.size?' <span style="font-size:11px;color:var(--text3);font-weight:500">('+p.size+')</span>':''}</div>
+        <span class="pc-cat">${p.category||'미분류'}</span>
+      </div>
+      <div class="pc-prices">
+        <div class="pc-price-item">
+          <div class="pc-price-label">원가</div>
+          <div class="pc-price-val">${p.costPrice?Number(p.costPrice).toLocaleString()+'원':'–'}</div>
+        </div>
+        <div class="pc-price-item">
+          <div class="pc-price-label">소비자가</div>
+          <div class="pc-price-val">${p.retailPrice?Number(p.retailPrice).toLocaleString()+'원':'–'}</div>
+        </div>
+      </div>
+      ${margin!==null ? `<div class="pc-margin">마진율 ${margin}%</div>` : ''}
+      ${p.note ? `<div style="font-size:11px;color:var(--text3);margin-bottom:10px;background:var(--bg);padding:5px 8px;border-radius:5px">📌 ${p.note}</div>` : ''}
+      <div class="pc-actions">
+        <button class="btn-secondary" onclick="openProductModal('${p.id}')">편집</button>
+        <button class="btn-danger" onclick="deleteProduct('${p.id}')">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openProductModal(id) {
+  editingProductId = id || null;
+  const p = id ? products.find(x=>x.id===id) : null;
+  document.getElementById('product-modal-title').textContent = id ? '제품 편집' : '제품 추가';
+  document.getElementById('p-name').value = p?.name || '';
+  document.getElementById('p-category').value = p?.category || '';
+  document.getElementById('p-cost').value = p?.costPrice || '';
+  document.getElementById('p-retail').value = p?.retailPrice || '';
+  document.getElementById('p-size').value = p?.size || '';
+  document.getElementById('p-note').value = p?.note || '';
+  document.getElementById('productOverlay').classList.add('show');
+}
+function closeProductModal() { document.getElementById('productOverlay').classList.remove('show'); }
+
+function saveProduct() {
+  const name = document.getElementById('p-name').value.trim();
+  if (!name) return alert('제품명을 입력해주세요');
+  const data = {
+    id: editingProductId || Date.now().toString(),
+    name,
+    category: document.getElementById('p-category').value.trim(),
+    costPrice: +document.getElementById('p-cost').value || 0,
+    retailPrice: +document.getElementById('p-retail').value || 0,
+    size: document.getElementById('p-size').value.trim(),
+    note: document.getElementById('p-note').value.trim(),
+  };
+  if (editingProductId) products = products.map(p => p.id===editingProductId ? data : p);
+  else products.push(data);
+  save(); closeProductModal(); renderProducts();
+}
+
+function deleteProduct(id) {
+  if (!confirm('삭제할까요?')) return;
+  products = products.filter(p => p.id !== id);
+  save(); renderProducts();
+}
+
 // overlays close on backdrop click
-['candOverlay','ambOverlay','missionOverlay'].forEach(id => {
+['candOverlay','ambOverlay','missionOverlay','productOverlay'].forEach(id => {
   document.getElementById(id).addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('show'); });
 });
 
