@@ -378,7 +378,7 @@ function renderCands() {
   ].map(([l,v,c]) => `
     <div class="stat-card">
       <div class="stat-label">${l}</div>
-      <div class="stat-val" style="${c?`color:${c}`:'''}">${v}명</div>
+      <div class="stat-val" style="${c?`color:${c}`:''}">${v}명</div>
     </div>`).join('');
 
   const filters = ['전체','검토중','연락중','계약완료','거절/보류'];
@@ -572,7 +572,7 @@ function renderAmbs() {
   ].map(([l,v,c]) => `
     <div class="stat-card">
       <div class="stat-label">${l}</div>
-      <div class="stat-val" style="${c?`color:${c}`:'''}">${v}</div>
+      <div class="stat-val" style="${c?`color:${c}`:''}">${v}</div>
     </div>`).join('');
 
   if (ambassadors.length === 0) {
