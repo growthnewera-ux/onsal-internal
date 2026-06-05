@@ -274,11 +274,14 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  </div>
  <button class="btn-primary" onclick="openCandModal()">+ 후보 추가</button>
  </div>
- <!-- 상태/카테고리 필터 -->
- <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
- <div class="filter-bar" id="cand-filters"></div>
- <div class="filter-bar" id="cand-cat-filters" style="padding-left:2px"></div>
+ <!-- 수동 입력 안내 -->
+ <div style="background:#f8fafc;border:1.5px solid var(--border);border-radius:9px;padding:10px 16px;margin-bottom:14px;font-size:12px;color:var(--text3);line-height:1.6">
+  <strong style="color:var(--text2)">팀원 안내</strong> — 인스타그램 팔로워 수 / 유튜브 구독자 수는 API 제공 불가로 <strong style="color:var(--text2)">직접 입력</strong>이 필요합니다.
+  프사(썸네일)는 인스타그램 공개 계정일 경우 자동 로드됩니다.
  </div>
+ <!-- 필터 (숨김) -->
+ <div id="cand-filters" style="display:none"></div>
+ <div id="cand-cat-filters" style="display:none"></div>
  <!-- 테이블 -->
  <div class="cand-table-wrap">
  <table class="cand-table" style="table-layout:fixed;width:100%">
@@ -364,32 +367,24 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <div class="form-row" style="margin-bottom:0"><label class="form-label">카테고리</label>
  <input class="form-input" id="c-category" list="cat-list" placeholder="카테고리 선택 또는 직접 입력">
  <datalist id="cat-list">
- <optgroup label="-- 뷰티/패션 --">
- <option value="뷰티">뷰티 — 메이크업·스킨케어 중심</option>
- <option value="스킨케어">스킨케어 — 피부관리 특화</option>
- <option value="패션">패션 — 의류·스타일링 중심</option>
- <option value="뷰티/패션">뷰티/패션 — 복합 채널</option>
- </optgroup>
- <optgroup label="-- 라이프스타일 --">
- <option value="라이프스타일">라이프스타일 — 일상 전반</option>
- <option value="일상/브이로그">일상/브이로그 — 데일리 콘텐츠</option>
- <option value="부부/커플">부부/커플 — 연인·부부 채널</option>
- <option value="육아/맘">육아/맘 — 자녀 양육 콘텐츠</option>
- <option value="피트니스/헬스">피트니스/헬스 — 운동·다이어트</option>
- <option value="음식/요리">음식/요리 — 쿡, 먹방</option>
- <option value="여행">여행 — 국내외 여행</option>
- </optgroup>
- <optgroup label="-- 셀럽/아이돌 --">
- <option value="연예인">연예인 — 배우·가수</option>
- <option value="아이돌">아이돌 — K-POP 아티스트</option>
- <option value="스포츠 선수">스포츠 선수</option>
- </optgroup>
- <optgroup label="-- 기타 --">
- <option value="직장인/커리어">직장인/커리어</option>
- <option value="반려동물">반려동물</option>
- <option value="게임">게임</option>
- <option value="기타">기타</option>
- </optgroup>
+ <option>뷰티</option>
+ <option>스킨케어</option>
+ <option>패션</option>
+ <option>뷰티/패션</option>
+ <option>라이프스타일</option>
+ <option>일상/브이로그</option>
+ <option>부부/커플</option>
+ <option>육아/맘</option>
+ <option>피트니스/헬스</option>
+ <option>음식/요리</option>
+ <option>여행</option>
+ <option>연예인</option>
+ <option>아이돌</option>
+ <option>스포츠 선수</option>
+ <option>직장인/커리어</option>
+ <option>반려동물</option>
+ <option>게임</option>
+ <option>기타</option>
  </datalist>
  </div>
  </div>
@@ -661,11 +656,19 @@ function renderCands() {
   };
 
   tbody.innerHTML = filtered.map(c => {
-    // 프사 (인스타 기준)
-    const igHandle = (c.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]||'';
+    // 프사 — 인스타 공개 계정이면 자동 로드, 실패 시 이니셜
+    const igHandle = (c.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]?.replace(/\//g,'')||'';
+    const initL = (c.name||'?')[0];
+    const avatarId = 'av-' + c.id;
     const pic = igHandle
-      ? `<img src="https://unavatar.io/instagram/${igHandle.replace(/\//g,'')}" onerror="this.outerHTML='<div class=\\'ct-avatar\\'>${(c.name||'?')[0]}</div>'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0" loading="lazy">`
-      : `<div class="ct-avatar">${(c.name||'?')[0]}</div>`;
+      ? `<div style="position:relative;width:34px;height:34px;flex-shrink:0">
+           <img src="https://unavatar.io/instagram/${igHandle}"
+                style="width:34px;height:34px;border-radius:50%;object-fit:cover;position:absolute;inset:0"
+                loading="lazy"
+                onerror="this.remove();document.getElementById('${avatarId}').style.display='flex'">
+           <div class="ct-avatar" id="${avatarId}" style="display:none;width:34px;height:34px">${initL}</div>
+         </div>`
+      : `<div class="ct-avatar" style="width:34px;height:34px;flex-shrink:0">${initL}</div>`;
 
     // 이름 → 클릭하면 주요 채널로 이동
     const mainUrl = c.igUrl || c.ytUrl || c.ttUrl || '';
@@ -682,13 +685,14 @@ function renderCands() {
         : `<span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px;background:${m.bg};color:${m.col};white-space:nowrap">${m.label}</span>`;
     }).join(' ');
 
-    // 팔로워 — 플랫폼별로 나열
+    // 팔로워 — 직접 입력 (인스타 팔로워 수동 입력 필요)
     const followersEl = (c.platforms||[]).map(p => {
       const m = platMap[p]; if(!m) return '';
       const val = c[m.subsField]||'';
+      const icon = {yt:'유튜브',ig:'인스타',tt:'틱톡'}[p];
       return `<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
-        <span style="font-size:10px;color:var(--text3);width:32px">${m.label.slice(0,2)}</span>
-        <input class="ct-inline" value="${val}" placeholder="${m.subsLabel}" style="width:60px;font-size:12px" onchange="updateCand('${c.id}','${m.subsField}',this.value)">
+        <span style="font-size:10px;color:var(--text3);min-width:28px">${icon}</span>
+        <input class="ct-inline" value="${val}" placeholder="직접 입력" style="width:68px;font-size:12px" onchange="updateCand('${c.id}','${m.subsField}',this.value)">
       </div>`;
     }).join('');
 
