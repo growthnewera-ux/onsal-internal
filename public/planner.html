@@ -177,7 +177,36 @@ header {
 
 /* PLAN SECTION */
 .plan-section { background: var(--white); border-radius: 12px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 12px; }
-.plan-section-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.plan-section-head { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.plan-section-head-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; }
+.plan-section-head-top.has-budget { margin-bottom: 10px; }
+.cat-budget-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cat-budget-input { background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px; padding: 5px 9px; font-size: 13px; font-weight: 700; color: var(--text); width: 90px; outline: none; font-family: inherit; font-variant-numeric: tabular-nums; }
+.cat-budget-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,78,248,0.1); }
+.cat-budget-track { flex: 1; min-width: 80px; height: 6px; background: var(--bg); border-radius: 6px; overflow: hidden; }
+.cat-budget-fill  { height: 100%; border-radius: 6px; transition: width 0.4s ease; }
+.cat-budget-stats { font-size: 11px; color: var(--text3); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cat-budget-stats.warn { color: var(--orange, #d9600a); }
+.cat-budget-stats.over { color: var(--red); }
+
+/* 카테고리 예산 개요 카드 */
+.budget-overview { background: var(--white); border-radius: 12px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 18px; }
+.budget-overview-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.budget-overview-head h3 { font-size: 13px; font-weight: 700; color: var(--text); }
+.budget-overview-body { padding: 4px 0; }
+.bov-row { display: grid; grid-template-columns: 100px 110px 1fr 90px 70px; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); }
+.bov-row:last-child { border-bottom: none; }
+.bov-label { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--text); }
+.bov-input-wrap { display: flex; align-items: center; gap: 5px; }
+.bov-input { background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px; padding: 5px 8px; font-size: 13px; font-weight: 700; color: var(--text); width: 80px; outline: none; font-family: inherit; font-variant-numeric: tabular-nums; }
+.bov-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,78,248,0.1); }
+.bov-track { height: 8px; background: var(--bg); border-radius: 8px; overflow: hidden; }
+.bov-fill  { height: 100%; border-radius: 8px; transition: width 0.4s ease; }
+.bov-spent { font-size: 12px; font-weight: 700; color: var(--text2); text-align: right; font-variant-numeric: tabular-nums; }
+.bov-pct   { font-size: 13px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+.bov-pct.ok   { color: var(--green); }
+.bov-pct.warn { color: #d9600a; }
+.bov-pct.over { color: var(--red); }
 .section-left { display: flex; align-items: center; gap: 9px; }
 .section-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .dot-inf { background: var(--inf); } .dot-amb { background: var(--amb); }
@@ -426,6 +455,27 @@ let activeCat = 'inf';
 let activeMonth = '6월';
 let activeInfSub = '전체';
 let modalData = null;
+
+// 카테고리별 예산 (만원) — localStorage 저장
+const CAT_BUDGET_KEY = 'cat_budgets_v1';
+const DEFAULT_CAT_BUDGETS = { inf:5000, amb:2000, exp:1500, ad:2200, viral:200, ops:100 };
+let catBudgets = { ...DEFAULT_CAT_BUDGETS };
+
+function loadCatBudgets() {
+  try {
+    const raw = localStorage.getItem(CAT_BUDGET_KEY);
+    if (raw) catBudgets = { ...DEFAULT_CAT_BUDGETS, ...JSON.parse(raw) };
+  } catch {}
+}
+function saveCatBudgets() {
+  try { localStorage.setItem(CAT_BUDGET_KEY, JSON.stringify(catBudgets)); } catch {}
+}
+function setCatBudget(catId, val) {
+  catBudgets[catId] = Math.max(0, parseInt(val) || 0);
+  saveCatBudgets();
+  renderMonthBody();
+  updateHeader();
+}
 
 // ── YOUTUBE DATA ─────────────────────────────────────────
 const YT_STORAGE_KEY = 'yt_cache_v1';
@@ -727,6 +777,10 @@ function renderMonthTabs() {
 function setMonth(m) { activeMonth = m; renderMonthTabs(); renderMonthBody(); }
 
 // ── MONTH BODY ───────────────────────────────────────────
+function catColor(id) {
+  return { inf:'#2563eb', amb:'#c2410c', exp:'#15803d', ad:'#7c3aed', viral:'#be185d', ops:'#475569' }[id] || '#888';
+}
+
 function renderMonthBody() {
   const items    = plan[activeMonth];
   const budget   = +document.getElementById('budgetInput').value || 10000;
@@ -737,26 +791,27 @@ function renderMonthBody() {
   const pct      = Math.min(100, budget > 0 ? Math.round(cumTotal/budget*100) : 0);
   const barColor = pct >= 100 ? '#e03131' : pct >= 80 ? '#d9600a' : '#5b4ef8';
 
+  // ── 전체 요약 카드 ──
   let html = `
   <div class="summary-grid">
     <div class="scard">
-      <div class="slabel">${activeMonth} VAT 별도</div>
+      <div class="slabel">${activeMonth} 집행 (VAT별도)</div>
       <div class="sval-main neutral">${fmtKor(monthRaw)}</div>
       <div class="sval-sub">${fmtWon(monthRaw)}</div>
     </div>
     <div class="scard">
-      <div class="slabel">${activeMonth} VAT 포함</div>
+      <div class="slabel">${activeMonth} 집행 (VAT포함)</div>
       <div class="sval-main neutral">${fmtKor(monthVat)}</div>
       <div class="sval-sub">${fmtWon(monthVat)}</div>
     </div>
     <div class="scard">
       <div class="slabel">전체 누적 (VAT포함)</div>
       <div class="sval-main ${cumTotal > budget ? 'over' : 'neutral'}">${fmtKor(cumTotal)}</div>
-      <div class="sval-sub">${fmtWon(cumTotal)} · 예산의 ${pct}%</div>
+      <div class="sval-sub">${fmtWon(cumTotal)} · 총예산의 ${pct}%</div>
     </div>
     <div class="scard" style="display:flex;flex-direction:column;justify-content:space-between">
       <div>
-        <div class="slabel">잔여 예산</div>
+        <div class="slabel">총예산 잔여</div>
         <div class="sval-main ${remain < 0 ? 'over' : 'ok'}">${fmtKor(remain)}</div>
         <div class="sval-sub">${fmtWon(remain)}</div>
       </div>
@@ -764,22 +819,80 @@ function renderMonthBody() {
     </div>
   </div>`;
 
+  // ── 카테고리 예산 개요 ──
+  html += `<div class="budget-overview">
+    <div class="budget-overview-head">
+      <h3>카테고리별 예산 현황</h3>
+      <span style="font-size:11px;color:var(--text3)">VAT 포함 기준 · 예산은 직접 입력</span>
+    </div>
+    <div class="budget-overview-body">`;
+
+  CATS.forEach(cat => {
+    const allCatItems = Object.values(plan).flat().filter(i => i.cat === cat.id);
+    const spent  = allCatItems.reduce((s,i) => s + i.priceVat, 0);
+    const bgt    = catBudgets[cat.id] || 0;
+    const cpct   = bgt > 0 ? Math.min(100, Math.round(spent / bgt * 100)) : (spent > 0 ? 100 : 0);
+    const fill   = bgt > 0 ? Math.min(100, spent / bgt * 100) : (spent > 0 ? 100 : 0);
+    const pctCls = cpct >= 100 ? 'over' : cpct >= 80 ? 'warn' : 'ok';
+    const col    = catColor(cat.id);
+    html += `
+    <div class="bov-row">
+      <div class="bov-label"><div class="section-dot ${cat.dot}" style="flex-shrink:0"></div>${cat.label}</div>
+      <div class="bov-input-wrap">
+        <input class="bov-input" type="number" value="${catBudgets[cat.id] || 0}"
+          onchange="setCatBudget('${cat.id}', this.value)" title="${cat.label} 예산 (만원)">
+        <span style="font-size:11px;color:var(--text3)">만원</span>
+      </div>
+      <div class="bov-track"><div class="bov-fill" style="width:${fill}%;background:${col}"></div></div>
+      <div class="bov-spent">${spent > 0 ? fmtKor(spent) : '–'}</div>
+      <div class="bov-pct ${pctCls}">${bgt > 0 ? cpct + '%' : (spent > 0 ? '예산미설정' : '–')}</div>
+    </div>`;
+  });
+
+  const totalCatBgt = Object.values(catBudgets).reduce((s,v) => s + v, 0);
+  const totalCatPct = totalCatBgt > 0 ? Math.min(100, Math.round(cumTotal / totalCatBgt * 100)) : 0;
+  html += `
+    <div class="bov-row" style="background:#f7f8fc;border-top:2px solid var(--border)">
+      <div class="bov-label" style="font-size:14px">합계</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text2)">${fmtKor(totalCatBgt)}</div>
+      <div class="bov-track"><div class="bov-fill" style="width:${totalCatPct}%;background:#5b4ef8"></div></div>
+      <div class="bov-spent" style="font-size:13px;font-weight:800;color:var(--text)">${fmtKor(cumTotal)}</div>
+      <div class="bov-pct ${totalCatPct >= 100 ? 'over' : totalCatPct >= 80 ? 'warn' : 'ok'}" style="font-size:14px">${totalCatPct}%</div>
+    </div>
+  </div></div>`;
+
+  // ── 카테고리별 플랜 섹션 ──
   CATS.forEach(cat => {
     const catItems = items.filter(i => i.cat === cat.id);
     const catVat   = catItems.reduce((s,i) => s + i.priceVat, 0);
     const catRaw   = catItems.reduce((s,i) => s + i.price, 0);
+    const bgt      = catBudgets[cat.id] || 0;
+    const cpct     = bgt > 0 ? Math.min(100, Math.round(catVat / bgt * 100)) : 0;
+    const fill     = bgt > 0 ? Math.min(100, catVat / bgt * 100) : 0;
+    const pctCls   = cpct >= 100 ? 'over' : cpct >= 80 ? 'warn' : 'ok';
+    const col      = catColor(cat.id);
+
     html += `
     <div class="plan-section">
       <div class="plan-section-head">
-        <div class="section-left">
-          <div class="section-dot ${cat.dot}"></div>
-          <span class="section-name">${cat.label}</span>
-          ${catItems.length > 0 ? `<span class="section-count">${catItems.length}건</span>` : ''}
+        <div class="plan-section-head-top ${bgt > 0 || catVat > 0 ? 'has-budget' : ''}">
+          <div class="section-left">
+            <div class="section-dot ${cat.dot}"></div>
+            <span class="section-name">${cat.label}</span>
+            ${catItems.length > 0 ? `<span class="section-count">${catItems.length}건</span>` : ''}
+          </div>
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="text-align:right">
+              <div class="section-amount">${catVat > 0 ? fmtKor(catVat) : '–'}</div>
+              ${catVat > 0 && bgt > 0 ? `<div class="section-amount-sub ${pctCls}" style="font-weight:700">예산의 ${cpct}%</div>` : ''}
+            </div>
+          </div>
         </div>
-        <div style="text-align:right">
-          <div class="section-amount">${catVat > 0 ? fmtKor(catVat) : '–'}</div>
-          ${catVat > 0 ? `<div class="section-amount-sub">${fmtWon(catVat)}</div>` : ''}
-        </div>
+        ${bgt > 0 ? `
+        <div class="cat-budget-row">
+          <div class="cat-budget-track"><div class="cat-budget-fill" style="width:${fill}%;background:${col}"></div></div>
+          <span class="cat-budget-stats ${pctCls}">${fmtKor(catVat)} / ${fmtKor(bgt)} · 잔여 ${fmtKor(Math.max(0, bgt - catVat))}</span>
+        </div>` : ''}
       </div>`;
     if (catItems.length === 0) {
       html += `<div class="empty-msg">← [${cat.label}] 탭에서 추가하세요</div>`;
@@ -833,6 +946,7 @@ document.getElementById('budgetInput').addEventListener('input', refresh);
 document.getElementById('overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
 
 loadYtCache();
+loadCatBudgets();
 renderCatTabs(); renderInfSubFilter(); renderItems(); renderMonthTabs(); renderMonthBody(); updateHeader();
 // 캐시 있으면 자동으로 카드에 반영 (새로고침 불필요)
 document.getElementById('ytLoadWrap').style.display = 'block';
