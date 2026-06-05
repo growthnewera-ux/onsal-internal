@@ -200,6 +200,18 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 .ae-input{background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12px;color:var(--text);outline:none;font-family:inherit;}
 .ae-input:focus{border-color:var(--accent);}
 .ae-link{font-size:11px;color:var(--accent);font-weight:700;word-break:break-all;}
+/* ── 월별 지급 탭 ── */
+.pay-month-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
+.pay-month-tab{padding:5px 14px;border-radius:18px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--white);transition:all .12s;white-space:nowrap;}
+.pay-month-tab.active{background:var(--accent);border-color:var(--accent);color:white;}
+.pay-section{background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden;margin-top:20px;}
+.pay-section-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#fafbfc;}
+.pay-section-head h3{font-size:14px;font-weight:700;color:var(--text);}
+.pay-status-btn{font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;cursor:pointer;border:none;font-family:inherit;transition:all .12s;}
+.ps-pending{background:#eff6ff;color:#2563eb;}
+.ps-paid   {background:#e6f7ef;color:#12a05c;}
+.ae-btn{padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--white);color:var(--text2);transition:all .12s;}
+.ae-btn:hover{border-color:var(--accent);color:var(--accent);}
 
 /* ── 후보풀 테이블 ── */
 .cand-table-wrap{background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden;}
@@ -248,6 +260,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
 .stat-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
 .stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.6px;}
 </style>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
 
@@ -311,6 +324,17 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <div class="stats-bar" id="amb-stats"></div>
  <div id="amb-contract-banner"></div>
  <div id="contract-table-wrap" style="background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden"></div>
+ <!-- 월별 지급 현황 -->
+ <div class="pay-section">
+   <div class="pay-section-head">
+     <h3>월별 광고비 지급 현황</h3>
+     <span style="font-size:11px;color:var(--text3)">클릭하면 지급 상태 변경</span>
+   </div>
+   <div style="padding:14px 18px">
+     <div class="pay-month-tabs" id="payMonthTabs"></div>
+     <div id="payMonthTable"></div>
+   </div>
+ </div>
  </div>
 
  <!-- ── 월별 운영 ── -->
@@ -1099,7 +1123,15 @@ function renderAmbs() {
      + `<div class="ct-avatar" style="display:none;width:34px;height:34px;flex-shrink:0">${initLetter}</div>`
    : `<div class="ct-avatar" style="width:34px;height:34px;flex-shrink:0">${initLetter}</div>`;
 
- const plats = (a.platforms||[]).map(p => platLabels[p]||'').join(', ');
+ // 플랫폼 배지 — 링크 포함
+ const platUrlMap = {yt: a.ytUrl||'', ig: a.igUrl||'', tt: a.ttUrl||''};
+ const plats = (a.platforms||[]).map(p => {
+   const label = platLabels[p]||p;
+   const url   = platUrlMap[p]||'';
+   return url
+     ? '<a href="'+url+'" target="_blank" style="font-size:11px;font-weight:600;color:var(--accent);text-decoration:none;padding:1px 5px;background:var(--accent-bg);border-radius:4px;white-space:nowrap">'+label+'↗</a>'
+     : '<span style="font-size:11px;color:var(--text2)">'+label+'</span>';
+ }).join(' ');
  const mainUrl = a.igUrl||a.ytUrl||a.ttUrl||'';
  const handleEl = mainUrl
    ? '<a href="' + mainUrl + '" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none">' + (a.handle||'') + '</a>'
@@ -1134,17 +1166,20 @@ function renderAmbs() {
    '<span style="font-size:11px;color:var(--text3)"> 만원</span>' +
  '</td>' +
  '<td style="width:90px;font-size:11px;white-space:nowrap" onclick="event.stopPropagation()">' +
-   '<button class="ct-text-del" style="color:var(--orange)" onclick="moveBackToCandidate(\'' + a.id + '\')">후보풀</button>' +
-   ' · <button class="ct-text-del" onclick="deleteAmb(\'' + a.id + '\')">삭제</button>' +
+   '<button class="ct-text-del" style="color:var(--accent)" onclick="event.stopPropagation();toggleAmbExpand(\''+a.id+'\')">편집</button>' +
+   ' · <button class="ct-text-del" style="color:var(--orange)" onclick="event.stopPropagation();moveBackToCandidate(\'' + a.id + '\')">후보풀</button>' +
+   ' · <button class="ct-text-del" onclick="event.stopPropagation();deleteAmb(\'' + a.id + '\')">삭제</button>' +
  '</td>' +
  '</tr>' +
  // 확장 행
  '<tr id="amb-expand-' + a.id + '" style="display:none"><td colspan="5">' +
  '<div class="amb-expand-inner">' +
  '<div class="ae-field"><span class="ae-label">수령인 (앰버서더명)</span><input class="ae-input" value="' + (a.contractName||a.name||'') + '" placeholder="이름" onchange="saveAmbContract(\'' + a.id + '\',\'contractName\',this.value)"></div>' +
- '<div class="ae-field"><span class="ae-label">연락처</span><input class="ae-input" value="' + (a.contractPhone||'') + '" placeholder="010-XXXX-XXXX" onchange="saveAmbContract(\'' + a.id + '\',\'contractPhone\',this.value)"></div>' +
- '<div class="ae-field"><span class="ae-label">우편번호</span><input class="ae-input" value="' + (a.contractZip||'') + '" placeholder="우편번호" onchange="saveAmbContract(\'' + a.id + '\',\'contractZip\',this.value)"></div>' +
- '<div class="ae-field" style="grid-column:span 2"><span class="ae-label">주소</span><input class="ae-input" value="' + (a.contractAddress||'') + '" placeholder="도로명 주소" onchange="saveAmbContract(\'' + a.id + '\',\'contractAddress\',this.value)"></div>' +
+ '<div class="ae-field"><span class="ae-label">연락처</span><input class="ae-input" value="' + (a.contractPhone||'') + '" placeholder="010-XXXX-XXXX" oninput="formatPhone(this,\'' + a.id + '\')"></div>' +
+ '<div class="ae-field"><span class="ae-label">우편번호</span>' +
+   '<div style="display:flex;gap:6px"><input class="ae-input" id="zip-'+a.id+'" value="' + (a.contractZip||'') + '" placeholder="우편번호" readonly style="width:80px;background:#f0f0f0">' +
+   '<button class="ae-btn" onclick="openDaumPostcode(\''+a.id+'\')">주소 검색</button></div></div>' +
+ '<div class="ae-field" style="grid-column:span 2"><span class="ae-label">주소</span><input class="ae-input" id="addr-'+a.id+'" value="' + (a.contractAddress||'') + '" placeholder="도로명 주소 (주소 검색 버튼 이용)" onchange="saveAmbContract(\'' + a.id + '\',\'contractAddress\',this.value)"></div>' +
  '<div class="ae-field"><span class="ae-label">계약서 경로/URL</span>' +
  '<input class="ae-input" value="' + (a.contractFile||'') + '" placeholder="파일 경로 또는 URL" onchange="saveAmbContract(\'' + a.id + '\',\'contractFile\',this.value)">' +
  (a.contractFile ? '<a href="' + a.contractFile + '" target="_blank" class="ae-link" style="font-size:11px;margin-top:2px">↗ 열기</a>' : '') +
@@ -1203,6 +1238,130 @@ function renderAmbs() {
  '<tbody>' + rows + '</tbody>' +
  '</table></div>' +
  '<div style="padding:10px 18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border)">행 클릭 시 계약정보 펼치기</div>';
+
+ // 월별 지급 탭 렌더
+ renderPayMonthSection();
+}
+
+// ── 전화번호 자동 하이픈 ─────────────────────────────────
+function formatPhone(el, ambId) {
+  let v = el.value.replace(/\D/g,'');
+  if (v.length <= 3)       el.value = v;
+  else if (v.length <= 7)  el.value = v.slice(0,3)+'-'+v.slice(3);
+  else                     el.value = v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+  if (ambId) saveAmbContract(ambId,'contractPhone',el.value);
+}
+
+// ── 다음 우편번호 API ────────────────────────────────────
+function openDaumPostcode(ambId) {
+  if (typeof daum === 'undefined') { alert('주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.'); return; }
+  new daum.Postcode({
+    oncomplete: function(data) {
+      saveAmbContract(ambId, 'contractZip', data.zonecode);
+      saveAmbContract(ambId, 'contractAddress', data.roadAddress || data.jibunAddress);
+      renderAmbs();
+    }
+  }).open();
+}
+
+// ── 월별 지급 상태 토글 ──────────────────────────────────
+let activePayMonth = '';
+
+function togglePayStatus(ambId, monthKey) {
+  const a = ambassadors.find(x => x.id === ambId);
+  if (!a) return;
+  if (!a.monthlyPayStatus) a.monthlyPayStatus = {};
+  a.monthlyPayStatus[monthKey] = a.monthlyPayStatus[monthKey] === 'paid' ? 'pending' : 'paid';
+  save();
+  renderPayMonthTable(activePayMonth);
+  // 스케줄 섹션도 동기화
+  const btn = document.getElementById('pstatus-' + ambId + '-' + monthKey);
+  if (btn) {
+    const isPaid = a.monthlyPayStatus[monthKey] === 'paid';
+    btn.textContent = isPaid ? '지급완료' : '예정';
+    btn.className = 'pay-status-btn ' + (isPaid ? 'ps-paid' : 'ps-pending');
+  }
+}
+
+// ── 월별 지급 탭 렌더 ────────────────────────────────────
+function renderPayMonthSection() {
+  // 모든 앰버서더의 계약 기간에서 월 목록 생성
+  const monthSet = new Set();
+  ambassadors.forEach(a => {
+    if (!a.contractStart || !a.contractEnd) return;
+    let cur = new Date(new Date(a.contractStart).getFullYear(), new Date(a.contractStart).getMonth(), 1);
+    const end = new Date(a.contractEnd);
+    while (cur <= end) {
+      monthSet.add(cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0'));
+      cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+    }
+  });
+  const months = Array.from(monthSet).sort();
+  if (!months.length) {
+    document.getElementById('payMonthTabs').innerHTML = '<span style="font-size:12px;color:var(--text3)">계약 기간이 설정된 앰버서더가 없어요</span>';
+    document.getElementById('payMonthTable').innerHTML = '';
+    return;
+  }
+  if (!activePayMonth || !months.includes(activePayMonth)) activePayMonth = months[0];
+  document.getElementById('payMonthTabs').innerHTML = months.map(m => {
+    const [y,mo] = m.split('-');
+    return '<button class="pay-month-tab ' + (m===activePayMonth?'active':'') + '" onclick="setPayMonth(\''+m+'\')">' + y + '년 ' + parseInt(mo) + '월</button>';
+  }).join('');
+  renderPayMonthTable(activePayMonth);
+}
+
+function setPayMonth(m) { activePayMonth = m; renderPayMonthSection(); }
+
+function renderPayMonthTable(monthKey) {
+  const [y,mo] = monthKey.split('-').map(Number);
+  const monthStart = new Date(y, mo-1, 1);
+  const monthEnd   = new Date(y, mo, 0); // last day of month
+  // 이 달에 활성인 앰버서더
+  const active = ambassadors.filter(a => {
+    if (!a.contractStart || !a.contractEnd) return false;
+    const s = new Date(a.contractStart), e = new Date(a.contractEnd);
+    return monthStart <= e && monthEnd >= s;
+  });
+  if (!active.length) {
+    document.getElementById('payMonthTable').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">이 달에 활성 계약이 없어요</div>';
+    return;
+  }
+  const fmt2 = n => parseInt(n||0).toLocaleString('ko-KR');
+  let totalPaid = 0, totalPending = 0;
+  const rows = active.map(a => {
+    const fee = +(a.fee||0);
+    const payStatus = a.monthlyPayStatus?.[monthKey] || 'pending';
+    const isPaid = payStatus === 'paid';
+    if (isPaid) totalPaid += fee; else totalPending += fee;
+    const platLabels = {yt:'유튜브',ig:'인스타',tt:'틱톡'};
+    const plats = (a.platforms||[]).map(p=>platLabels[p]||'').join(', ');
+    const igHandle = (a.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]||'';
+    const pic = igHandle
+      ? '<img src="https://unavatar.io/instagram/'+igHandle+'" style="width:28px;height:28px;border-radius:50%;object-fit:cover" onerror="this.style.display=\'none\'">'
+      : '<div style="width:28px;height:28px;border-radius:50%;background:var(--accent-bg);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">'+(a.name||'?')[0]+'</div>';
+    return '<tr style="border-bottom:1px solid var(--border)">' +
+      '<td style="padding:10px 16px"><div style="display:flex;align-items:center;gap:8px">' + pic +
+        '<div><div style="font-size:13px;font-weight:700">' + a.name + '</div>' +
+        '<div style="font-size:11px;color:var(--text3)">' + plats + '</div></div></div></td>' +
+      '<td style="padding:10px 16px;font-size:13px;font-weight:700;text-align:right">' + fmt2(fee) + '만원</td>' +
+      '<td style="padding:10px 16px;text-align:center">' +
+        '<button id="pstatus-'+a.id+'-'+monthKey+'" class="pay-status-btn ' + (isPaid?'ps-paid':'ps-pending') + '" onclick="togglePayStatus(\''+a.id+'\',\''+monthKey+'\')">' +
+          (isPaid?'지급완료':'예정') +
+        '</button></td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('payMonthTable').innerHTML =
+    '<div style="background:#fafbfc;border-radius:8px;padding:10px 16px;margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap">' +
+      '<span style="font-size:12px;font-weight:600;color:var(--text2)">활성 앰버서더 <strong style="color:var(--text)">' + active.length + '명</strong></span>' +
+      '<span style="font-size:12px;font-weight:600;color:var(--green)">지급완료 ' + fmt2(totalPaid) + '만원</span>' +
+      '<span style="font-size:12px;font-weight:600;color:#2563eb">지급 예정 ' + fmt2(totalPending) + '만원</span>' +
+      '<span style="font-size:12px;font-weight:700;color:var(--text)">합계 ' + fmt2(totalPaid+totalPending) + '만원</span>' +
+    '</div>' +
+    '<table style="width:100%;border-collapse:collapse">' +
+    '<thead><tr style="background:#fafbfc"><th style="padding:8px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3)">앰버서더</th>' +
+    '<th style="padding:8px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3)">광고비</th>' +
+    '<th style="padding:8px 16px;text-align:center;font-size:10px;font-weight:700;color:var(--text3)">지급 상태</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody></table>';
 }
 
 function deleteAmb(id) {
