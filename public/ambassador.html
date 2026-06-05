@@ -297,14 +297,13 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <div id="cand-cat-filters" style="display:none"></div>
  <!-- 테이블 -->
  <div class="cand-table-wrap">
- <table class="cand-table" style="table-layout:fixed;width:100%">
+ <table class="cand-table" style="width:100%">
  <thead><tr>
- <th style="width:170px">이름</th>
- <th style="width:70px;text-align:center">채널</th>
- <th style="width:100px">카테고리</th>
- <th style="width:80px">플랫폼</th>
- <th style="width:120px">팔로워</th>
- <th style="width:75px;text-align:right">제안 단가</th>
+ <th>이름 / 채널</th>
+ <th style="width:110px">카테고리</th>
+ <th style="width:90px">플랫폼</th>
+ <th style="width:130px">팔로워</th>
+ <th style="width:80px">제안 단가</th>
  <th style="width:110px">상태</th>
  <th style="width:80px"></th>
  </tr></thead>
@@ -680,102 +679,94 @@ function renderCands() {
     rejected:  'background:#f8fafc;color:#9098ae',
   };
 
+  const CAT_COLORS = {
+    '뷰티':'#be185d','스킨케어':'#be185d','패션':'#7c3aed','뷰티/패션':'#be185d',
+    '라이프스타일':'#15803d','일상/브이로그':'#15803d','부부/커플':'#15803d','육아/맘':'#15803d',
+    '피트니스/헬스':'#0369a1','음식/요리':'#d97706','여행':'#0369a1',
+    '연예인':'#dc2626','아이돌':'#dc2626','스포츠 선수':'#0369a1','게임':'#7c3aed','기타':'#6b7280',
+  };
+
   tbody.innerHTML = filtered.map(c => {
-    // 프사 — 인스타 공개 계정이면 자동 로드, 실패 시 이니셜
+    // 프사
     const igHandle = (c.igUrl||'').match(/instagram\.com\/([^/?#]+)/)?.[1]?.replace(/\//g,'')||'';
     const initL = (c.name||'?')[0];
-    const avatarId = 'av-' + c.id;
+    const avId = 'av-'+c.id;
     const pic = igHandle
-      ? `<div style="position:relative;width:34px;height:34px;flex-shrink:0">
-           <img src="https://unavatar.io/instagram/${igHandle}"
-                style="width:34px;height:34px;border-radius:50%;object-fit:cover;position:absolute;inset:0"
-                loading="lazy"
-                onerror="this.remove();document.getElementById('${avatarId}').style.display='flex'">
-           <div class="ct-avatar" id="${avatarId}" style="display:none;width:34px;height:34px">${initL}</div>
+      ? `<div style="position:relative;width:40px;height:40px;flex-shrink:0">
+           <img src="https://unavatar.io/instagram/${igHandle}" loading="lazy"
+             style="width:40px;height:40px;border-radius:50%;object-fit:cover;position:absolute;inset:0"
+             onerror="this.remove();document.getElementById('${avId}').style.display='flex'">
+           <div class="ct-avatar" id="${avId}" style="display:none;width:40px;height:40px;font-size:15px">${initL}</div>
          </div>`
-      : `<div class="ct-avatar" style="width:34px;height:34px;flex-shrink:0">${initL}</div>`;
+      : `<div class="ct-avatar" style="width:40px;height:40px;font-size:15px;flex-shrink:0">${initL}</div>`;
 
-    // 이름 → 클릭하면 주요 채널로 이동
-    const mainUrl = c.igUrl || c.ytUrl || c.ttUrl || '';
-    const nameEl = mainUrl
-      ? `<a href="${mainUrl}" target="_blank" style="font-size:13px;font-weight:700;color:var(--text);text-decoration:none;border-bottom:1px solid transparent" onmouseover="this.style.borderBottomColor='var(--accent)'" onmouseout="this.style.borderBottomColor='transparent'">${c.name||'이름 없음'}</a>`
-      : `<input class="ct-inline" value="${c.name||''}" placeholder="본명 입력" style="font-weight:700;font-size:13px;width:110px" onchange="updateCand('${c.id}','name',this.value)">`;
+    // 채널 링크
+    const mainUrl = c.igUrl || c.ytUrl || c.ttUrl || c.url || '';
 
-    // 플랫폼 배지
+    // 플랫폼 → 클릭 시 해당 URL로
     const plats = (c.platforms||[]).map(p => {
       const m = platMap[p]; if(!m) return '';
       const pUrl = c[m.urlField]||'';
-      return pUrl
-        ? `<a href="${pUrl}" target="_blank" style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px;background:${m.bg};color:${m.col};text-decoration:none;white-space:nowrap">${m.label}</a>`
-        : `<span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:5px;background:${m.bg};color:${m.col};white-space:nowrap">${m.label}</span>`;
+      const badge = `<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;background:${m.bg};color:${m.col};white-space:nowrap">${m.label}</span>`;
+      return pUrl ? `<a href="${pUrl}" target="_blank" style="text-decoration:none">${badge}</a>` : badge;
     }).join(' ');
 
-    // 팔로워 — 직접 입력 (인스타 팔로워 수동 입력 필요)
-    const followersEl = (c.platforms||[]).map(p => {
+    // 팔로워 — 가장 대표값만 보기 좋게
+    const followerLines = (c.platforms||[]).map(p => {
       const m = platMap[p]; if(!m) return '';
       const val = c[m.subsField]||'';
+      if(!val) return '';
       const icon = {yt:'유튜브',ig:'인스타',tt:'틱톡'}[p];
-      return `<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
-        <span style="font-size:10px;color:var(--text3);min-width:28px">${icon}</span>
-        <input class="ct-inline" value="${val}" placeholder="직접 입력" style="width:68px;font-size:12px" onchange="updateCand('${c.id}','${m.subsField}',this.value)">
-      </div>`;
-    }).join('');
+      return `<div style="font-size:12px;color:var(--text2)">${val} <span style="font-size:10px;color:var(--text3)">${icon}</span></div>`;
+    }).filter(Boolean).join('');
 
+    // 카테고리 뱃지
+    const catColor = CAT_COLORS[c.category]||'#6b7280';
+    const catBadge = c.category
+      ? `<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;background:${catColor}15;color:${catColor};border:1px solid ${catColor}30;white-space:nowrap">${c.category}</span>`
+      : `<span style="font-size:11px;color:var(--border2)">미설정</span>`;
+
+    // 상태 파이프라인
+    const stLabels = {reviewing:'검토중', contacting:'연락중', contracted:'계약완료', rejected:'거절/보류'};
     const stCol = stColors[c.status||'reviewing'];
-    // 채널 링크 — igUrl, ytUrl, ttUrl, 또는 구형 url 필드
-    const channelUrl = c.igUrl || c.ytUrl || c.ttUrl || c.url || '';
+    const stLabel = stLabels[c.status||'reviewing'];
 
-    return `<tr>
-      <td style="width:170px">
-        <div style="display:flex;align-items:center;gap:9px">
+    // 제안 단가
+    const feeText = c.fee ? `${parseInt(c.fee).toLocaleString('ko-KR')}만원` : '–';
+
+    // 메모 미리보기
+    const notePreview = c.note ? `<div style="font-size:11px;color:var(--text3);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${c.note}">📋 ${c.note}</div>` : '';
+
+    return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:10px">
           ${pic}
-          <div>
-            <input class="ct-inline" value="${c.name||''}" placeholder="본명" style="font-weight:700;font-size:13px;width:110px" onchange="updateCand('${c.id}','name',this.value)">
-            <div style="font-size:11px;color:var(--text3);margin-top:1px">${c.handle||''}</div>
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${mainUrl
+                ? `<a href="${mainUrl}" target="_blank" style="font-size:14px;font-weight:800;color:var(--text);text-decoration:none" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">${c.name||'이름 없음'}</a>`
+                : `<span style="font-size:14px;font-weight:800;color:var(--text)">${c.name||'이름 없음'}</span>`
+              }
+              ${mainUrl ? `<a href="${mainUrl}" target="_blank" style="font-size:10px;color:var(--accent);font-weight:700;background:var(--accent-bg);padding:1px 5px;border-radius:4px;text-decoration:none">↗</a>` : ''}
+            </div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px">${c.handle||''}</div>
+            ${notePreview}
           </div>
         </div>
       </td>
-      <td style="width:70px;text-align:center">
-        ${channelUrl
-          ? `<a href="${channelUrl}" target="_blank" style="font-size:11px;font-weight:700;color:var(--accent);text-decoration:none;padding:3px 7px;background:var(--accent-bg);border-radius:5px;white-space:nowrap">채널↗</a>`
-          : `<span style="font-size:11px;color:var(--border2)">–</span>`
-        }
-      </td>
-      <td style="width:100px">
-        <select class="ct-status-sel" style="background:transparent;border:none;font-size:12px;color:var(--text);cursor:pointer;outline:none;font-family:inherit;width:95px;appearance:none;-webkit-appearance:none;-moz-appearance:none" onchange="updateCand('${c.id}','category',this.value)">
-          <option value="" ${!c.category?'selected':''}>선택...</option>
-          <option value="뷰티" ${c.category==='뷰티'?'selected':''}>뷰티</option>
-          <option value="스킨케어" ${c.category==='스킨케어'?'selected':''}>스킨케어</option>
-          <option value="패션" ${c.category==='패션'?'selected':''}>패션</option>
-          <option value="뷰티/패션" ${c.category==='뷰티/패션'?'selected':''}>뷰티/패션</option>
-          <option value="라이프스타일" ${c.category==='라이프스타일'?'selected':''}>라이프스타일</option>
-          <option value="일상/브이로그" ${c.category==='일상/브이로그'?'selected':''}>일상/브이로그</option>
-          <option value="부부/커플" ${c.category==='부부/커플'?'selected':''}>부부/커플</option>
-          <option value="육아/맘" ${c.category==='육아/맘'?'selected':''}>육아/맘</option>
-          <option value="피트니스/헬스" ${c.category==='피트니스/헬스'?'selected':''}>피트니스/헬스</option>
-          <option value="음식/요리" ${c.category==='음식/요리'?'selected':''}>음식/요리</option>
-          <option value="여행" ${c.category==='여행'?'selected':''}>여행</option>
-          <option value="연예인" ${c.category==='연예인'?'selected':''}>연예인</option>
-          <option value="아이돌" ${c.category==='아이돌'?'selected':''}>아이돌</option>
-          <option value="스포츠 선수" ${c.category==='스포츠 선수'?'selected':''}>스포츠 선수</option>
-          <option value="직장인/커리어" ${c.category==='직장인/커리어'?'selected':''}>직장인/커리어</option>
-          <option value="반려동물" ${c.category==='반려동물'?'selected':''}>반려동물</option>
-          <option value="게임" ${c.category==='게임'?'selected':''}>게임</option>
-          <option value="기타" ${c.category==='기타'?'selected':''}>기타</option>
-        </select>
-      </td>
-      <td style="width:80px">${plats}</td>
-      <td style="width:130px">${followersEl||'<span style="color:var(--text3);font-size:12px">–</span>'}</td>
-      <td style="width:80px;text-align:right"><input class="ct-inline" type="number" value="${c.fee||''}" placeholder="0" style="width:55px;text-align:right" onchange="updateCand('${c.id}','fee',this.value)"><span style="font-size:11px;color:var(--text3)"> 만</span></td>
-      <td style="width:110px">
-        <select style="${stCol};border-radius:7px;padding:3px 8px;font-size:12px;font-weight:700;cursor:pointer;outline:none;font-family:inherit;border:none;appearance:none;-webkit-appearance:none;-moz-appearance:none;" onchange="updateCandStatus('${c.id}',this.value)">
+      <td style="padding:12px 14px">${catBadge}</td>
+      <td style="padding:12px 14px">${plats||'<span style="color:var(--border2)">–</span>'}</td>
+      <td style="padding:12px 14px">${followerLines||'<span style="font-size:12px;color:var(--border2)">직접 입력 필요</span>'}</td>
+      <td style="padding:12px 14px;font-size:13px;font-weight:700;color:var(--text)">${feeText}</td>
+      <td style="padding:12px 14px">
+        <select style="${stCol};appearance:none;-webkit-appearance:none;border:none;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;outline:none;font-family:inherit" onchange="updateCandStatus('${c.id}',this.value)">
           <option value="reviewing"  ${(c.status||'reviewing')==='reviewing'?'selected':''}>검토중</option>
           <option value="contacting" ${c.status==='contacting'?'selected':''}>연락중</option>
-          <option value="contracted">→ 계약전환</option>
+          <option value="contracted">계약전환</option>
           <option value="rejected"   ${c.status==='rejected'?'selected':''}>거절/보류</option>
         </select>
       </td>
-      <td style="width:80px;text-align:right;white-space:nowrap">
+      <td style="padding:12px 14px;text-align:right;white-space:nowrap">
         <button style="background:none;border:none;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit;padding:0 4px" onclick="editCand('${c.id}')">편집</button>
         <span style="color:var(--border2)">·</span>
         <button style="background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit;padding:0 4px" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'" onclick="deleteCand('${c.id}')">삭제</button>
