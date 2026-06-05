@@ -299,13 +299,14 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <div class="cand-table-wrap">
  <table class="cand-table" style="table-layout:fixed;width:100%">
  <thead><tr>
- <th style="width:190px">이름</th>
+ <th style="width:170px">이름</th>
+ <th style="width:70px;text-align:center">채널</th>
  <th style="width:100px">카테고리</th>
  <th style="width:80px">플랫폼</th>
- <th style="width:130px">팔로워</th>
- <th style="width:80px;text-align:right">제안 단가</th>
+ <th style="width:120px">팔로워</th>
+ <th style="width:75px;text-align:right">제안 단가</th>
  <th style="width:110px">상태</th>
- <th style="width:40px"></th>
+ <th style="width:80px"></th>
  </tr></thead>
  <tbody id="cand-tbody"></tbody>
  </table>
@@ -721,19 +722,27 @@ function renderCands() {
     }).join('');
 
     const stCol = stColors[c.status||'reviewing'];
+    // 채널 링크 — igUrl, ytUrl, ttUrl, 또는 구형 url 필드
+    const channelUrl = c.igUrl || c.ytUrl || c.ttUrl || c.url || '';
 
     return `<tr>
-      <td style="width:190px">
+      <td style="width:170px">
         <div style="display:flex;align-items:center;gap:9px">
           ${pic}
           <div>
-            ${nameEl}
+            <input class="ct-inline" value="${c.name||''}" placeholder="본명" style="font-weight:700;font-size:13px;width:110px" onchange="updateCand('${c.id}','name',this.value)">
             <div style="font-size:11px;color:var(--text3);margin-top:1px">${c.handle||''}</div>
           </div>
         </div>
       </td>
+      <td style="width:70px;text-align:center">
+        ${channelUrl
+          ? `<a href="${channelUrl}" target="_blank" style="font-size:11px;font-weight:700;color:var(--accent);text-decoration:none;padding:3px 7px;background:var(--accent-bg);border-radius:5px;white-space:nowrap">채널↗</a>`
+          : `<span style="font-size:11px;color:var(--border2)">–</span>`
+        }
+      </td>
       <td style="width:100px">
-        <select class="ct-status-sel" style="background:transparent;border:none;font-size:12px;color:var(--text);cursor:pointer;outline:none;font-family:inherit;width:95px;-webkit-appearance:none;-moz-appearance:none;appearance:none" onchange="updateCand('${c.id}','category',this.value)">
+        <select class="ct-status-sel" style="background:transparent;border:none;font-size:12px;color:var(--text);cursor:pointer;outline:none;font-family:inherit;width:95px;appearance:none;-webkit-appearance:none;-moz-appearance:none" onchange="updateCand('${c.id}','category',this.value)">
           <option value="" ${!c.category?'selected':''}>선택...</option>
           <option value="뷰티" ${c.category==='뷰티'?'selected':''}>뷰티</option>
           <option value="스킨케어" ${c.category==='스킨케어'?'selected':''}>스킨케어</option>
@@ -759,15 +768,17 @@ function renderCands() {
       <td style="width:130px">${followersEl||'<span style="color:var(--text3);font-size:12px">–</span>'}</td>
       <td style="width:80px;text-align:right"><input class="ct-inline" type="number" value="${c.fee||''}" placeholder="0" style="width:55px;text-align:right" onchange="updateCand('${c.id}','fee',this.value)"><span style="font-size:11px;color:var(--text3)"> 만</span></td>
       <td style="width:110px">
-        <select class="ct-status-sel" style="${stCol};border-radius:7px;padding:3px 8px;font-size:12px;font-weight:700;cursor:pointer;outline:none;font-family:inherit;border:none" onchange="updateCandStatus('${c.id}',this.value)">
+        <select style="${stCol};border-radius:7px;padding:3px 8px;font-size:12px;font-weight:700;cursor:pointer;outline:none;font-family:inherit;border:none;appearance:none;-webkit-appearance:none;-moz-appearance:none;" onchange="updateCandStatus('${c.id}',this.value)">
           <option value="reviewing"  ${(c.status||'reviewing')==='reviewing'?'selected':''}>검토중</option>
           <option value="contacting" ${c.status==='contacting'?'selected':''}>연락중</option>
           <option value="contracted">→ 계약전환</option>
           <option value="rejected"   ${c.status==='rejected'?'selected':''}>거절/보류</option>
         </select>
       </td>
-      <td style="width:40px;text-align:center">
-        <button style="background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit;padding:0" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'" onclick="deleteCand('${c.id}')">삭제</button>
+      <td style="width:80px;text-align:right;white-space:nowrap">
+        <button style="background:none;border:none;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit;padding:0 4px" onclick="editCand('${c.id}')">편집</button>
+        <span style="color:var(--border2)">·</span>
+        <button style="background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit;padding:0 4px" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'" onclick="deleteCand('${c.id}')">삭제</button>
       </td>
     </tr>`;
   }).join('');
