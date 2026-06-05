@@ -5,167 +5,601 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>온살 마케팅 예산 플래너</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #0f0f11;
+  --surface: #1a1a1f;
+  --surface2: #222228;
+  --border: #2e2e38;
+  --border2: #3a3a48;
+  --text: #f0f0f2;
+  --text2: #9090a0;
+  --text3: #5a5a6a;
+  --accent: #7c6af7;
+  --accent2: #9c8fff;
+  --green: #34d399;
+  --red: #f87171;
+  --orange: #fb923c;
+  --yellow: #fbbf24;
+
+  --inf:   #60a5fa;
+  --amb:   #fb923c;
+  --exp:   #34d399;
+  --ad:    #c084fc;
+  --viral: #f472b6;
+  --ops:   #94a3b8;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f5f5f7; color: #1d1d1f; font-size: 14px; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow: hidden;
+}
 
-header { background: #1d1d1f; color: white; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; position: sticky; top: 0; z-index: 50; }
-header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
-.hbar { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-.hitem label { font-size: 10px; color: #888; display: block; margin-bottom: 2px; }
-.hitem .hval { font-size: 16px; font-weight: 700; }
-.hval.over { color: #ff4d4d; }
-.hval.ok { color: #34c759; }
-.budget-input { background: transparent; border: none; border-bottom: 1px solid #444; color: white; font-size: 16px; font-weight: 700; width: 80px; text-align: right; outline: none; }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
-.layout { display: grid; grid-template-columns: 380px 1fr; height: calc(100vh - 57px); }
+/* ── HEADER ── */
+header {
+  height: 60px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.header-divider { width: 1px; height: 24px; background: var(--border); }
+.header-stats { display: flex; gap: 0; flex: 1; }
+.hstat {
+  padding: 0 20px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hstat:first-child { padding-left: 0; }
+.hstat-label { font-size: 10px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.hstat-val { font-size: 16px; font-weight: 700; letter-spacing: -0.5px; }
+.hstat-val.ok { color: var(--green); }
+.hstat-val.over { color: var(--red); }
+.hstat-val.neutral { color: var(--text); }
+.budget-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+  width: 90px;
+  text-align: right;
+  outline: none;
+  font-family: inherit;
+  letter-spacing: -0.5px;
+}
+.budget-input:focus { border-bottom-color: var(--accent); }
 
-.left { background: white; border-right: 1px solid #e5e5e5; display: flex; flex-direction: column; overflow: hidden; }
-.left-head { padding: 14px 18px; border-bottom: 1px solid #e5e5e5; }
-.left-head h2 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #333; }
-.search-wrap input { width: 100%; padding: 7px 12px; border: 1px solid #ddd; border-radius: 7px; font-size: 12px; outline: none; }
-.search-wrap input:focus { border-color: #007aff; }
+/* ── LAYOUT ── */
+.layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: calc(100vh - 60px);
+}
 
-.cat-tabs { display: flex; border-bottom: 1px solid #e5e5e5; overflow-x: auto; flex-shrink: 0; background: #fafafa; }
-.cat-tab { padding: 10px 13px; font-size: 12px; cursor: pointer; border-bottom: 2px solid transparent; color: #888; white-space: nowrap; transition: all 0.15s; }
-.cat-tab.active { color: #007aff; border-bottom-color: #007aff; font-weight: 600; background: white; }
+/* ── LEFT PANEL ── */
+.left {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.left-top {
+  padding: 16px 20px 0;
+}
+.left-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+.search-box {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px 8px 34px;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a5a6a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+}
+.search-box::placeholder { color: var(--text3); }
+.search-box:focus { border-color: var(--accent); }
 
-.item-list { overflow-y: auto; flex: 1; }
+/* ── CAT TABS ── */
+.cat-tabs {
+  display: flex;
+  padding: 12px 20px 0;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+.cat-tab {
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  transition: all 0.15s;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+.cat-tab:hover { border-color: var(--border2); color: var(--text); }
+.cat-tab.active-inf   { background: rgba(96,165,250,0.12); border-color: rgba(96,165,250,0.4); color: var(--inf); }
+.cat-tab.active-amb   { background: rgba(251,146,60,0.12); border-color: rgba(251,146,60,0.4); color: var(--amb); }
+.cat-tab.active-exp   { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.4); color: var(--exp); }
+.cat-tab.active-ad    { background: rgba(192,132,252,0.12); border-color: rgba(192,132,252,0.4); color: var(--ad); }
+.cat-tab.active-viral { background: rgba(244,114,182,0.12); border-color: rgba(244,114,182,0.4); color: var(--viral); }
+.cat-tab.active-ops   { background: rgba(148,163,184,0.12); border-color: rgba(148,163,184,0.4); color: var(--ops); }
 
-.inf-card { padding: 11px 18px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.1s; }
-.inf-card:hover { background: #f5f5f7; }
-.inf-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-.inf-name { font-size: 13px; font-weight: 600; }
-.inf-cat-badge { font-size: 10px; color: #888; background: #f0f0f0; padding: 2px 6px; border-radius: 10px; }
-.price-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-.pchip { font-size: 11px; padding: 2px 7px; border-radius: 5px; border: 1px solid #e5e5e5; background: white; white-space: nowrap; color: #555; }
+.item-list { overflow-y: auto; flex: 1; padding: 8px 0; }
 
-.fixed-card { padding: 14px 18px; border-bottom: 1px solid #f0f0f0; }
-.fixed-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-.fixed-desc { font-size: 11px; color: #888; margin-bottom: 10px; }
-.fixed-fields { display: flex; flex-direction: column; gap: 8px; }
-.field-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.field-row label { font-size: 11px; color: #888; width: 80px; flex-shrink: 0; }
-.field-row input[type=number], .field-row input[type=text] { border: 1px solid #ddd; border-radius: 6px; padding: 5px 8px; font-size: 12px; outline: none; }
-.field-row input[type=number]:focus, .field-row input[type=text]:focus { border-color: #007aff; }
+/* ── INF CARDS ── */
+.inf-card {
+  margin: 2px 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.inf-card:hover {
+  background: var(--surface2);
+  border-color: var(--border);
+}
+.inf-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 7px; }
+.inf-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.inf-sub { font-size: 10px; color: var(--text3); background: var(--surface2); padding: 2px 7px; border-radius: 10px; border: 1px solid var(--border); }
+.price-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.pchip {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(124,106,247,0.1);
+  border: 1px solid rgba(124,106,247,0.2);
+  color: var(--accent2);
+  white-space: nowrap;
+}
+
+/* ── FIXED CARDS ── */
+.fixed-card {
+  margin: 4px 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+.fixed-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.fixed-card h4 { font-size: 13px; font-weight: 600; color: var(--text); }
+.fixed-desc { font-size: 11px; color: var(--text3); margin-bottom: 14px; }
+.fixed-fields { display: flex; flex-direction: column; gap: 10px; }
+.field-row { display: flex; align-items: center; gap: 8px; }
+.field-row label { font-size: 11px; color: var(--text2); width: 84px; flex-shrink: 0; }
+.field-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.field-input:focus { border-color: var(--accent); }
 .w60 { width: 60px; }
 .w80 { width: 80px; }
-.w120 { width: 120px; }
-.field-row select { border: 1px solid #ddd; border-radius: 6px; padding: 5px 8px; font-size: 12px; outline: none; }
-.calc-preview { font-size: 11px; color: #007aff; font-weight: 600; }
-.btn-add-fixed { margin-top: 10px; width: 100%; padding: 8px; background: #007aff; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
-.btn-add-fixed:hover { background: #0066dd; }
+.w130 { width: 130px; }
+.field-select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+.field-unit { font-size: 11px; color: var(--text3); }
+.calc-preview {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent2);
+  padding: 6px 10px;
+  background: rgba(124,106,247,0.08);
+  border-radius: 6px;
+  flex: 1;
+}
+.btn-add {
+  margin-top: 12px;
+  width: 100%;
+  padding: 9px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  letter-spacing: -0.2px;
+}
+.btn-add:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-add:active { transform: translateY(0); }
 
-.right { display: flex; flex-direction: column; overflow: hidden; }
-.month-tabs { display: flex; background: white; border-bottom: 1px solid #e5e5e5; padding: 0 20px; overflow-x: auto; flex-shrink: 0; }
-.mtab { padding: 13px 16px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; color: #888; transition: all 0.15s; }
-.mtab.active { color: #007aff; border-bottom-color: #007aff; font-weight: 600; }
-.mbadge { font-size: 10px; background: #007aff; color: white; border-radius: 10px; padding: 1px 5px; margin-left: 4px; }
+/* ── RIGHT PANEL ── */
+.right { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
 
-.month-body { flex: 1; overflow-y: auto; padding: 18px; }
+/* ── MONTH TABS ── */
+.month-tabs {
+  display: flex;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  flex-shrink: 0;
+  gap: 2px;
+}
+.mtab {
+  padding: 14px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  color: var(--text3);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mtab:hover { color: var(--text2); }
+.mtab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+.mbadge {
+  font-size: 9px;
+  font-weight: 700;
+  background: rgba(124,106,247,0.2);
+  color: var(--accent2);
+  border-radius: 8px;
+  padding: 1px 6px;
+  letter-spacing: 0;
+}
 
-.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
-.scard { background: white; border-radius: 10px; padding: 14px 16px; border: 1px solid #e5e5e5; }
-.scard .slabel { font-size: 10px; color: #888; margin-bottom: 3px; }
-.scard .sval { font-size: 17px; font-weight: 700; }
-.scard .sval.over { color: #ff4d4d; }
+.month-body { flex: 1; overflow-y: auto; padding: 20px; }
 
-.plan-section { background: white; border-radius: 10px; border: 1px solid #e5e5e5; overflow: hidden; margin-bottom: 14px; }
-.plan-section-head { padding: 12px 18px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
-.plan-section-head h3 { font-size: 13px; font-weight: 600; }
-.section-total { font-size: 12px; color: #555; font-weight: 600; }
-.empty-msg { padding: 28px; text-align: center; color: #bbb; font-size: 12px; }
+/* ── SUMMARY GRID ── */
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.scard {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  transition: border-color 0.15s;
+}
+.scard:hover { border-color: var(--border2); }
+.scard .slabel {
+  font-size: 10px;
+  color: var(--text3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.scard .sval { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.scard .sval.ok { color: var(--green); }
+.scard .sval.over { color: var(--red); }
+.scard .sval.neutral { color: var(--text); }
+.scard .ssub { font-size: 10px; color: var(--text3); margin-top: 3px; }
 
+/* ── PLAN SECTIONS ── */
+.plan-section {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.plan-section-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.section-title { display: flex; align-items: center; gap: 10px; }
+.section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-inf   { background: var(--inf); box-shadow: 0 0 6px var(--inf); }
+.dot-amb   { background: var(--amb); box-shadow: 0 0 6px var(--amb); }
+.dot-exp   { background: var(--exp); box-shadow: 0 0 6px var(--exp); }
+.dot-ad    { background: var(--ad);  box-shadow: 0 0 6px var(--ad); }
+.dot-viral { background: var(--viral); box-shadow: 0 0 6px var(--viral); }
+.dot-ops   { background: var(--ops); box-shadow: 0 0 6px var(--ops); }
+.section-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.section-count { font-size: 11px; color: var(--text3); }
+.section-amount { font-size: 13px; font-weight: 600; color: var(--text2); }
+
+.empty-msg {
+  padding: 32px;
+  text-align: center;
+  color: var(--text3);
+  font-size: 12px;
+}
+.empty-msg span { display: block; font-size: 20px; margin-bottom: 6px; }
+
+/* ── TABLE ── */
 table { width: 100%; border-collapse: collapse; }
-th { padding: 9px 14px; text-align: left; font-size: 10px; font-weight: 600; color: #888; background: #f9f9f9; border-bottom: 1px solid #e5e5e5; white-space: nowrap; }
-td { padding: 10px 14px; font-size: 12px; border-bottom: 1px solid #f7f7f7; vertical-align: middle; }
-tr:last-child td { border-bottom: none; }
-.del-btn { background: none; border: none; color: #ddd; cursor: pointer; font-size: 14px; padding: 2px 5px; border-radius: 4px; }
-.del-btn:hover { color: #ff4d4d; background: #fff0f0; }
-.type-badge { font-size: 10px; padding: 2px 7px; border-radius: 8px; display: inline-block; white-space: nowrap; }
-.badge-inf   { background: #e8f4fd; color: #0a84ff; }
-.badge-amb   { background: #fef3e8; color: #ff9500; }
-.badge-exp   { background: #e8fdf0; color: #30d158; }
-.badge-ad    { background: #f3e8fe; color: #bf5af2; }
-.badge-viral { background: #fde8e8; color: #ff3b30; }
-.badge-ops   { background: #f0f0f0; color: #888; }
-.trow-total td { font-weight: 700; background: #f9f9f9; border-top: 2px solid #e5e5e5; }
-.memo-inp { border: none; background: transparent; font-size: 11px; color: #aaa; width: 110px; outline: none; }
-.memo-inp:focus { background: #f5f5f7; border-radius: 4px; padding: 2px 4px; color: #555; }
+th {
+  padding: 9px 16px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td { padding: 11px 16px; font-size: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(255,255,255,0.015); }
+.td-name { font-weight: 600; color: var(--text); }
+.td-sub { font-size: 10px; color: var(--text3); }
+.type-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.pill-inf   { background: rgba(96,165,250,0.1);  color: var(--inf);   border: 1px solid rgba(96,165,250,0.2); }
+.pill-amb   { background: rgba(251,146,60,0.1);  color: var(--amb);   border: 1px solid rgba(251,146,60,0.2); }
+.pill-exp   { background: rgba(52,211,153,0.1);  color: var(--exp);   border: 1px solid rgba(52,211,153,0.2); }
+.pill-ad    { background: rgba(192,132,252,0.1); color: var(--ad);    border: 1px solid rgba(192,132,252,0.2); }
+.pill-viral { background: rgba(244,114,182,0.1); color: var(--viral); border: 1px solid rgba(244,114,182,0.2); }
+.pill-ops   { background: rgba(148,163,184,0.1); color: var(--ops);   border: 1px solid rgba(148,163,184,0.2); }
+.td-price { text-align: right; font-variant-numeric: tabular-nums; color: var(--text2); }
+.td-price-vat { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+.memo-inp {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: var(--text3);
+  width: 110px;
+  outline: none;
+  font-family: inherit;
+}
+.memo-inp::placeholder { color: var(--text3); }
+.memo-inp:focus { color: var(--text2); }
+.del-btn {
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 5px;
+  font-size: 12px;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.del-btn:hover { color: var(--red); background: rgba(248,113,113,0.1); }
+.total-row td { font-weight: 600; color: var(--text); border-top: 1px solid var(--border2); background: rgba(255,255,255,0.02); }
 
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
+/* ── MODAL ── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+}
 .overlay.show { display: flex; }
-.modal { background: white; border-radius: 14px; padding: 24px; width: 340px; box-shadow: 0 16px 48px rgba(0,0,0,0.18); }
-.modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
-.modal .msub { font-size: 11px; color: #888; margin-bottom: 18px; }
-.modal label { font-size: 11px; font-weight: 600; display: block; margin-bottom: 5px; color: #555; }
-.modal select, .modal input[type=text] { width: 100%; padding: 9px 10px; border: 1px solid #ddd; border-radius: 7px; font-size: 12px; margin-bottom: 12px; outline: none; }
-.modal select:focus, .modal input[type=text]:focus { border-color: #007aff; }
-.price-box { background: #f5f5f7; border-radius: 8px; padding: 12px; margin-bottom: 14px; text-align: center; }
-.price-box .pb-label { font-size: 10px; color: #888; }
-.price-box .pb-main { font-size: 20px; font-weight: 700; }
-.price-box .pb-vat { font-size: 11px; color: #888; margin-top: 2px; }
-.mbtns { display: flex; gap: 8px; }
-.mbtn-cancel { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 7px; background: white; font-size: 12px; cursor: pointer; }
-.mbtn-ok { flex: 2; padding: 10px; border: none; border-radius: 7px; background: #007aff; color: white; font-size: 12px; font-weight: 600; cursor: pointer; }
-.mbtn-ok:hover { background: #0066dd; }
+.modal {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 28px;
+  width: 360px;
+  border: 1px solid var(--border2);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+.modal-header { margin-bottom: 20px; }
+.modal-name { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; margin-bottom: 3px; }
+.modal-sub { font-size: 12px; color: var(--text3); }
+.modal label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 6px;
+}
+.modal select, .modal input[type=text] {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  margin-bottom: 16px;
+  transition: border-color 0.15s;
+}
+.modal select:focus, .modal input[type=text]:focus { border-color: var(--accent); }
+.price-preview {
+  background: linear-gradient(135deg, rgba(124,106,247,0.12), rgba(156,143,255,0.06));
+  border: 1px solid rgba(124,106,247,0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.pp-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.pp-price { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -1px; }
+.pp-vat { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.pp-vat span { color: var(--accent2); font-weight: 600; }
+.modal-btns { display: flex; gap: 8px; }
+.mbtn-cancel {
+  flex: 1;
+  padding: 11px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.mbtn-cancel:hover { border-color: var(--border2); color: var(--text); }
+.mbtn-ok {
+  flex: 2;
+  padding: 11px;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.mbtn-ok:hover { background: var(--accent2); }
+
+/* ── PROGRESS BAR ── */
+.budget-progress { padding: 0 20px 12px; }
+.progress-track { height: 3px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+.progress-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+.progress-labels span { font-size: 10px; color: var(--text3); }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🌿 온살 마케팅 예산 플래너</h1>
-  <div class="hbar">
-    <div class="hitem">
-      <label>총 예산</label>
-      <span class="hval"><input class="budget-input" id="budgetInput" type="number" value="100000">만원</span>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    온살 마케팅 플래너
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-stats">
+    <div class="hstat">
+      <div class="hstat-label">총 예산</div>
+      <div class="hstat-val neutral">
+        <input class="budget-input" id="budgetInput" type="number" value="100000">만원
+      </div>
     </div>
-    <div class="hitem">
-      <label>집행 합계 (VAT포함)</label>
-      <span class="hval ok" id="hSpent">0만원</span>
+    <div class="hstat">
+      <div class="hstat-label">집행 합계 (VAT포함)</div>
+      <div class="hstat-val ok" id="hSpent">0만원</div>
     </div>
-    <div class="hitem">
-      <label>잔여</label>
-      <span class="hval ok" id="hRemain">100,000만원</span>
+    <div class="hstat">
+      <div class="hstat-label">잔여 예산</div>
+      <div class="hstat-val ok" id="hRemain">100,000만원</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-label">소진율</div>
+      <div class="hstat-val neutral" id="hPct">0%</div>
     </div>
   </div>
 </header>
 
 <div class="layout">
+  <!-- LEFT -->
   <div class="left">
-    <div class="left-head">
-      <h2>항목 추가</h2>
-      <div id="infSearchWrap" class="search-wrap">
-        <input id="infSearch" placeholder="인플루언서 검색..." oninput="renderItems()">
+    <div class="left-top">
+      <div class="left-title">항목 추가</div>
+      <div id="infSearchWrap">
+        <input class="search-box" id="infSearch" placeholder="인플루언서 검색..." oninput="renderItems()">
       </div>
     </div>
     <div class="cat-tabs" id="catTabs"></div>
+    <div class="budget-progress" id="leftProgress" style="padding-top:12px"></div>
     <div class="item-list" id="itemList"></div>
   </div>
 
+  <!-- RIGHT -->
   <div class="right">
     <div class="month-tabs" id="monthTabs"></div>
     <div class="month-body" id="monthBody"></div>
   </div>
 </div>
 
+<!-- MODAL -->
 <div class="overlay" id="overlay">
   <div class="modal">
-    <h3 id="mName"></h3>
-    <div class="msub" id="mSub"></div>
+    <div class="modal-header">
+      <div class="modal-name" id="mName"></div>
+      <div class="modal-sub" id="mSub"></div>
+    </div>
     <label>콘텐츠 유형</label>
     <select id="mType" onchange="updateModalPrice()"></select>
     <label>진행 월</label>
     <select id="mMonth"></select>
     <label>메모 (선택)</label>
-    <input type="text" id="mMemo" placeholder="메모...">
-    <div class="price-box">
-      <div class="pb-label">단가 (VAT 별도)</div>
-      <div class="pb-main" id="mPriceMain">-</div>
-      <div class="pb-vat" id="mPriceVat">VAT 포함: -</div>
+    <input type="text" id="mMemo" placeholder="예: 8월 24일 주차 확정">
+    <div class="price-preview">
+      <div class="pp-label">단가</div>
+      <div class="pp-price" id="ppPrice">-</div>
+      <div class="pp-vat">VAT 포함 <span id="ppVat">-</span></div>
     </div>
-    <div class="mbtns">
+    <div class="modal-btns">
       <button class="mbtn-cancel" onclick="closeModal()">취소</button>
-      <button class="mbtn-ok" onclick="addFromModal()">추가 ✓</button>
+      <button class="mbtn-ok" onclick="addFromModal()">플랜에 추가</button>
     </div>
   </div>
 </div>
@@ -173,12 +607,12 @@ tr:last-child td { border-bottom: none; }
 <script>
 const MONTHS = ['6월','7월','8월','9월','10월','11월','12월'];
 const CATS = [
-  { id:'inf',   label:'인플루언서', badge:'badge-inf'   },
-  { id:'amb',   label:'앰버서더',   badge:'badge-amb'   },
-  { id:'exp',   label:'체험단',     badge:'badge-exp'   },
-  { id:'ad',    label:'광고',       badge:'badge-ad'    },
-  { id:'viral', label:'바이럴',     badge:'badge-viral' },
-  { id:'ops',   label:'운영/제작',  badge:'badge-ops'   },
+  { id:'inf',   label:'인플루언서', dot:'dot-inf',   pill:'pill-inf'   },
+  { id:'amb',   label:'앰버서더',   dot:'dot-amb',   pill:'pill-amb'   },
+  { id:'exp',   label:'체험단',     dot:'dot-exp',   pill:'pill-exp'   },
+  { id:'ad',    label:'광고',       dot:'dot-ad',    pill:'pill-ad'    },
+  { id:'viral', label:'바이럴',     dot:'dot-viral', pill:'pill-viral' },
+  { id:'ops',   label:'운영/제작',  dot:'dot-ops',   pill:'pill-ops'   },
 ];
 
 const INFLUENCERS = [
@@ -219,20 +653,14 @@ const INFLUENCERS = [
 
 const FIXED_ITEMS = {
   amb: [
-    { name:'앰버서더', desc:'팔로워 5~20만 / 뷰티 카테고리 외', mode:'per',
-      countLabel:'인원(명)', defaultCount:100, unitLabel:'인당 단가(만원)', defaultUnit:30 },
+    { name:'앰버서더', desc:'팔로워 5~20만 / 뷰티 카테고리 외', mode:'per', countLabel:'인원(명)', defaultCount:100, unitLabel:'인당 단가(만원)', defaultUnit:30 },
   ],
   exp: [
-    { name:'레뷰 프리미어', desc:'방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per',
-      countLabel:'인원(명)', defaultCount:30, unitLabel:'인당 단가(만원)', defaultUnit:5 },
-    { name:'레뷰 베이직', desc:'일반 블로그', mode:'per',
-      countLabel:'인원(명)', defaultCount:30, unitLabel:'인당 단가(만원)', defaultUnit:1 },
-    { name:'서포터즈 인스타', desc:'인스타 채널 서포터즈', mode:'per',
-      countLabel:'인원(명)', defaultCount:30, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
-    { name:'서포터즈 블로그', desc:'블로그 채널 서포터즈', mode:'per',
-      countLabel:'인원(명)', defaultCount:20, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
-    { name:'나노 시딩', desc:'무상 제품 제공 (제품원가만 입력)', mode:'fixed',
-      valLabel:'총 제품원가(만원)', defaultVal:0 },
+    { name:'레뷰 프리미어', desc:'방문자 3천+ / 네이버 인플루언서 / 인스타 50k', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:5 },
+    { name:'레뷰 베이직',   desc:'일반 블로그', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당(만원)', defaultUnit:1 },
+    { name:'서포터즈 인스타', desc:'인스타 채널 서포터즈', mode:'per', countLabel:'인원(명)', defaultCount:30, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
+    { name:'서포터즈 블로그', desc:'블로그 채널 서포터즈', mode:'per', countLabel:'인원(명)', defaultCount:20, unitLabel:'인당 활동비(만원)', defaultUnit:5 },
+    { name:'나노 시딩', desc:'무상 제품 제공 — 제품원가만 입력', mode:'fixed', valLabel:'총 제품원가(만원)', defaultVal:0 },
   ],
   ad: [
     { name:'메타 광고', desc:'인스타그램 / 페이스북', mode:'fixed', valLabel:'월 집행금액(만원)', defaultVal:1000 },
@@ -257,22 +685,29 @@ let modalData = null;
 
 const fmt = n => Math.round(n).toLocaleString('ko-KR');
 const allTotal = () => Object.values(plan).flat().reduce((s,i) => s + i.priceVat, 0);
+const getCat = id => CATS.find(c => c.id === id);
 
 function updateHeader() {
   const budget = +document.getElementById('budgetInput').value || 100000;
   const total = allTotal();
   const remain = budget - total;
-  const se = document.getElementById('hSpent'), re = document.getElementById('hRemain');
+  const pct = budget > 0 ? Math.min(100, Math.round(total / budget * 100)) : 0;
+  const se = document.getElementById('hSpent');
+  const re = document.getElementById('hRemain');
+  const pe = document.getElementById('hPct');
   se.textContent = fmt(total) + '만원';
-  se.className = 'hval ' + (total > budget ? 'over' : 'ok');
+  se.className = 'hstat-val ' + (total > budget ? 'over' : 'ok');
   re.textContent = fmt(remain) + '만원';
-  re.className = 'hval ' + (remain < 0 ? 'over' : 'ok');
+  re.className = 'hstat-val ' + (remain < 0 ? 'over' : 'ok');
+  pe.textContent = pct + '%';
+  pe.className = 'hstat-val ' + (pct >= 100 ? 'over' : pct >= 80 ? 'neutral' : 'ok');
 }
 
 function renderCatTabs() {
-  document.getElementById('catTabs').innerHTML = CATS.map(c =>
-    `<div class="cat-tab ${c.id===activeCat?'active':''}" onclick="setCat('${c.id}')">${c.label}</div>`
-  ).join('');
+  document.getElementById('catTabs').innerHTML = CATS.map(c => {
+    const isActive = c.id === activeCat;
+    return `<div class="cat-tab ${isActive ? 'active-' + c.id : ''}" onclick="setCat('${c.id}')">${c.label}</div>`;
+  }).join('');
   document.getElementById('infSearchWrap').style.display = activeCat === 'inf' ? 'block' : 'none';
 }
 function setCat(id) { activeCat = id; renderCatTabs(); renderItems(); }
@@ -286,14 +721,14 @@ function renderItems() {
       <div class="inf-card" onclick="openModal('${inf.name}')">
         <div class="inf-top">
           <span class="inf-name">${inf.name}</span>
-          <span class="inf-cat-badge">${inf.sub}</span>
+          <span class="inf-sub">${inf.sub}</span>
         </div>
         <div class="price-chips">${inf.prices.map(p => `<span class="pchip">${p.t} ${fmt(p.v)}만</span>`).join('')}</div>
-      </div>`).join('') || '<div style="padding:24px;text-align:center;color:#bbb">검색 결과 없음</div>';
+      </div>`).join('') || '<div style="padding:32px;text-align:center;color:var(--text3);font-size:12px">검색 결과 없음</div>';
   } else {
     const items = FIXED_ITEMS[activeCat] || [];
-    el.innerHTML = items.map((item, idx) => {
-      const catId = activeCat;
+    el.innerHTML = '<div style="height:4px"></div>' + items.map((item, idx) => {
+      const cid = activeCat;
       if (item.mode === 'per') {
         return `<div class="fixed-card">
           <h4>${item.name}</h4>
@@ -301,28 +736,27 @@ function renderItems() {
           <div class="fixed-fields">
             <div class="field-row">
               <label>${item.countLabel}</label>
-              <input type="number" class="w60" id="fc_${catId}_${idx}_count" value="${item.defaultCount}" oninput="updateCalc('${catId}',${idx})">
-              <span style="font-size:11px;color:#888">명</span>
+              <input type="number" class="field-input w60" id="fc_${cid}_${idx}_count" value="${item.defaultCount}" oninput="updateCalc('${cid}',${idx})">
+              <span class="field-unit">명</span>
             </div>
             <div class="field-row">
               <label>${item.unitLabel}</label>
-              <input type="number" class="w80" id="fc_${catId}_${idx}_unit" value="${item.defaultUnit}" oninput="updateCalc('${catId}',${idx})">
-              <span style="font-size:11px;color:#888">만원</span>
+              <input type="number" class="field-input w80" id="fc_${cid}_${idx}_unit" value="${item.defaultUnit}" oninput="updateCalc('${cid}',${idx})">
+              <span class="field-unit">만원</span>
             </div>
             <div class="field-row">
               <label>진행 월</label>
-              <select id="fc_${catId}_${idx}_month">${MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('')}</select>
+              <select class="field-select" id="fc_${cid}_${idx}_month">${MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('')}</select>
             </div>
             <div class="field-row">
               <label>메모</label>
-              <input type="text" class="w120" id="fc_${catId}_${idx}_memo" placeholder="메모...">
+              <input type="text" class="field-input w130" id="fc_${cid}_${idx}_memo" placeholder="메모...">
             </div>
             <div class="field-row">
-              <label>합계</label>
-              <span class="calc-preview" id="fc_${catId}_${idx}_preview">${fmt(item.defaultCount*item.defaultUnit)}만 → VAT포함 ${fmt(item.defaultCount*item.defaultUnit*1.1)}만</span>
+              <span class="calc-preview" id="fc_${cid}_${idx}_preview">${fmt(item.defaultCount*item.defaultUnit)}만 → VAT포함 ${fmt(item.defaultCount*item.defaultUnit*1.1)}만</span>
             </div>
           </div>
-          <button class="btn-add-fixed" onclick="addFixed('${catId}',${idx})">플랜에 추가 ✓</button>
+          <button class="btn-add" onclick="addFixed('${cid}',${idx})">플랜에 추가 +</button>
         </div>`;
       } else {
         return `<div class="fixed-card">
@@ -331,38 +765,37 @@ function renderItems() {
           <div class="fixed-fields">
             <div class="field-row">
               <label>${item.valLabel}</label>
-              <input type="number" class="w80" id="fc_${catId}_${idx}_val" value="${item.defaultVal}" oninput="updateCalcFixed('${catId}',${idx})">
-              <span style="font-size:11px;color:#888">만원</span>
+              <input type="number" class="field-input w80" id="fc_${cid}_${idx}_val" value="${item.defaultVal}" oninput="updateCalcFixed('${cid}',${idx})">
+              <span class="field-unit">만원</span>
             </div>
             <div class="field-row">
               <label>진행 월</label>
-              <select id="fc_${catId}_${idx}_month">${MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('')}</select>
+              <select class="field-select" id="fc_${cid}_${idx}_month">${MONTHS.map(m=>`<option ${m===activeMonth?'selected':''}>${m}</option>`).join('')}</select>
             </div>
             <div class="field-row">
               <label>메모</label>
-              <input type="text" class="w120" id="fc_${catId}_${idx}_memo" placeholder="메모...">
+              <input type="text" class="field-input w130" id="fc_${cid}_${idx}_memo" placeholder="메모...">
             </div>
             <div class="field-row">
-              <label>VAT포함</label>
-              <span class="calc-preview" id="fc_${catId}_${idx}_preview">VAT포함 ${fmt(item.defaultVal*1.1)}만</span>
+              <span class="calc-preview" id="fc_${cid}_${idx}_preview">VAT포함 ${fmt(item.defaultVal*1.1)}만원</span>
             </div>
           </div>
-          <button class="btn-add-fixed" onclick="addFixed('${catId}',${idx})">플랜에 추가 ✓</button>
+          <button class="btn-add" onclick="addFixed('${cid}',${idx})">플랜에 추가 +</button>
         </div>`;
       }
-    }).join('');
+    }).join('') + '<div style="height:4px"></div>';
   }
 }
 
 function updateCalc(cat, idx) {
-  const count = +document.getElementById(`fc_${cat}_${idx}_count`).value || 0;
-  const unit  = +document.getElementById(`fc_${cat}_${idx}_unit`).value  || 0;
-  const t = count * unit;
+  const c = +document.getElementById(`fc_${cat}_${idx}_count`).value || 0;
+  const u = +document.getElementById(`fc_${cat}_${idx}_unit`).value  || 0;
+  const t = c * u;
   document.getElementById(`fc_${cat}_${idx}_preview`).textContent = `${fmt(t)}만 → VAT포함 ${fmt(t*1.1)}만`;
 }
 function updateCalcFixed(cat, idx) {
   const v = +document.getElementById(`fc_${cat}_${idx}_val`).value || 0;
-  document.getElementById(`fc_${cat}_${idx}_preview`).textContent = `VAT포함 ${fmt(v*1.1)}만`;
+  document.getElementById(`fc_${cat}_${idx}_preview`).textContent = `VAT포함 ${fmt(v*1.1)}만원`;
 }
 
 function addFixed(cat, idx) {
@@ -371,10 +804,9 @@ function addFixed(cat, idx) {
   const memo  = document.getElementById(`fc_${cat}_${idx}_memo`).value;
   let price, label;
   if (item.mode === 'per') {
-    const count = +document.getElementById(`fc_${cat}_${idx}_count`).value || 0;
-    const unit  = +document.getElementById(`fc_${cat}_${idx}_unit`).value  || 0;
-    price = count * unit;
-    label = `${count}명 × ${unit}만`;
+    const c = +document.getElementById(`fc_${cat}_${idx}_count`).value || 0;
+    const u = +document.getElementById(`fc_${cat}_${idx}_unit`).value  || 0;
+    price = c * u; label = `${c}명 × ${u}만`;
   } else {
     price = +document.getElementById(`fc_${cat}_${idx}_val`).value || 0;
     label = item.name;
@@ -397,8 +829,8 @@ function openModal(name) {
 }
 function updateModalPrice() {
   const v = +document.getElementById('mType').value;
-  document.getElementById('mPriceMain').textContent = fmt(v) + '만원';
-  document.getElementById('mPriceVat').textContent = 'VAT 포함: ' + fmt(v*1.1) + '만원';
+  document.getElementById('ppPrice').textContent = fmt(v) + '만원';
+  document.getElementById('ppVat').textContent = fmt(Math.round(v*1.1)) + '만원';
 }
 function closeModal() { document.getElementById('overlay').classList.remove('show'); }
 function addFromModal() {
@@ -427,13 +859,38 @@ function renderMonthBody() {
   const monthVat = items.reduce((s,i) => s + i.priceVat, 0);
   const monthRaw = items.reduce((s,i) => s + i.price, 0);
   const cumTotal = allTotal();
+  const remain = budget - cumTotal;
+  const pct = Math.min(100, budget > 0 ? Math.round(cumTotal/budget*100) : 0);
+  const barColor = pct >= 100 ? '#f87171' : pct >= 80 ? '#fb923c' : '#7c6af7';
 
   let html = `
   <div class="summary-grid">
-    <div class="scard"><div class="slabel">${activeMonth} VAT 별도</div><div class="sval">${fmt(monthRaw)}만</div></div>
-    <div class="scard"><div class="slabel">${activeMonth} VAT 포함</div><div class="sval">${fmt(monthVat)}만</div></div>
-    <div class="scard"><div class="slabel">전체 누적 (VAT포함)</div><div class="sval ${cumTotal>budget?'over':''}">${fmt(cumTotal)}만</div></div>
-    <div class="scard"><div class="slabel">잔여 예산</div><div class="sval ${budget-cumTotal<0?'over':''}">${fmt(budget-cumTotal)}만</div></div>
+    <div class="scard">
+      <div class="slabel">${activeMonth} VAT 별도</div>
+      <div class="sval neutral">${fmt(monthRaw)}만</div>
+      <div class="ssub">VAT포함 ${fmt(monthVat)}만</div>
+    </div>
+    <div class="scard">
+      <div class="slabel">전체 누적 (VAT포함)</div>
+      <div class="sval ${cumTotal > budget ? 'over' : 'neutral'}">${fmt(cumTotal)}만</div>
+      <div class="ssub">${pct}% 소진</div>
+    </div>
+    <div class="scard">
+      <div class="slabel">잔여 예산</div>
+      <div class="sval ${remain < 0 ? 'over' : 'ok'}">${fmt(remain)}만</div>
+      <div class="ssub">총 예산 ${fmt(budget)}만</div>
+    </div>
+    <div class="scard" style="padding:0;overflow:hidden;">
+      <div style="padding:16px 18px 10px">
+        <div class="slabel">예산 소진율</div>
+        <div class="sval neutral">${pct}%</div>
+      </div>
+      <div style="padding:0 18px 16px">
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%;background:${barColor}"></div>
+        </div>
+      </div>
+    </div>
   </div>`;
 
   CATS.forEach(cat => {
@@ -443,33 +900,40 @@ function renderMonthBody() {
     html += `
     <div class="plan-section">
       <div class="plan-section-head">
-        <h3><span class="type-badge ${cat.badge}">${cat.label}</span></h3>
-        <span class="section-total">${catVat > 0 ? fmt(catVat)+'만원 (VAT포함)' : '–'}</span>
+        <div class="section-title">
+          <div class="section-dot ${cat.dot}"></div>
+          <span class="section-name">${cat.label}</span>
+          ${catItems.length > 0 ? `<span class="section-count">${catItems.length}건</span>` : ''}
+        </div>
+        <span class="section-amount">${catVat > 0 ? fmt(catVat)+'만원' : '–'}</span>
       </div>`;
     if (catItems.length === 0) {
-      html += `<div class="empty-msg">← 왼쪽 [${cat.label}] 탭에서 추가</div>`;
+      html += `<div class="empty-msg"><span>＋</span>왼쪽 [${cat.label}] 탭에서 항목을 추가하세요</div>`;
     } else {
       html += `<table><thead><tr>
-        <th>이름</th><th>유형 / 내용</th>
+        <th>이름</th>
+        <th>유형</th>
         <th style="text-align:right">VAT별도</th>
         <th style="text-align:right">VAT포함</th>
-        <th>메모</th><th></th>
+        <th>메모</th>
+        <th style="width:32px"></th>
       </tr></thead><tbody>`;
       catItems.forEach(i => {
         html += `<tr>
-          <td style="font-weight:600">${i.name}</td>
-          <td><span class="type-badge ${cat.badge}">${i.type}</span></td>
-          <td style="text-align:right">${fmt(i.price)}만</td>
-          <td style="text-align:right;font-weight:600">${fmt(i.priceVat)}만</td>
+          <td class="td-name">${i.name}</td>
+          <td><span class="type-pill ${cat.pill}">${i.type}</span></td>
+          <td class="td-price">${fmt(i.price)}만</td>
+          <td class="td-price-vat">${fmt(i.priceVat)}만</td>
           <td><input class="memo-inp" value="${i.memo}" placeholder="메모..." onchange="updateMemo('${activeMonth}',${i.id},this.value)"></td>
           <td><button class="del-btn" onclick="delItem('${activeMonth}',${i.id})">✕</button></td>
         </tr>`;
       });
-      html += `<tr class="trow-total"><td colspan="2">소계</td>
-        <td style="text-align:right">${fmt(catRaw)}만</td>
-        <td style="text-align:right">${fmt(catVat)}만</td>
-        <td colspan="2"></td></tr>`;
-      html += `</tbody></table>`;
+      html += `<tr class="total-row">
+        <td colspan="2" style="color:var(--text3);font-size:11px">소계</td>
+        <td class="td-price">${fmt(catRaw)}만</td>
+        <td class="td-price-vat">${fmt(catVat)}만</td>
+        <td colspan="2"></td>
+      </tr></tbody></table>`;
     }
     html += `</div>`;
   });
@@ -488,7 +952,7 @@ function updateMemo(month, id, val) {
 function refresh() { renderMonthTabs(); renderMonthBody(); updateHeader(); }
 
 document.getElementById('budgetInput').addEventListener('input', refresh);
-document.getElementById('overlay').addEventListener('click', e => { if (e.target===e.currentTarget) closeModal(); });
+document.getElementById('overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
 
 renderCatTabs(); renderItems(); renderMonthTabs(); renderMonthBody(); updateHeader();
 </script>
