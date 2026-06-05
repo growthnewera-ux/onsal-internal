@@ -306,6 +306,7 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <button class="btn-primary" onclick="openAmbModal()">+ 앰버서더 추가</button>
  </div>
  <div class="stats-bar" id="amb-stats"></div>
+ <div id="amb-contract-banner"></div>
  <div id="contract-table-wrap" style="background:var(--white);border-radius:12px;border:1.5px solid var(--border);overflow:hidden"></div>
  </div>
 
@@ -465,16 +466,12 @@ html,body{height:100%;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
  <!-- 7. 계약기간 -->
  <div class="form-row-2">
  <div>
- <label class="form-label">계약 시작월</label>
- <select class="form-select" id="a-start">
- <option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option>
- </select>
+ <label class="form-label">계약 시작일</label>
+ <input class="form-input" type="date" id="a-start">
  </div>
  <div>
- <label class="form-label">계약 종료월</label>
- <select class="form-select" id="a-end">
- <option>7월</option><option>8월</option><option>9월</option><option>10월</option><option>11월</option><option>12월</option>
- </select>
+ <label class="form-label">계약 종료일</label>
+ <input class="form-input" type="date" id="a-end">
  </div>
  </div>
 
@@ -995,8 +992,20 @@ function renderAmbs() {
  return;
  }
 
- const MONTHS_OPT = ['7월','8월','9월','10월','11월','12월'];
- const platLabels = {yt:'',ig:'',tt:''};
+ const today = new Date(); today.setHours(0,0,0,0);
+ const platLabels = {yt:'유튜브',ig:'인스타',tt:'틱톡'};
+
+ // ── 만료 알림 배너 ──
+ const expiredAmbs = ambassadors.filter(a => a.contractEnd && new Date(a.contractEnd) < today);
+ const soonAmbs = ambassadors.filter(a => {
+   if (!a.contractEnd) return false;
+   const end = new Date(a.contractEnd);
+   const days = Math.ceil((end - today)/(1000*60*60*24));
+   return days >= 0 && days <= 30;
+ });
+ let banner = '';
+ if (expiredAmbs.length) banner += '<div style="background:var(--red-bg);border:1.5px solid var(--red);border-radius:10px;padding:11px 16px;margin-bottom:12px;font-size:13px;font-weight:600;color:var(--red)">계약 만료 · ' + expiredAmbs.map(a=>a.name).join(', ') + ' — 갱신 또는 종료 처리 필요</div>';
+ if (soonAmbs.length) banner += '<div style="background:#fff3e8;border:1.5px solid var(--orange);border-radius:10px;padding:11px 16px;margin-bottom:12px;font-size:13px;font-weight:600;color:var(--orange)">30일 이내 만료 예정 · ' + soonAmbs.map(a=>{const d=Math.ceil((new Date(a.contractEnd)-today)/(1000*60*60*24));return a.name+' (D-'+d+')';}).join(', ') + '</div>';
 
  let rows = '';
  ambassadors.forEach(a => {
@@ -1004,26 +1013,34 @@ function renderAmbs() {
  const pic = igHandle
  ? '<img src="https://unavatar.io/instagram/' + igHandle.replace(/\//g,'') + '" onerror="this.outerHTML=\'<div class=\'ct-avatar\'>' + a.name[0] + '</div>\'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0" loading="lazy">'
  : '<div class="ct-avatar">' + a.name[0] + '</div>';
- const plats = (a.platforms||[]).map(p => platLabels[p]||'').join(' ');
+ const plats = (a.platforms||[]).map(p => platLabels[p]||'').join(', ');
  const igUrl = a.igUrl||a.ytUrl||a.ttUrl||'';
  const handleEl = igUrl
  ? '<a href="' + igUrl + '" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none">' + (a.handle||'') + '</a>'
  : '<span style="font-size:11px;color:var(--text3)">' + (a.handle||'') + '</span>';
 
- const startSel = MONTHS_OPT.map(m => '<option value="' + m + '" ' + (a.contractStart===m?'selected':'') + '>' + m + '</option>').join('');
- const endSel = MONTHS_OPT.map(m => '<option value="' + m + '" ' + (a.contractEnd===m?'selected':'') + '>' + m + '</option>').join('');
+ // 계약 만료 상태
+ const endDate = a.contractEnd ? new Date(a.contractEnd) : null;
+ const daysLeft = endDate ? Math.ceil((endDate - today)/(1000*60*60*24)) : null;
+ let expiryBadge = '';
+ if (daysLeft !== null) {
+   if (daysLeft < 0) expiryBadge = '<span style="font-size:10px;font-weight:700;background:var(--red-bg);color:var(--red);padding:2px 6px;border-radius:5px;margin-left:5px">만료됨</span>';
+   else if (daysLeft <= 30) expiryBadge = '<span style="font-size:10px;font-weight:700;background:#fff3e8;color:var(--orange);padding:2px 6px;border-radius:5px;margin-left:5px">D-'+daysLeft+'</span>';
+ }
+ // 날짜 포맷
+ const fmtDate = d => d ? (d.length === 10 ? d : d.slice(0,7)) : '미설정';
 
  rows += '<tr style="cursor:pointer" onclick="toggleAmbExpand(\'' + a.id + '\')">' +
- '<td><div style="display:flex;align-items:center;gap:9px">' + pic + '<div><div style="font-size:13px;font-weight:700">' + a.name + '</div>' + handleEl + '</div></div></td>' +
- '<td><span style="font-size:12px">' + plats + '</span><span style="font-size:11px;color:var(--text3);margin-left:5px">' + (a.category||'') + '</span></td>' +
+ '<td><div style="display:flex;align-items:center;gap:9px">' + pic + '<div><div style="font-size:13px;font-weight:700">' + a.name + expiryBadge + '</div>' + handleEl + '</div></div></td>' +
+ '<td><span style="font-size:12px;color:var(--text2)">' + plats + '</span></td>' +
  '<td onclick="event.stopPropagation()" style="white-space:nowrap">' +
- '<select class="ct-status-sel" style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:3px 6px" onchange="saveAmbContract(\'' + a.id + '\',\'contractStart\',this.value)">' + startSel + '</select>' +
- ' ~ <select class="ct-status-sel" style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:3px 6px" onchange="saveAmbContract(\'' + a.id + '\',\'contractEnd\',this.value)">' + endSel + '</select>' +
+   '<input type="date" class="ct-inline" style="width:130px;font-size:12px" value="' + (a.contractStart||'') + '" onchange="saveAmbContract(\'' + a.id + '\',\'contractStart\',this.value)">' +
+   ' ~ <input type="date" class="ct-inline" style="width:130px;font-size:12px" value="' + (a.contractEnd||'') + '" onchange="saveAmbContract(\'' + a.id + '\',\'contractEnd\',this.value)">' +
  '</td>' +
  '<td onclick="event.stopPropagation()"><input class="ct-inline" type="number" value="' + (a.fee||'') + '" placeholder="0" style="width:60px;text-align:right" onchange="saveAmbContract(\'' + a.id + '\',\'fee\',this.value)"><span style="font-size:11px;color:var(--text3)">만원</span></td>' +
  '<td onclick="event.stopPropagation()" style="font-size:11px">' +
- '<button class="ct-text-del" style="color:var(--orange,#d9600a)" onclick="moveBackToCandidate(\'' + a.id + '\')"> 후보풀</button>' +
- ' · <button class="ct-text-del" onclick="deleteAmb(\'' + a.id + '\')"> 삭제</button>' +
+ '<button class="ct-text-del" style="color:var(--orange,#d9600a)" onclick="moveBackToCandidate(\'' + a.id + '\')">후보풀</button>' +
+ ' · <button class="ct-text-del" onclick="deleteAmb(\'' + a.id + '\')">삭제</button>' +
  '</td>' +
  '</tr>' +
  // 확장 행
@@ -1045,12 +1062,16 @@ function renderAmbs() {
  '</div></td></tr>';
  });
 
+ // 배너 + 테이블
+ const bannerEl = document.getElementById('amb-contract-banner');
+ if (bannerEl) bannerEl.innerHTML = banner;
+
  document.getElementById('contract-table-wrap').innerHTML =
  '<div style="overflow-x:auto"><table class="cand-table">' +
- '<thead><tr><th style="min-width:180px">앰버서더</th><th>플랫폼</th><th>계약기간</th><th>월광고비</th><th style="width:110px"></th></tr></thead>' +
+ '<thead><tr><th style="min-width:180px">앰버서더</th><th style="width:100px">플랫폼</th><th style="width:320px">계약기간 (시작일 ~ 종료일)</th><th style="width:100px">월광고비</th><th style="width:110px"></th></tr></thead>' +
  '<tbody>' + rows + '</tbody>' +
  '</table></div>' +
- '<div style="padding:10px 18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border)">▼ 행 클릭 시 계약정보 펼치기</div>';
+ '<div style="padding:10px 18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border)">행 클릭 시 계약정보 펼치기</div>';
 }
 
 function deleteAmb(id) {
